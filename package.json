@@ -1,13 +1,12 @@
 {
-  "name": "gulp-game-boilertemplate",
+  "name": "Kekkai",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "electron ./public/electron.js",
-    "build:win": "cd public && electron-packager ./ Yakusoku --overwrite --platform=win32  --arch=x64 --version=0.36.1 --icon=icon.ico --out ../Win64",
-    "build:mac": "cd public && electron-packager ./ Yakusoku --overwrite --platform=darwin --arch=x64 --version=0.36.1 --icon=icon.icns --out ../Mac",
-    "build:win32": "cd public && electron-packager ./ Yakusoku --overwrite --platform=win32  --arch=ia32 --version=0.36.1 --icon=icon.ico --out ../Win32"
+    "build:win": "cd public && electron-packager ./ Kekkai --overwrite --platform=win32  --arch=x64 --version=0.36.1 --icon=icon.ico --out ../Win64",
+    "build:mac": "cd public && electron-packager ./ Kekkai --overwrite --platform=darwin --arch=x64 --version=0.36.1 --icon=icon.icns --out ../Mac"
   },
   "author": "sairoutine",
   "license": "NO LICENSE",
