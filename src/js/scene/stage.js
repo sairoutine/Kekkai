@@ -2,20 +2,27 @@
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
+var SceneStageTalk = require("./stage/talk");
+
 var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
+
+	this.addSubScene("talk", new SceneStageTalk(core, this));
+	//this.addSubScene("play", new SceneStagePlay(core, this));
 };
 util.inherit(SceneStage, base_scene);
 
 SceneStage.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
+
+	this.changeSubScene("talk");
 };
 
-SceneStage.prototype.draw = function(){
+SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;
 
 	ctx.save();
-	ctx.fillStyle = util.hexToRGBString("000000");
+	ctx.fillStyle = util.hexToRGBString("EEEEEE");
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
 	// 横:30, 縦20
@@ -148,6 +155,8 @@ var stage = [
 
 		}
 	}
+
+	base_scene.prototype.draw.apply(this, arguments);
 };
 
 module.exports = SceneStage;
