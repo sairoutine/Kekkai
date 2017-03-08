@@ -15,6 +15,16 @@ SceneLoading.prototype.init = function() {
 	this.core.image_loader.loadImage("block", "./image/block.png");
 	this.core.image_loader.loadImage("player", "./image/player.png");
 	this.core.image_loader.loadImage("hashigo", "./image/hashigo.png");
+	this.core.image_loader.loadImage("reimu_angry", "./image/reimu_angry.png");
+	this.core.image_loader.loadImage("reimu_laugh", "./image/reimu_laugh.png");
+	this.core.image_loader.loadImage("reimu_laugh2", "./image/reimu_laugh2.png");
+	this.core.image_loader.loadImage("reimu_normal", "./image/reimu_normal.png");
+	this.core.image_loader.loadImage("reimu_yoyu", "./image/reimu_yoyu.png");
+	this.core.image_loader.loadImage("yukari_angry", "./image/yukari_angry.png");
+	this.core.image_loader.loadImage("yukari_angry", "./image/yukari_angry.png");
+	this.core.image_loader.loadImage("yukari_laugh", "./image/yukari_laugh.png");
+	this.core.image_loader.loadImage("yukari_normal", "./image/yukari_normal.png");
+
 };
 
 SceneLoading.prototype.beforeDraw = function() {
