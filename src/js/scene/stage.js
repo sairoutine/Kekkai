@@ -3,12 +3,13 @@
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
 var SceneStageTalk = require("./stage/talk");
+var SceneStagePlay = require("./stage/play");
 
 var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
 
 	this.addSubScene("talk", new SceneStageTalk(core, this));
-	//this.addSubScene("play", new SceneStagePlay(core, this));
+	this.addSubScene("play", new SceneStagePlay(core, this));
 };
 util.inherit(SceneStage, base_scene);
 
