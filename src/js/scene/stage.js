@@ -15,9 +15,14 @@ util.inherit(SceneStage, base_scene);
 SceneStage.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
-	this.changeSubScene("talk");
 };
+SceneStage.prototype.beforeDraw = function(){
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+	if(this.frame_count === 2) {
+		this.changeSubScene("talk");
+	}
 
+};
 SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;
 
@@ -40,7 +45,7 @@ var stage = [
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,7,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,9,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,2,2,2,2,2,2,2,6,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
 	[0,0,0,0,2,2,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0],
 	[0,0,0,0,2,2,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0],
@@ -66,14 +71,15 @@ var stage = [
 		var line = stage[i];
 		for (var j = 0; j < line.length; j++) {
 			var type = line[j];
+			var pos_x = j*size + 25;
+			var pos_y = i*size + 50;
 			if (type === 0) {
-				/*
-				if(j % 2 ===0) continue;
-				ctx.fillStyle = 'rgb(255, 255, 255 )';
-				ctx.textAlign = 'left';
-				ctx.font = "9px Arial";
-				ctx.fillText(j + "," + i , j * size, i * size);
-				*/
+				ctx.fillStyle = util.hexToRGBString("DDDDDD");
+				ctx.fillRect(
+					pos_x, pos_y,
+					size, size
+				);
+
 			}
 			else if (type === 1) {//block
 				ctx.drawImage(block,
@@ -81,7 +87,7 @@ var stage = [
 					16 * 4, 0,
 					// sprite size to get
 					16, 16,
-					j * size, i * size,
+					pos_x, pos_y,
 					// sprite size to show
 					size, size
 				);
@@ -92,7 +98,7 @@ var stage = [
 					16 * 5, 0,
 					// sprite size to get
 					16, 16,
-					j * size, i * size,
+					pos_x, pos_y,
 					// sprite size to show
 					size, size
 				);
@@ -103,7 +109,7 @@ var stage = [
 					16 * 6, 0,
 					// sprite size to get
 					16, 16,
-					j * size, i * size,
+					pos_x, pos_y,
 					// sprite size to show
 					size, size
 				);
@@ -114,7 +120,7 @@ var stage = [
 					16 * 7, 0,
 					// sprite size to get
 					16, 16,
-					j * size, i * size,
+					pos_x, pos_y,
 					// sprite size to show
 					size, size
 				);
@@ -125,7 +131,7 @@ var stage = [
 					16 * 3, 0,
 					// sprite size to get
 					16, 16,
-					j * size, i * size,
+					pos_x, pos_y,
 					// sprite size to show
 					size, size
 				);
@@ -136,7 +142,7 @@ var stage = [
 					0, 0,
 					// sprite size to get
 					32, 16,
-					j * size, i * size,
+					pos_x, pos_y,
 					// sprite size to show
 					size, size
 				);
@@ -144,12 +150,12 @@ var stage = [
 			else if (type === 7) { // player
 				ctx.drawImage(player,
 					// sprite position
-					32 * 1, 0,
+					32 * 1, 48 * 2,
 					// sprite size to get
-					32, 32,
-					j * size, i * size,
+					32, 48,
+					pos_x, pos_y,
 					// sprite size to show
-					48, 48
+					32, 48
 				);
 			}
 
