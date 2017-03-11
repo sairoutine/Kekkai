@@ -1,127 +1,10 @@
 'use strict';
-/*
-SceneStage.prototype.nn = function() {
-	var ctx = this.core.ctx;
-
-	var player = this.core.image_loader.getImage("player");
-	var hashigo = this.core.image_loader.getImage("hashigo");
-	var item = this.core.image_loader.getImage("item");
-
-			if (type === 1) {//block
-			}
-			else if (type === 2) {//block
-				ctx.drawImage(block,
-					// sprite position
-					16 * 5, 0,
-					// sprite size to get
-					16, 16,
-					pos_x, pos_y,
-					// sprite size to show
-					size, size
-				);
-			}
-			else if (type === 3) {//block
-				ctx.drawImage(block,
-					// sprite position
-					16 * 6, 0,
-					// sprite size to get
-					16, 16,
-					pos_x, pos_y,
-					// sprite size to show
-					size, size
-				);
-			}
-			else if (type === 4) {//block
-				ctx.drawImage(block,
-					// sprite position
-					16 * 7, 0,
-					// sprite size to get
-					16, 16,
-					pos_x, pos_y,
-					// sprite size to show
-					size, size
-				);
-			}
-			else if (type === 5) {//block
-				ctx.drawImage(block,
-					// sprite position
-					16 * 3, 0,
-					// sprite size to get
-					16, 16,
-					pos_x, pos_y,
-					// sprite size to show
-					size, size
-				);
-			}
-			else if (type === 6) { //hashigo
-				ctx.drawImage(hashigo,
-					// sprite position
-					0, 0,
-					// sprite size to get
-					32, 16,
-					pos_x, pos_y,
-					// sprite size to show
-					size, size
-				);
-			}
-			else if (type === 7) { // player
-				ctx.drawImage(player,
-					// sprite position
-					32 * 1, 48 * 2,
-					// sprite size to get
-					32, 48,
-					pos_x, pos_y,
-					// sprite size to show
-					32, 48
-				);
-			}
-			else if (type === 8) { // enemy
-				ctx.drawImage(item,
-					// sprite position
-					32 * 0, 32 * 3,
-					// sprite size to get
-					32, 32,
-					pos_x, pos_y,
-					// sprite size to show
-					size, size
-				);
-			}
-			else if (type === 9) { // item1
-				ctx.drawImage(item,
-					// sprite position
-					32 * 3, 32 * 2,
-					// sprite size to get
-					32, 32,
-					pos_x, pos_y,
-					// sprite size to show
-					size, size
-				);
-			}
-		}
-	}
-
-};
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	var offset_x = 25;
 	var offset_y = 50;
-	var size = 24;
 
 var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
 
 var BlockGreen  = require('../object/tile/block_green');
 var BlockBlue   = require('../object/tile/block_blue');
@@ -190,7 +73,7 @@ SceneStage.prototype.draw = function() {
 	ctx.fillStyle = util.hexToRGBString("DDDDDD");
 	ctx.fillRect(
 		offset_x, offset_y,
-		size * 30, size * 20
+		CONSTANT.TILE_SIZE * 30, CONSTANT.TILE_SIZE * 20
 	);
 	ctx.restore();
 
@@ -205,8 +88,8 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 		var line = stage[pos_y];
 		for (var pos_x = 0; pos_x < line.length; pos_x++) {
 			var tile = line[pos_x];
-			var x = pos_x * size + offset_x;
-			var y = pos_y * size + offset_y;
+			var x = pos_x * CONSTANT.TILE_SIZE + offset_x;
+			var y = pos_y * CONSTANT.TILE_SIZE + offset_y;
 
 			var Class = TILE_TYPE_TO_CLASS[ tile ];
 			if(Class) {
