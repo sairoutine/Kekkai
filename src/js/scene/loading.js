@@ -15,6 +15,7 @@ SceneLoading.prototype.init = function() {
 	this.core.image_loader.loadImage("block", "./image/block.png");
 	this.core.image_loader.loadImage("player", "./image/player.png");
 	this.core.image_loader.loadImage("hashigo", "./image/hashigo.png");
+	this.core.image_loader.loadImage("item", "./image/item.png");
 	this.core.image_loader.loadImage("reimu_angry", "./image/reimu_angry.png");
 	this.core.image_loader.loadImage("reimu_laugh", "./image/reimu_laugh.png");
 	this.core.image_loader.loadImage("reimu_laugh2", "./image/reimu_laugh2.png");

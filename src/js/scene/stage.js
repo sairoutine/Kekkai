@@ -29,29 +29,41 @@ SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;
 
 	ctx.save();
+
+	// background
 	ctx.fillStyle = util.hexToRGBString("EEEEEE");
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
+	ctx.restore();
+
+	ctx.save();
+	var offset_x = 25;
+	var offset_y = 50;
+	var size = 24;
+
+	ctx.fillStyle = util.hexToRGBString("DDDDDD");
+	ctx.fillRect(
+		offset_x, offset_y,
+		size * 30, size * 20
+	);
+	ctx.restore();
+
+	ctx.save();
 	// map
 	var stage = stage1_map;
 
 	var player = this.core.image_loader.getImage("player");
 	var block = this.core.image_loader.getImage("block");
 	var hashigo = this.core.image_loader.getImage("hashigo");
+	var item = this.core.image_loader.getImage("item");
 
-	var size = 24;
 	for (var i = 0; i < stage.length; i++) {
 		var line = stage[i];
 		for (var j = 0; j < line.length; j++) {
 			var type = line[j];
-			var pos_x = j*size + 25;
-			var pos_y = i*size + 50;
+			var pos_x = j*size + offset_x;
+			var pos_y = i*size + offset_y;
 			if (type === 0) {
-				ctx.fillStyle = util.hexToRGBString("DDDDDD");
-				ctx.fillRect(
-					pos_x, pos_y,
-					size, size
-				);
 
 			}
 			else if (type === 1) {//block
@@ -131,7 +143,28 @@ SceneStage.prototype.draw = function() {
 					32, 48
 				);
 			}
-
+			else if (type === 8) { // enemy
+				ctx.drawImage(item,
+					// sprite position
+					32 * 0, 32 * 3,
+					// sprite size to get
+					32, 32,
+					pos_x, pos_y,
+					// sprite size to show
+					size, size
+				);
+			}
+			else if (type === 9) { // item1
+				ctx.drawImage(item,
+					// sprite position
+					32 * 3, 32 * 2,
+					// sprite size to get
+					32, 32,
+					pos_x, pos_y,
+					// sprite size to show
+					size, size
+				);
+			}
 		}
 	}
 
