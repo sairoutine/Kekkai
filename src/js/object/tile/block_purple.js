@@ -1,6 +1,6 @@
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('./block_base');
 var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
