@@ -3,18 +3,24 @@ var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.base;
 var util = require('../../hakurei').util;
 
-var BlockGreen = function (scene) {
+var Player = function (scene) {
 	base_object.apply(this, arguments);
 };
-util.inherit(BlockGreen, base_object);
+util.inherit(Player, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
+Player.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
 };
 
-BlockGreen.prototype.draw = function() {
+Player.prototype.beforeDraw = function(){
+	base_object.prototype.beforeDraw.apply(this, arguments);
+
+	// 落下していく
+	this.y++;
+};
+Player.prototype.draw = function() {
 	base_object.prototype.draw.apply(this, arguments);
 
 	var ctx = this.core.ctx;
@@ -30,4 +36,4 @@ BlockGreen.prototype.draw = function() {
 	);
 };
 
-module.exports = BlockGreen;
+module.exports = Player;
