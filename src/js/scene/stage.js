@@ -16,20 +16,29 @@ var Player      = require('../object/tile/player');
 var Enemy       = require('../object/tile/enemy');
 var Item        = require('../object/tile/item');
 
+// tile_type => クラス名
+var TILE_TYPE_TO_CLASS = {};
+//TILE_TYPE_TO_CLASS[CONSTANT.BACKGROUND]  = BackGround;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_GREEN]  = BlockGreen;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BLUE]   = BlockBlue;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_RED]    = BlockRed;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_PURPLE] = BlockPurple;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BROWN]  = BlockBrown;
+TILE_TYPE_TO_CLASS[CONSTANT.LADDER]       = Ladder;
+TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]       = Player;
+TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]        = Enemy;
+TILE_TYPE_TO_CLASS[CONSTANT.ITEM]         = Item;
 
-var TILE_TYPE_TO_CLASS = {
-	//0: BackGround
-	1: BlockGreen,
-	2: BlockBlue,
-	3: BlockRed,
-	4: BlockPurple,
-	5: BlockBrown,
-	6: Ladder,
-	7: Player,
-	8: Enemy,
-	9: Item,
-};
 
+
+// 壁ブロック一覧
+var BLOCK_TILE_TYPES = [
+	CONSTANT.BLOCK_GREEN,
+	CONSTANT.BLOCK_BLUE,
+	CONSTANT.BLOCK_RED,
+	CONSTANT.BLOCK_PURPLE,
+	CONSTANT.BLOCK_BROWN,
+];
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
