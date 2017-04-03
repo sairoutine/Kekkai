@@ -1,6 +1,7 @@
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.base;
+var BlockBase = require('./block_base');
 var util = require('../../hakurei').util;
 
 var Player = function (scene) {
@@ -35,5 +36,26 @@ Player.prototype.draw = function() {
 		32, 48
 	);
 };
+
+Player.prototype.onCollision = function(obj) {
+	if (obj instanceof BlockBase) {
+		var player_down_y = this.globalDownY();
+		var block_up_y = obj.globalUpY();
+
+		if(player_down_y < block_up_y) {
+			this.y = block_up_y - 48;
+		}
+	}
+};
+Player.prototype.collisionWidth = function() {
+	return 32;
+};
+Player.prototype.collisionHeight = function() {
+	return 48;
+};
+
+
+
+
 
 module.exports = Player;

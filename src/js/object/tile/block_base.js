@@ -7,4 +7,13 @@ var BlockBase = function (scene) {
 };
 util.inherit(BlockBase, base_object);
 
+BlockBase.prototype.collisionWidth = function() {
+	return 16;
+};
+BlockBase.prototype.collisionHeight = function() {
+	return 48;
+};
+
+
+
 module.exports = BlockBase;
