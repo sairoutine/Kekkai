@@ -57,14 +57,28 @@ util.inherit(SceneStage, base_scene);
 SceneStage.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
+	// タイルの種類毎のオブジェクトの配列
+	this.objects_by_tile_type = this.initializeObjectsByTileType();
+
+	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(stage1_map);
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
-	if(this.frame_count === 2) {
-		this.changeSubScene("talk");
+
+	var self = this;
+
+	if(self.frame_count === 2) {
+		self.changeSubScene("talk");
 	}
 
+	// プレイヤー(1ステージにプレイヤーは1人の想定)
+	var player = self.objects_by_tile_type[ CONSTANT.PLAYER ][0];
+
+	// 壁と自機の衝突判定
+	BLOCK_TILE_TYPES.forEach(function (tile_type) {
+		player.checkCollisionWithObjects(self.objects_by_tile_type[tile_type]);
+	});
 };
 SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;
@@ -90,6 +104,17 @@ SceneStage.prototype.draw = function() {
 
 	base_scene.prototype.draw.apply(this, arguments);
 };
+
+SceneStage.prototype.initializeObjectsByTileType = function () {
+	var data = {};
+
+	for (var tile_type in TILE_TYPE_TO_CLASS) {
+		data[ tile_type ] = [];
+	}
+
+	return data;
+};
+
 SceneStage.prototype.parseAndCreateMap = function(map) {
 	var stage = stage1_map;
 
@@ -101,11 +126,17 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 			var y = pos_y * CONSTANT.TILE_SIZE + offset_y;
 
 			var Class = TILE_TYPE_TO_CLASS[ tile ];
-			if(Class) {
-				var instance = new Class(this);
-				instance.init(x, y);
-				this.addObject(instance);
-			}
+
+			if(!Class) continue; // 何もタイルがなければ何も表示しない
+
+			// シーンにオブジェクト追加
+			var instance = new Class(this);
+			instance.init(x, y);
+			this.addObject(instance);
+
+			// タイルの種類毎にオブジェクトを管理
+			if(!this.objects_by_tile_type[ tile ]) this.objects_by_tile_type[ tile ] = []; //初期化
+			this.objects_by_tile_type[ tile ].push(instance);
 		}
 	}
 };
