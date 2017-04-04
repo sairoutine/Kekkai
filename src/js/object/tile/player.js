@@ -21,6 +21,8 @@ Player.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
+
+	this.is_left_to = false;
 };
 
 Player.prototype.beforeDraw = function(){
@@ -32,9 +34,11 @@ Player.prototype.beforeDraw = function(){
 
 Player.prototype.moveLeft = function() {
 	this.x -= MOVE_SPEED;
+	this.is_left_to = true;
 };
 Player.prototype.moveRight = function() {
 	this.x += MOVE_SPEED;
+	this.is_left_to = false;
 };
 
 
@@ -45,15 +49,34 @@ Player.prototype.draw = function() {
 
 	var ctx = this.core.ctx;
 	var player = this.core.image_loader.getImage("player");
-	ctx.drawImage(player,
-		// sprite position
-		32 * 1, 48 * 2,
-		// sprite size to get
-		32, 48,
-		this.x, this.y,
-		// sprite size to show
-		32, 48
-	);
+
+	var player_width=32;
+
+	ctx.save();
+	if (this.is_left_to) {
+		ctx.transform(-1, 0, 0, 1, player_width,  0); // 左右反転
+		ctx.drawImage(player,
+			// sprite position
+			32 * 1, 48 * 2,
+			// sprite size to get
+			32, 48,
+			-this.x, this.y,
+			// sprite size to show
+			32, 48
+		);
+	}
+	else {
+		ctx.drawImage(player,
+			// sprite position
+			32 * 1, 48 * 2,
+			// sprite size to get
+			32, 48,
+			this.x, this.y,
+			// sprite size to show
+			32, 48
+		);
+	}
+	ctx.restore();
 };
 
 Player.prototype.onCollision = function(obj) {
