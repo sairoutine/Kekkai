@@ -72,13 +72,16 @@ SceneStage.prototype.beforeDraw = function(){
 		self.changeSubScene("talk");
 	}
 
-	// プレイヤー(1ステージにプレイヤーは1人の想定)
-	var player = self.objects_by_tile_type[ CONSTANT.PLAYER ][0];
+	var player = self.player();
 
 	// 壁と自機の衝突判定
 	BLOCK_TILE_TYPES.forEach(function (tile_type) {
 		player.checkCollisionWithObjects(self.objects_by_tile_type[tile_type]);
 	});
+};
+// プレイヤー(1ステージにプレイヤーは1人の想定)
+SceneStage.prototype.player = function () {
+	return this.objects_by_tile_type[ CONSTANT.PLAYER ][0];
 };
 SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;

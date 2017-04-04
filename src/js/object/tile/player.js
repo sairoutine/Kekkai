@@ -1,4 +1,12 @@
 'use strict';
+
+// 移動速度
+var MOVE_SPEED = 4;
+// 落下速度
+var FALL_SPEED = 4;
+
+
+
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.base;
 var BlockBase = require('./block_base');
@@ -19,8 +27,19 @@ Player.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
 	// 落下していく
-	this.y++;
+	this.y+=FALL_SPEED;
 };
+
+Player.prototype.moveLeft = function() {
+	this.x -= MOVE_SPEED;
+};
+Player.prototype.moveRight = function() {
+	this.x += MOVE_SPEED;
+};
+
+
+
+
 Player.prototype.draw = function() {
 	base_object.prototype.draw.apply(this, arguments);
 

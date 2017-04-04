@@ -16,6 +16,15 @@ SceneStagePlay.prototype.init = function(){
 
 SceneStagePlay.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.core.isKeyDown(CONSTANT.BUTTON_LEFT)) {
+		this.parent.player().moveLeft();
+	}
+
+	if(this.core.isKeyDown(CONSTANT.BUTTON_RIGHT)) {
+		this.parent.player().moveRight();
+	}
+
 };
 
 module.exports = SceneStagePlay;
