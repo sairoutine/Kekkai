@@ -44,14 +44,43 @@ SceneTitle.prototype.draw = function(){
 		ctx.globalAlpha = 1.0;
 	}
 
+
+	var title_bg = this.core.image_loader.getImage('title_bg');
+	// 背景画像表示
+	ctx.drawImage(title_bg,
+					0,
+					0,
+					title_bg.width,
+					title_bg.height,
+					0,
+					0,
+					this.core.width,
+					this.core.height);
+	ctx.drawImage(title_bg,
+					0,
+					0,
+					title_bg.width,
+					title_bg.height,
+					0,
+					50,
+					this.core.width,
+					this.core.height);
+
+
+
 	// show game title text
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.textAlign = 'right';
-	ctx.font = "30px 'ＭＳ ゴシック'";
-	ctx.fillText('Kekkai(仮)', 400, 225);
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.textAlign = 'center';
+	ctx.font = "60px 'ＭＳ ゴシック'";
+	ctx.fillText('タイトルロゴ(仮)', this.core.width/2, 100);
 
 	// show press z
-	ctx.fillText('Press Z to Start', 400, 350);
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.font = "35px 'ＭＳ ゴシック'";
+	ctx.textAlign = 'left';
+	ctx.fillText('→ Story Start', 280, 400);
+	ctx.fillText('　 Stage Select', 280, 450);
 	ctx.restore();
 };
 
