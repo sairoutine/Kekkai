@@ -31,15 +31,6 @@ TILE_TYPE_TO_CLASS[CONSTANT.ITEM]         = Item;
 
 
 
-// 壁ブロック一覧
-var BLOCK_TILE_TYPES = [
-	CONSTANT.BLOCK_GREEN,
-	CONSTANT.BLOCK_BLUE,
-	CONSTANT.BLOCK_RED,
-	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
-];
-
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
 var SceneStageTalk = require("./stage/talk");
@@ -74,10 +65,6 @@ SceneStage.prototype.beforeDraw = function(){
 
 	var player = self.player();
 
-	// 壁と自機の衝突判定
-	BLOCK_TILE_TYPES.forEach(function (tile_type) {
-		player.checkCollisionWithObjects(self.objects_by_tile_type[tile_type]);
-	});
 };
 // プレイヤー(1ステージにプレイヤーは1人の想定)
 SceneStage.prototype.player = function () {
