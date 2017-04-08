@@ -1,6 +1,7 @@
 'use strict';
 
 var CONSTANT = require('../../constant');
+var H_CONSTANT = require('../../hakurei').constant;
 
 // 移動速度
 var MOVE_SPEED = 4;
@@ -14,11 +15,11 @@ var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_RED,
 	CONSTANT.BLOCK_PURPLE,
 	CONSTANT.BLOCK_BROWN,
+	CONSTANT.LADDER, // はしごも
 ];
 
 
 
-var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
 var BlockBase = require('./block_base');
 var util = require('../../hakurei').util;
@@ -34,7 +35,8 @@ Player.prototype.init = function(x, y) {
 	this.y = y;
 
 	this.is_reflect = false; // 左を向いているか
-	this.is_down = false;
+	this.is_down = false; // 落下中かどうか
+	this.is_down_ladder = false; // はしごを降りている最中かどうか
 };
 
 Player.prototype.beforeDraw = function(){
@@ -50,6 +52,20 @@ Player.prototype.beforeDraw = function(){
 		this.is_down = false;
 	}
 
+	// はしごを降りている
+	if(this.checkCollisionWithLadder()) {
+		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+			this.y+=FALL_SPEED;
+			this.is_down_ladder = true;
+		}
+		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+			this.y-=FALL_SPEED;
+			this.is_down_ladder = true;
+		}
+	}
+	else {
+		this.is_down_ladder = false;
+	}
 };
 
 Player.prototype.checkCollisionWithBlocks = function() {
@@ -67,6 +83,24 @@ Player.prototype.checkCollisionWithBlocks = function() {
 
 	return is_collision;
 };
+
+Player.prototype.checkCollisionWithLadder = function() {
+	var self = this;
+	// はしごと自機の衝突判定
+	var is_collision = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.LADDER].forEach(function(obj) {
+		if(self.checkCollision(obj)) {
+			is_collision = true;
+			// TODO: break;
+		}
+	});
+
+	return is_collision;
+};
+
+
+
 
 
 Player.prototype.moveLeft = function() {
@@ -123,7 +157,7 @@ Player.prototype.spriteName = function(){
 	return "player";
 };
 Player.prototype.spriteIndices = function(){
-	return [{x: 1, y: 2}];
+	return this.is_down_ladder ? [{x: 1, y: 3}] : [{x: 1, y: 2}];
 };
 Player.prototype.spriteWidth = function(){
 	return 32;
