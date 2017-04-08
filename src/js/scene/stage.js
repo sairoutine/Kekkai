@@ -53,15 +53,14 @@ SceneStage.prototype.init = function(){
 
 	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(stage1_map);
+
+	// 会話シーン
+	this.changeSubScene("talk");
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
 	var self = this;
-
-	if(self.frame_count === 2) {
-		self.changeSubScene("talk");
-	}
 
 	var player = self.player();
 
