@@ -39,9 +39,21 @@ Player.prototype.init = function(x, y) {
 
 Player.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
+
+
+	// 落下していく
+	if(!this.checkCollisionWithBlocks()) {
+		this.y+=FALL_SPEED;
+		this.is_down = true;
+	}
+	else {
+		this.is_down = false;
+	}
+
+};
+
+Player.prototype.checkCollisionWithBlocks = function() {
 	var self = this;
-
-
 	// 壁と自機の衝突判定
 	var is_collision = false;
 	BLOCK_TILE_TYPES.forEach(function (tile_type) {
@@ -53,16 +65,10 @@ Player.prototype.beforeDraw = function(){
 		});
 	});
 
-	// 落下していく
-	if(!is_collision) {
-		this.y+=FALL_SPEED;
-		this.is_down = true;
-	}
-	else {
-		this.is_down = false;
-	}
-
+	return is_collision;
 };
+
+
 Player.prototype.moveLeft = function() {
 	if(this.is_down) return;
 
