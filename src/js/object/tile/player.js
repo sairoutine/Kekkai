@@ -22,6 +22,7 @@ var BLOCK_TILE_TYPES = [
 
 var base_object = require('../../hakurei').object.sprite;
 var BlockBase = require('./block_base');
+var AlterEgo = require('../alterego');
 var util = require('../../hakurei').util;
 
 var Player = function (scene) {
@@ -37,6 +38,10 @@ Player.prototype.init = function(x, y) {
 	this.is_reflect = false; // 左を向いているか
 	this.is_down = false; // 落下中かどうか
 	this.is_down_ladder = false; // はしごを降りている最中かどうか
+
+	this.alterego = new AlterEgo(this.scene);
+	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
+	this.addSubObject(this.alterego);
 };
 
 Player.prototype.beforeDraw = function(){
@@ -45,7 +50,7 @@ Player.prototype.beforeDraw = function(){
 
 	// 落下していく
 	if(!this.checkCollisionWithBlocks()) {
-		this.y+=FALL_SPEED;
+		this.moveY(FALL_SPEED);
 		this.is_down = true;
 	}
 	else {
@@ -55,11 +60,11 @@ Player.prototype.beforeDraw = function(){
 	// はしごを降りている
 	if(this.checkCollisionWithLadder()) {
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
-			this.y+=FALL_SPEED;
+			this.moveY(FALL_SPEED);
 			this.is_down_ladder = true;
 		}
 		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
-			this.y-=FALL_SPEED;
+			this.moveY(-FALL_SPEED);
 			this.is_down_ladder = true;
 		}
 	}
@@ -108,13 +113,26 @@ Player.prototype.moveLeft = function() {
 
 	this.x -= MOVE_SPEED;
 	this.is_reflect = true;
+
+	this.alterego.x += MOVE_SPEED;
 };
 Player.prototype.moveRight = function() {
 	if(this.is_down) return;
 
 	this.x += MOVE_SPEED;
 	this.is_reflect = false;
+
+	this.alterego.x -= MOVE_SPEED;
 };
+
+Player.prototype.moveY = function(y) {
+
+	this.y += y;
+	this.alterego.y += y;
+};
+
+
+
 
 
 /*
