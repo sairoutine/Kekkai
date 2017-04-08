@@ -171,6 +171,9 @@ Player.prototype.startExchange = function() {
 
 	this.exchange_anim.init(this.x, this.y, EXCHANGE_ANIM_SPAN);
 	this.addSubObject(this.exchange_anim);
+
+	// 紫もアニメーション
+	this.alterego.startExchange(EXCHANGE_ANIM_SPAN);
 };
 
 Player.prototype.exchange_position = function() {
