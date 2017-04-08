@@ -8,6 +8,9 @@ var MOVE_SPEED = 4;
 // 落下速度
 var FALL_SPEED = 4;
 
+// 交代アニメーション時間
+var EXCHANGE_ANIM_SPAN = 60;
+
 // 壁ブロック一覧
 var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_GREEN,
@@ -23,6 +26,7 @@ var BLOCK_TILE_TYPES = [
 var base_object = require('../../hakurei').object.sprite;
 var BlockBase = require('./block_base');
 var AlterEgo = require('../alterego');
+var ExchangeAnim = require('../exchange_anim');
 var util = require('../../hakurei').util;
 
 var Player = function (scene) {
@@ -39,9 +43,13 @@ Player.prototype.init = function(x, y) {
 	this.is_down = false; // 落下中かどうか
 	this.is_down_ladder = false; // はしごを降りている最中かどうか
 
+	this.exchange_animation_start_count = 0; // 交代アニメーション開始時刻
+
 	this.alterego = new AlterEgo(this.scene);
 	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
 	this.addSubObject(this.alterego);
+
+	this.exchange_anim = new ExchangeAnim(this.scene);
 };
 
 Player.prototype.beforeDraw = function(){
@@ -70,6 +78,20 @@ Player.prototype.beforeDraw = function(){
 	}
 	else {
 		this.is_down_ladder = false;
+	}
+
+
+	// 交代アニメーション再生
+	if(this.exchange_animation_start_count) {
+		// 交代アニメーション終了
+		if(this.frame_count - this.exchange_animation_start_count > EXCHANGE_ANIM_SPAN) {
+			// 位置移動
+			this.exchange_position();
+
+			// リセット
+			this.exchange_animation_start_count = 0;
+			this.removeSubObject(this.exchange_anim);
+		}
 	}
 };
 
@@ -109,6 +131,7 @@ Player.prototype.checkCollisionWithLadder = function() {
 
 
 Player.prototype.moveLeft = function() {
+	if(!this.isEnableMove()) return;
 	if(this.is_down) return;
 
 	this.x -= MOVE_SPEED;
@@ -117,6 +140,7 @@ Player.prototype.moveLeft = function() {
 	this.alterego.x += MOVE_SPEED;
 };
 Player.prototype.moveRight = function() {
+	if(!this.isEnableMove()) return;
 	if(this.is_down) return;
 
 	this.x += MOVE_SPEED;
@@ -126,11 +150,30 @@ Player.prototype.moveRight = function() {
 };
 
 Player.prototype.moveY = function(y) {
+	if(!this.isEnableMove()) return;
 	this.y += y;
 	this.alterego.y += y;
 };
 
-Player.prototype.exchange = function(){
+Player.prototype.isEnableMove = function() {
+	if(this.exchange_animation_start_count) return false; // 位置移動中は実行できない
+
+	return true;
+};
+
+
+
+
+// 位置移動
+Player.prototype.startExchange = function() {
+	if(!this.isEnableMove()) return;
+	this.exchange_animation_start_count = this.frame_count;
+
+	this.exchange_anim.init(this.x, this.y, EXCHANGE_ANIM_SPAN);
+	this.addSubObject(this.exchange_anim);
+};
+
+Player.prototype.exchange_position = function() {
 	var player_x = this.x;
 	var player_y = this.y;
 	var alterego_x = this.alterego.x;
@@ -196,10 +239,21 @@ Player.prototype.spriteHeight = function(){
 	return 48;
 };
 Player.prototype.scaleWidth = function(){
-	return 1;
+	if(this.exchange_animation_start_count && (EXCHANGE_ANIM_SPAN/2) < this.frame_count - this.exchange_animation_start_count) {
+		return (EXCHANGE_ANIM_SPAN/2 - (this.frame_count - this.exchange_animation_start_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
+	}
+	else {
+		return 1;
+	}
+
 };
 Player.prototype.scaleHeight = function(){
-	return 1;
+	if(this.exchange_animation_start_count && (EXCHANGE_ANIM_SPAN/2) < this.frame_count - this.exchange_animation_start_count) {
+		return (EXCHANGE_ANIM_SPAN/2 - (this.frame_count - this.exchange_animation_start_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
+	}
+	else {
+		return 1;
+	}
 };
 Player.prototype.isReflect = function(){
 	return this.is_reflect;
