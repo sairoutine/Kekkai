@@ -112,8 +112,8 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 		var line = stage[pos_y];
 		for (var pos_x = 0; pos_x < line.length; pos_x++) {
 			var tile = line[pos_x];
-			var x = pos_x * CONSTANT.TILE_SIZE + offset_x;
-			var y = pos_y * CONSTANT.TILE_SIZE + offset_y;
+			var x = pos_x * CONSTANT.TILE_SIZE + offset_x + 12; // 12 = TILE TIP SIZE * 1.5 / 2
+			var y = pos_y * CONSTANT.TILE_SIZE + offset_y + 12;
 
 			var Class = TILE_TYPE_TO_CLASS[ tile ];
 

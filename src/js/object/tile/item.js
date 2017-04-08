@@ -1,33 +1,37 @@
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('../../hakurei').object.sprite;
 var util = require('../../hakurei').util;
 
-var BlockGreen = function (scene) {
+var Item = function (scene) {
 	base_object.apply(this, arguments);
 };
-util.inherit(BlockGreen, base_object);
+util.inherit(Item, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
+Item.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
 };
+// sprite configuration
 
-BlockGreen.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
-
-	var ctx = this.core.ctx;
-	var item = this.core.image_loader.getImage("item");
-	ctx.drawImage(item,
-		// sprite position
-		32 * 3, 32 * 2,
-		// sprite size to get
-		32, 32,
-		this.x, this.y,
-		// sprite size to show
-		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
-	);
+Item.prototype.spriteName = function(){
+	return "item";
+};
+Item.prototype.spriteIndices = function(){
+	return [{x: 3, y: 2}];
+};
+Item.prototype.spriteWidth = function(){
+	return 32;
+};
+Item.prototype.spriteHeight = function(){
+	return 32;
+};
+Item.prototype.scaleWidth = function(){
+	return 1;
+};
+Item.prototype.scaleHeight = function(){
+	return 1;
 };
 
-module.exports = BlockGreen;
+module.exports = Item;

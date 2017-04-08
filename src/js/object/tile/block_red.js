@@ -14,20 +14,10 @@ BlockGreen.prototype.init = function(x, y) {
 	this.y = y;
 };
 
-BlockGreen.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
 
-	var ctx = this.core.ctx;
-	var block = this.core.image_loader.getImage("block");
-	ctx.drawImage(block,
-		// sprite position
-		16 * 6, 0,
-		// sprite size to get
-		16, 16,
-		this.x, this.y,
-		// sprite size to show
-		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
-	);
+BlockGreen.prototype.spriteIndices = function(){
+	return [{x: 6, y: 0}];
 };
+
 
 module.exports = BlockGreen;

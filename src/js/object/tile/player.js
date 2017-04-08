@@ -19,7 +19,7 @@ var BLOCK_TILE_TYPES = [
 
 
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('../../hakurei').object.sprite;
 var BlockBase = require('./block_base');
 var util = require('../../hakurei').util;
 
@@ -33,7 +33,7 @@ Player.prototype.init = function(x, y) {
 	this.x = x;
 	this.y = y;
 
-	this.is_left_to = false; // 左を向いているか
+	this.is_reflect = false; // 左を向いているか
 	this.is_down = false;
 };
 
@@ -61,23 +61,23 @@ Player.prototype.beforeDraw = function(){
 	else {
 		this.is_down = false;
 	}
+
 };
 Player.prototype.moveLeft = function() {
 	if(this.is_down) return;
 
 	this.x -= MOVE_SPEED;
-	this.is_left_to = true;
+	this.is_reflect = true;
 };
 Player.prototype.moveRight = function() {
 	if(this.is_down) return;
 
 	this.x += MOVE_SPEED;
-	this.is_left_to = false;
+	this.is_reflect = false;
 };
 
 
-
-
+/*
 Player.prototype.draw = function() {
 	base_object.prototype.draw.apply(this, arguments);
 
@@ -112,6 +112,39 @@ Player.prototype.draw = function() {
 	}
 	ctx.restore();
 };
+*/
+Player.prototype.spriteName = function(){
+	return "player";
+};
+Player.prototype.spriteIndices = function(){
+	return [{x: 1, y: 2}];
+};
+Player.prototype.spriteWidth = function(){
+	return 32;
+};
+Player.prototype.spriteHeight = function(){
+	return 48;
+};
+Player.prototype.scaleWidth = function(){
+	return 1;
+};
+Player.prototype.scaleHeight = function(){
+	return 1;
+};
+Player.prototype.isReflect = function(){
+	return this.is_reflect;
+};
+
+
+
+
+
+
+
+
+
+
+
 /*
 Player.prototype.onCollision = function(obj) {
 	if (obj instanceof BlockBase) {
@@ -125,7 +158,7 @@ Player.prototype.onCollision = function(obj) {
 };
 */
 Player.prototype.collisionWidth = function() {
-	return 32;
+	return 16;
 };
 Player.prototype.collisionHeight = function() {
 	return 48;
