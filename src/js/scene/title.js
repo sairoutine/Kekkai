@@ -56,17 +56,6 @@ SceneTitle.prototype.draw = function(){
 					0,
 					this.core.width,
 					this.core.height);
-	ctx.drawImage(title_bg,
-					0,
-					0,
-					title_bg.width,
-					title_bg.height,
-					0,
-					50,
-					this.core.width,
-					this.core.height);
-
-
 
 	// show game title text
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
