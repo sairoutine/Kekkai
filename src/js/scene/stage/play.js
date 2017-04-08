@@ -26,7 +26,7 @@ SceneStagePlay.prototype.beforeDraw = function(){
 	}
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_X)) {
-		this.parent.player().exchange();
+		this.parent.player().startExchange();
 	}
 };
 
