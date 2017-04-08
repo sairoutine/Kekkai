@@ -25,6 +25,9 @@ SceneStagePlay.prototype.beforeDraw = function(){
 		this.parent.player().moveRight();
 	}
 
+	if(this.core.isKeyPush(CONSTANT.BUTTON_X)) {
+		this.parent.player().exchange();
+	}
 };
 
 module.exports = SceneStagePlay;

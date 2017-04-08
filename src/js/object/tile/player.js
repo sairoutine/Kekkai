@@ -126,9 +126,21 @@ Player.prototype.moveRight = function() {
 };
 
 Player.prototype.moveY = function(y) {
-
 	this.y += y;
 	this.alterego.y += y;
+};
+
+Player.prototype.exchange = function(){
+	var player_x = this.x;
+	var player_y = this.y;
+	var alterego_x = this.alterego.x;
+	var alterego_y = this.alterego.y;
+
+	this.x = alterego_x;
+	this.y = alterego_y;
+
+	this.alterego.x = player_x;
+	this.alterego.y = player_y;
 };
 
 
