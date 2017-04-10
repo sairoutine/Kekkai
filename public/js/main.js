@@ -1,11 +1,21 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var Constant = {
+var CONSTANT = {
 	TILE_SIZE:  24,
+
+	BLOCK_GREEN:  1,
+	BLOCK_BLUE:   2,
+	BLOCK_RED:    3,
+	BLOCK_PURPLE: 4,
+	BLOCK_BROWN:  5,
+	LADDER:       6,
+	PLAYER:       7,
+	ENEMY:        8,
+	ITEM:         9,
 };
 
-module.exports = Constant;
+module.exports = CONSTANT;
 
 },{}],2:[function(require,module,exports){
 'use strict';
@@ -33,7 +43,7 @@ Game.prototype.init = function () {
 
 module.exports = Game;
 
-},{"./hakurei":3,"./scene/loading":25,"./scene/stage":27,"./scene/title":30}],3:[function(require,module,exports){
+},{"./hakurei":3,"./scene/loading":28,"./scene/stage":30,"./scene/title":33}],3:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -328,10 +338,14 @@ var ObjectBase = function(scene, object) {
 	this.x = 0; // local center x
 	this.y = 0; // local center y
 
+	// manage flags that disappears in frame elapsed
+	this.auto_disable_times_map = {};
+
 	this.velocity = {magnitude:0, theta:0};
 
 	// sub object
 	this.objects = [];
+
 };
 
 ObjectBase.prototype.init = function(){
@@ -340,6 +354,8 @@ ObjectBase.prototype.init = function(){
 	this.x = 0;
 	this.y = 0;
 
+	this.auto_disable_times_map = {};
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].init();
 	}
@@ -347,6 +363,8 @@ ObjectBase.prototype.init = function(){
 
 ObjectBase.prototype.beforeDraw = function(){
 	this.frame_count++;
+
+	this.checkAutoDisableFlags();
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].beforeDraw();
@@ -371,6 +389,17 @@ ObjectBase.prototype.afterDraw = function() {
 ObjectBase.prototype.addSubObject = function(object){
 	this.objects.push(object);
 };
+ObjectBase.prototype.removeSubObject = function(object){
+	// TODO: O(n) -> O(1)
+	for(var i = 0, len = this.objects.length; i < len; i++) {
+		if(this.objects[i].id === object.id) {
+			this.objects.splice(i, 1);
+			break;
+		}
+	}
+};
+
+
 
 ObjectBase.prototype.move = function() {
 	var x = util.calcMoveXByVelocity(this.velocity);
@@ -419,11 +448,21 @@ ObjectBase.prototype.checkCollisionWithObject = function(obj1) {
 	if(obj1.checkCollision(obj2)) {
 		obj1.onCollision(obj2);
 		obj2.onCollision(obj1);
-		return true;
 	}
-
-	return false;
 };
+ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
+	var obj1 = this;
+	for(var i = 0; i < objs.length; i++) {
+		var obj2 = objs[i];
+		if(obj1.checkCollision(obj2)) {
+			obj1.onCollision(obj2);
+			obj2.onCollision(obj1);
+		}
+	}
+};
+
+
+
 ObjectBase.prototype.checkCollision = function(obj) {
 	if(Math.abs(this.x - obj.x) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
 		Math.abs(this.y - obj.y) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
@@ -447,6 +486,28 @@ ObjectBase.prototype.getCollisionUpY = function() {
 
 
 
+
+// set flags that disappears in frame elapsed
+// TODO: enable to set flag which becomes false -> true
+ObjectBase.prototype.setAutoDisableFlag = function(flag_name, count) {
+	var self = this;
+
+	self[flag_name] = true;
+
+	self.auto_disable_times_map[flag_name] = self.frame_count + count;
+
+};
+
+// check flags that disappears in frame elapsed
+ObjectBase.prototype.checkAutoDisableFlags = function() {
+	var self = this;
+	for (var flag_name in self.auto_disable_times_map) {
+		if(this.auto_disable_times_map[flag_name] < self.frame_count) {
+			self[flag_name] = false;
+			delete self.auto_disable_times_map[flag_name];
+		}
+	}
+};
 
 
 
@@ -574,9 +635,10 @@ Sprite.prototype.beforeDraw = function(){
 	}
 };
 Sprite.prototype.draw = function(){
-	base_object.prototype.draw.apply(this, arguments);
 
 	var image = this.core.image_loader.getImage(this.spriteName());
+
+	if(this.scale()) console.error("scale method is deprecated. you should use scaleWidth and scaleHeight.");
 
 	var ctx = this.core.ctx;
 
@@ -594,8 +656,13 @@ Sprite.prototype.draw = function(){
 	if(!sprite_width)  sprite_width = image.width;
 	if(!sprite_height) sprite_height = image.height;
 
-	var width  = sprite_width * this.scale();
-	var height = sprite_height * this.scale();
+	var width  = sprite_width * this.scaleWidth();
+	var height = sprite_height * this.scaleHeight();
+
+	// reflect left or right
+	if(this.isReflect()) {
+		ctx.transform(-1, 0, 0, 1, 0, 0);
+	}
 
 	ctx.drawImage(image,
 		// sprite position
@@ -608,6 +675,9 @@ Sprite.prototype.draw = function(){
 		width,                              height
 	);
 	ctx.restore();
+
+	// draw sub objects
+	base_object.prototype.draw.apply(this, arguments);
 };
 
 Sprite.prototype.spriteName = function(){
@@ -634,9 +704,24 @@ Sprite.prototype.spriteHeight = function(){
 Sprite.prototype.rotateAdjust = function(){
 	return 0;
 };
+
+// scale method is deprecated. you should use scaleWidth and scaleHeight
 Sprite.prototype.scale = function(){
+	return 0;
+};
+
+
+Sprite.prototype.scaleWidth = function(){
 	return 1;
 };
+Sprite.prototype.scaleHeight = function(){
+	return 1;
+};
+Sprite.prototype.isReflect = function(){
+	return false;
+};
+
+
 
 
 module.exports = Sprite;
@@ -1010,43 +1095,201 @@ window.changeFullScreen = function () {
 
 },{"./game":2}],16:[function(require,module,exports){
 'use strict';
-var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
-var util = require('../../hakurei').util;
+var base_object = require('../hakurei').object.sprite;
+var util = require('../hakurei').util;
+var ExchangeAnim = require('./exchange_anim');
 
-var BlockGreen = function (scene) {
+var AlterEgo = function (scene) {
 	base_object.apply(this, arguments);
 };
-util.inherit(BlockGreen, base_object);
+util.inherit(AlterEgo, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
+AlterEgo.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
+
+	this.span = 0;
+	this.exchange_animation_start_count = 0;
+	this.exchange_anim = new ExchangeAnim(this.scene);
 };
 
-BlockGreen.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
+AlterEgo.prototype.beforeDraw = function(){
+	base_object.prototype.beforeDraw.apply(this, arguments);
 
-	var ctx = this.core.ctx;
-	var block = this.core.image_loader.getImage("block");
-	ctx.drawImage(block,
-		// sprite position
-		16 * 5, 0,
-		// sprite size to get
-		16, 16,
-		this.x, this.y,
-		// sprite size to show
-		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
-	);
+	// 交代アニメーション再生
+	if(this.exchange_animation_start_count) {
+		// 交代アニメーション終了
+		if(this.frame_count - this.exchange_animation_start_count > this.span) {
+			// リセット
+			this.exchange_animation_start_count = 0;
+			this.removeSubObject(this.exchange_anim);
+		}
+	}
+
 };
 
-module.exports = BlockGreen;
+AlterEgo.prototype.spriteName = function(){
+	return "alterego";
+};
+AlterEgo.prototype.spriteIndices = function(){
+	return [{x: 0, y: 0}];
+};
+AlterEgo.prototype.spriteWidth = function(){
+	return 200;
+};
+AlterEgo.prototype.spriteHeight = function(){
+	return 200;
+};
+AlterEgo.prototype.scaleWidth = function(){
+	return 0.2;
+};
+AlterEgo.prototype.scaleHeight = function(){
+	return 0.2;
+};
 
-},{"../../constant":1,"../../hakurei":3}],17:[function(require,module,exports){
+AlterEgo.prototype.scaleWidth = function(){
+	if(this.exchange_animation_start_count && (this.span/2) < this.frame_count - this.exchange_animation_start_count) {
+		return 0.2 * (this.span/2 - (this.frame_count - this.exchange_animation_start_count -  this.span/2)) / (this.span/2);
+	}
+	else {
+		return 0.2;
+	}
+
+};
+AlterEgo.prototype.scaleHeight = function(){
+	if(this.exchange_animation_start_count && (this.span/2) < this.frame_count - this.exchange_animation_start_count) {
+		return 0.2 * (this.span/2 - (this.frame_count - this.exchange_animation_start_count -  this.span/2)) / (this.span/2);
+	}
+	else {
+		return 0.2;
+	}
+};
+
+
+
+
+
+
+// 位置移動
+AlterEgo.prototype.startExchange = function(span) {
+	this.exchange_animation_start_count = this.frame_count;
+	this.span = span;
+
+	this.exchange_anim.init(this.x, this.y, span);
+	this.addSubObject(this.exchange_anim);
+};
+
+
+
+
+
+
+
+module.exports = AlterEgo;
+
+},{"../hakurei":3,"./exchange_anim":17}],17:[function(require,module,exports){
+'use strict';
+var base_object = require('../hakurei').object.sprite;
+var util = require('../hakurei').util;
+
+var AlterEgo = function (scene) {
+	base_object.apply(this, arguments);
+};
+util.inherit(AlterEgo, base_object);
+
+AlterEgo.prototype.init = function(x, y, anim_span) {
+	base_object.prototype.init.apply(this, arguments);
+	this.x = x;
+	this.y = y;
+
+	this.anim_span = anim_span;
+};
+
+AlterEgo.prototype.beforeDraw = function(){
+	base_object.prototype.beforeDraw.apply(this, arguments);
+};
+
+AlterEgo.prototype.spriteName = function(){
+	return "exchange";
+};
+AlterEgo.prototype.spriteIndices = function(){
+	return [{x: 0, y: 0}];
+};
+AlterEgo.prototype.spriteWidth = function(){
+	return 200;
+};
+AlterEgo.prototype.spriteHeight = function(){
+	return 200;
+};
+AlterEgo.prototype.scaleWidth = function(){
+	if(this.frame_count < this.anim_span/2) {
+		return 0.25 * this.frame_count / (this.anim_span/2);
+	}
+	else {
+		return 0.25;
+	}
+};
+AlterEgo.prototype.scaleHeight = function(){
+	if(this.frame_count < this.anim_span/2) {
+		return 0.25 * this.frame_count / (this.anim_span/2);
+	}
+	else {
+		return 0.25;
+	}
+
+};
+
+module.exports = AlterEgo;
+
+},{"../hakurei":3}],18:[function(require,module,exports){
+'use strict';
+var base_object = require('../../hakurei').object.sprite;
+var util = require('../../hakurei').util;
+
+var BlockBase = function (scene) {
+	base_object.apply(this, arguments);
+};
+util.inherit(BlockBase, base_object);
+
+BlockBase.prototype.collisionWidth = function() {
+	return 32;
+};
+BlockBase.prototype.collisionHeight = function() {
+	return 32;
+};
+
+// sprite configuration
+
+BlockBase.prototype.spriteName = function(){
+	return "block";
+};
+BlockBase.prototype.spriteIndices = function(){
+	console.error("spriteIndices must be overwritten");
+};
+BlockBase.prototype.spriteWidth = function(){
+	return 16;
+};
+BlockBase.prototype.spriteHeight = function(){
+	return 16;
+};
+BlockBase.prototype.scaleWidth = function(){
+	return 1.5;
+};
+BlockBase.prototype.scaleHeight = function(){
+	return 1.5;
+};
+
+
+
+
+
+module.exports = BlockBase;
+
+},{"../../hakurei":3}],19:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('./block_base');
 var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
@@ -1060,28 +1303,17 @@ BlockGreen.prototype.init = function(x, y) {
 	this.y = y;
 };
 
-BlockGreen.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
-
-	var ctx = this.core.ctx;
-	var block = this.core.image_loader.getImage("block");
-	ctx.drawImage(block,
-		// sprite position
-		16 * 3, 0,
-		// sprite size to get
-		16, 16,
-		this.x, this.y,
-		// sprite size to show
-		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
-	);
+BlockGreen.prototype.spriteIndices = function(){
+	return [{x: 5, y: 0}];
 };
+
 
 module.exports = BlockGreen;
 
-},{"../../constant":1,"../../hakurei":3}],18:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3,"./block_base":18}],20:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('./block_base');
 var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
@@ -1095,28 +1327,17 @@ BlockGreen.prototype.init = function(x, y) {
 	this.y = y;
 };
 
-BlockGreen.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
-
-	var ctx = this.core.ctx;
-	var block = this.core.image_loader.getImage("block");
-	ctx.drawImage(block,
-		// sprite position
-		16 * 4, 0,
-		// sprite size to get
-		16, 16,
-		this.x, this.y,
-		// sprite size to show
-		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
-	);
+BlockGreen.prototype.spriteIndices = function(){
+	return [{x: 3, y: 0}];
 };
+
 
 module.exports = BlockGreen;
 
-},{"../../constant":1,"../../hakurei":3}],19:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3,"./block_base":18}],21:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('./block_base');
 var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
@@ -1130,28 +1351,16 @@ BlockGreen.prototype.init = function(x, y) {
 	this.y = y;
 };
 
-BlockGreen.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
-
-	var ctx = this.core.ctx;
-	var block = this.core.image_loader.getImage("block");
-	ctx.drawImage(block,
-		// sprite position
-		16 * 7, 0,
-		// sprite size to get
-		16, 16,
-		this.x, this.y,
-		// sprite size to show
-		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
-	);
+BlockGreen.prototype.spriteIndices = function(){
+	return [{x: 4, y: 0}];
 };
 
 module.exports = BlockGreen;
 
-},{"../../constant":1,"../../hakurei":3}],20:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3,"./block_base":18}],22:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('./block_base');
 var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
@@ -1165,25 +1374,38 @@ BlockGreen.prototype.init = function(x, y) {
 	this.y = y;
 };
 
-BlockGreen.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
-
-	var ctx = this.core.ctx;
-	var block = this.core.image_loader.getImage("block");
-	ctx.drawImage(block,
-		// sprite position
-		16 * 6, 0,
-		// sprite size to get
-		16, 16,
-		this.x, this.y,
-		// sprite size to show
-		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
-	);
+BlockGreen.prototype.spriteIndices = function(){
+	return [{x: 7, y: 0}];
 };
 
 module.exports = BlockGreen;
 
-},{"../../constant":1,"../../hakurei":3}],21:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3,"./block_base":18}],23:[function(require,module,exports){
+'use strict';
+var CONSTANT = require('../../constant');
+var base_object = require('./block_base');
+var util = require('../../hakurei').util;
+
+var BlockGreen = function (scene) {
+	base_object.apply(this, arguments);
+};
+util.inherit(BlockGreen, base_object);
+
+BlockGreen.prototype.init = function(x, y) {
+	base_object.prototype.init.apply(this, arguments);
+	this.x = x;
+	this.y = y;
+};
+
+
+BlockGreen.prototype.spriteIndices = function(){
+	return [{x: 6, y: 0}];
+};
+
+
+module.exports = BlockGreen;
+
+},{"../../constant":1,"../../hakurei":3,"./block_base":18}],24:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.base;
@@ -1218,59 +1440,63 @@ BlockGreen.prototype.draw = function() {
 
 module.exports = BlockGreen;
 
-},{"../../constant":1,"../../hakurei":3}],22:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3}],25:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('../../hakurei').object.sprite;
 var util = require('../../hakurei').util;
 
-var BlockGreen = function (scene) {
+var Item = function (scene) {
 	base_object.apply(this, arguments);
 };
-util.inherit(BlockGreen, base_object);
+util.inherit(Item, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
+Item.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
 };
+// sprite configuration
 
-BlockGreen.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
-
-	var ctx = this.core.ctx;
-	var item = this.core.image_loader.getImage("item");
-	ctx.drawImage(item,
-		// sprite position
-		32 * 3, 32 * 2,
-		// sprite size to get
-		32, 32,
-		this.x, this.y,
-		// sprite size to show
-		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
-	);
+Item.prototype.spriteName = function(){
+	return "item";
+};
+Item.prototype.spriteIndices = function(){
+	return [{x: 3, y: 2}];
+};
+Item.prototype.spriteWidth = function(){
+	return 32;
+};
+Item.prototype.spriteHeight = function(){
+	return 32;
+};
+Item.prototype.scaleWidth = function(){
+	return 1;
+};
+Item.prototype.scaleHeight = function(){
+	return 1;
 };
 
-module.exports = BlockGreen;
+module.exports = Item;
 
-},{"../../constant":1,"../../hakurei":3}],23:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3}],26:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var base_object = require('../../hakurei').object.sprite;
 var util = require('../../hakurei').util;
 
-var BlockGreen = function (scene) {
+var Ladder = function (scene) {
 	base_object.apply(this, arguments);
 };
-util.inherit(BlockGreen, base_object);
+util.inherit(Ladder, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
+Ladder.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
 };
-
-BlockGreen.prototype.draw = function() {
+/*
+Ladder.prototype.draw = function() {
 	base_object.prototype.draw.apply(this, arguments);
 
 	var ctx = this.core.ctx;
@@ -1287,45 +1513,348 @@ BlockGreen.prototype.draw = function() {
 	);
 
 };
+*/
+// sprite configuration
 
-module.exports = BlockGreen;
+Ladder.prototype.spriteName = function(){
+	return "hashigo";
+};
+Ladder.prototype.spriteIndices = function(){
+	return [{x: 0, y: 0}];
+};
+Ladder.prototype.spriteWidth = function(){
+	return 32;
+};
+Ladder.prototype.spriteHeight = function(){
+	return 16;
+};
+Ladder.prototype.scaleWidth = function(){
+	return 0.75;
+};
+Ladder.prototype.scaleHeight = function(){
+	return 1.5;
+};
 
-},{"../../constant":1,"../../hakurei":3}],24:[function(require,module,exports){
+// collision configuration
+
+Ladder.prototype.collisionWidth = function() {
+	return 32;
+};
+Ladder.prototype.collisionHeight = function() {
+	return 32;
+};
+
+
+
+
+
+
+
+
+
+module.exports = Ladder;
+
+},{"../../constant":1,"../../hakurei":3}],27:[function(require,module,exports){
 'use strict';
+
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.base;
+var H_CONSTANT = require('../../hakurei').constant;
+
+// 移動速度
+var MOVE_SPEED = 4;
+// 落下速度
+var FALL_SPEED = 4;
+
+// 交代アニメーション時間
+var EXCHANGE_ANIM_SPAN = 60;
+
+// 壁ブロック一覧
+var BLOCK_TILE_TYPES = [
+	CONSTANT.BLOCK_GREEN,
+	CONSTANT.BLOCK_BLUE,
+	CONSTANT.BLOCK_RED,
+	CONSTANT.BLOCK_PURPLE,
+	CONSTANT.BLOCK_BROWN,
+	CONSTANT.LADDER, // はしごも
+];
+
+
+
+var base_object = require('../../hakurei').object.sprite;
+var BlockBase = require('./block_base');
+var AlterEgo = require('../alterego');
+var ExchangeAnim = require('../exchange_anim');
 var util = require('../../hakurei').util;
 
-var BlockGreen = function (scene) {
+var Player = function (scene) {
 	base_object.apply(this, arguments);
 };
-util.inherit(BlockGreen, base_object);
+util.inherit(Player, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
+Player.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
+
+	this.is_reflect = false; // 左を向いているか
+	this.is_down = false; // 落下中かどうか
+	this.is_down_ladder = false; // はしごを降りている最中かどうか
+
+	this.exchange_animation_start_count = 0; // 交代アニメーション開始時刻
+
+	this.alterego = new AlterEgo(this.scene);
+	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
+	this.addSubObject(this.alterego);
+
+	this.exchange_anim = new ExchangeAnim(this.scene);
 };
 
-BlockGreen.prototype.draw = function() {
+Player.prototype.beforeDraw = function(){
+	base_object.prototype.beforeDraw.apply(this, arguments);
+
+
+	// 落下していく
+	if(!this.checkCollisionWithBlocks()) {
+		this.moveY(FALL_SPEED);
+		this.is_down = true;
+	}
+	else {
+		this.is_down = false;
+	}
+
+	// はしごを降りている
+	if(this.checkCollisionWithLadder()) {
+		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+			this.moveY(FALL_SPEED);
+			this.is_down_ladder = true;
+		}
+		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+			this.moveY(-FALL_SPEED);
+			this.is_down_ladder = true;
+		}
+	}
+	else {
+		this.is_down_ladder = false;
+	}
+
+
+	// 交代アニメーション再生
+	if(this.exchange_animation_start_count) {
+		// 交代アニメーション終了
+		if(this.frame_count - this.exchange_animation_start_count > EXCHANGE_ANIM_SPAN) {
+			// 位置移動
+			this.exchange_position();
+
+			// リセット
+			this.exchange_animation_start_count = 0;
+			this.removeSubObject(this.exchange_anim);
+		}
+	}
+};
+
+Player.prototype.checkCollisionWithBlocks = function() {
+	var self = this;
+	// 壁と自機の衝突判定
+	var is_collision = false;
+	BLOCK_TILE_TYPES.forEach(function (tile_type) {
+		self.scene.objects_by_tile_type[tile_type].forEach(function(obj) {
+			if(self.checkCollision(obj)) {
+				is_collision = true;
+				// TODO: break;
+			}
+		});
+	});
+
+	return is_collision;
+};
+
+Player.prototype.checkCollisionWithLadder = function() {
+	var self = this;
+	// はしごと自機の衝突判定
+	var is_collision = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.LADDER].forEach(function(obj) {
+		if(self.checkCollision(obj)) {
+			is_collision = true;
+			// TODO: break;
+		}
+	});
+
+	return is_collision;
+};
+
+
+
+
+
+Player.prototype.moveLeft = function() {
+	if(!this.isEnableMove()) return;
+	if(this.is_down) return;
+
+	this.x -= MOVE_SPEED;
+	this.is_reflect = true;
+
+	this.alterego.x += MOVE_SPEED;
+};
+Player.prototype.moveRight = function() {
+	if(!this.isEnableMove()) return;
+	if(this.is_down) return;
+
+	this.x += MOVE_SPEED;
+	this.is_reflect = false;
+
+	this.alterego.x -= MOVE_SPEED;
+};
+
+Player.prototype.moveY = function(y) {
+	if(!this.isEnableMove()) return;
+	this.y += y;
+	this.alterego.y += y;
+};
+
+Player.prototype.isEnableMove = function() {
+	if(this.exchange_animation_start_count) return false; // 位置移動中は実行できない
+
+	return true;
+};
+
+
+
+
+// 位置移動
+Player.prototype.startExchange = function() {
+	if(!this.isEnableMove()) return;
+	this.exchange_animation_start_count = this.frame_count;
+
+	this.exchange_anim.init(this.x, this.y, EXCHANGE_ANIM_SPAN);
+	this.addSubObject(this.exchange_anim);
+
+	// 紫もアニメーション
+	this.alterego.startExchange(EXCHANGE_ANIM_SPAN);
+};
+
+Player.prototype.exchange_position = function() {
+	var player_x = this.x;
+	var player_y = this.y;
+	var alterego_x = this.alterego.x;
+	var alterego_y = this.alterego.y;
+
+	this.x = alterego_x;
+	this.y = alterego_y;
+
+	this.alterego.x = player_x;
+	this.alterego.y = player_y;
+};
+
+
+
+
+
+/*
+Player.prototype.draw = function() {
 	base_object.prototype.draw.apply(this, arguments);
 
 	var ctx = this.core.ctx;
 	var player = this.core.image_loader.getImage("player");
-	ctx.drawImage(player,
-		// sprite position
-		32 * 1, 48 * 2,
-		// sprite size to get
-		32, 48,
-		this.x, this.y,
-		// sprite size to show
-		32, 48
-	);
+
+	var player_width=32;
+
+	ctx.save();
+	if (this.is_left_to) {
+		ctx.transform(-1, 0, 0, 1, player_width,  0); // 左右反転
+		ctx.drawImage(player,
+			// sprite position
+			32 * 1, 48 * 2,
+			// sprite size to get
+			32, 48,
+			-this.x, this.y,
+			// sprite size to show
+			32, 48
+		);
+	}
+	else {
+		ctx.drawImage(player,
+			// sprite position
+			32 * 1, 48 * 2,
+			// sprite size to get
+			32, 48,
+			this.x, this.y,
+			// sprite size to show
+			32, 48
+		);
+	}
+	ctx.restore();
+};
+*/
+Player.prototype.spriteName = function(){
+	return "player";
+};
+Player.prototype.spriteIndices = function(){
+	return this.is_down_ladder ? [{x: 1, y: 3}] : [{x: 1, y: 2}];
+};
+Player.prototype.spriteWidth = function(){
+	return 32;
+};
+Player.prototype.spriteHeight = function(){
+	return 48;
+};
+Player.prototype.scaleWidth = function(){
+	if(this.exchange_animation_start_count && (EXCHANGE_ANIM_SPAN/2) < this.frame_count - this.exchange_animation_start_count) {
+		return (EXCHANGE_ANIM_SPAN/2 - (this.frame_count - this.exchange_animation_start_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
+	}
+	else {
+		return 1;
+	}
+
+};
+Player.prototype.scaleHeight = function(){
+	if(this.exchange_animation_start_count && (EXCHANGE_ANIM_SPAN/2) < this.frame_count - this.exchange_animation_start_count) {
+		return (EXCHANGE_ANIM_SPAN/2 - (this.frame_count - this.exchange_animation_start_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
+	}
+	else {
+		return 1;
+	}
+};
+Player.prototype.isReflect = function(){
+	return this.is_reflect;
 };
 
-module.exports = BlockGreen;
 
-},{"../../constant":1,"../../hakurei":3}],25:[function(require,module,exports){
+
+
+
+
+
+
+
+
+
+/*
+Player.prototype.onCollision = function(obj) {
+	if (obj instanceof BlockBase) {
+		var player_down_y = this.globalDownY();
+		var block_up_y = obj.globalUpY();
+
+		if(player_down_y < block_up_y) { // 落下させない
+			this.y = block_up_y - 48;
+		}
+	}
+};
+*/
+Player.prototype.collisionWidth = function() {
+	return 16;
+};
+Player.prototype.collisionHeight = function() {
+	return 48;
+};
+
+
+
+
+
+module.exports = Player;
+
+},{"../../constant":1,"../../hakurei":3,"../alterego":16,"../exchange_anim":17,"./block_base":18}],28:[function(require,module,exports){
 'use strict';
 
 // scene to load image and sound
@@ -1340,8 +1869,11 @@ util.inherit(SceneLoading, base_scene);
 
 SceneLoading.prototype.init = function() {
 	base_scene.prototype.init.apply(this, arguments);
+	this.core.image_loader.loadImage("title_bg", "./image/title_bg.jpg");
 	this.core.image_loader.loadImage("block", "./image/block.png");
 	this.core.image_loader.loadImage("player", "./image/player.png");
+	this.core.image_loader.loadImage("alterego", "./image/alterego.png");
+	this.core.image_loader.loadImage("exchange", "./image/exchange.png");
 	this.core.image_loader.loadImage("hashigo", "./image/hashigo.png");
 	this.core.image_loader.loadImage("item", "./image/item.png");
 	this.core.image_loader.loadImage("reimu_angry", "./image/reimu_angry.png");
@@ -1378,7 +1910,7 @@ SceneLoading.prototype.draw = function(){
 
 module.exports = SceneLoading;
 
-},{"../hakurei":3}],26:[function(require,module,exports){
+},{"../hakurei":3}],29:[function(require,module,exports){
 'use strict';
 var N = -1;
 	// 横:30, 縦20
@@ -1417,7 +1949,7 @@ var stage = [
 
 module.exports = stage;
 
-},{}],27:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 	var offset_x = 25;
@@ -1436,19 +1968,19 @@ var Player      = require('../object/tile/player');
 var Enemy       = require('../object/tile/enemy');
 var Item        = require('../object/tile/item');
 
+// tile_type => クラス名
+var TILE_TYPE_TO_CLASS = {};
+//TILE_TYPE_TO_CLASS[CONSTANT.BACKGROUND]  = BackGround;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_GREEN]  = BlockGreen;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BLUE]   = BlockBlue;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_RED]    = BlockRed;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_PURPLE] = BlockPurple;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BROWN]  = BlockBrown;
+TILE_TYPE_TO_CLASS[CONSTANT.LADDER]       = Ladder;
+TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]       = Player;
+TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]        = Enemy;
+TILE_TYPE_TO_CLASS[CONSTANT.ITEM]         = Item;
 
-var TILE_TYPE_TO_CLASS = {
-	//0: BackGround
-	1: BlockGreen,
-	2: BlockBlue,
-	3: BlockRed,
-	4: BlockPurple,
-	5: BlockBrown,
-	6: Ladder,
-	7: Player,
-	8: Enemy,
-	9: Item,
-};
 
 
 var base_scene = require('../hakurei').scene.base;
@@ -1468,14 +2000,26 @@ util.inherit(SceneStage, base_scene);
 SceneStage.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
+	// タイルの種類毎のオブジェクトの配列
+	this.objects_by_tile_type = this.initializeObjectsByTileType();
+
+	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(stage1_map);
+
+	// 会話シーン
+	this.changeSubScene("talk");
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
-	if(this.frame_count === 2) {
-		this.changeSubScene("talk");
-	}
 
+	var self = this;
+
+	var player = self.player();
+
+};
+// プレイヤー(1ステージにプレイヤーは1人の想定)
+SceneStage.prototype.player = function () {
+	return this.objects_by_tile_type[ CONSTANT.PLAYER ][0];
 };
 SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;
@@ -1501,6 +2045,17 @@ SceneStage.prototype.draw = function() {
 
 	base_scene.prototype.draw.apply(this, arguments);
 };
+
+SceneStage.prototype.initializeObjectsByTileType = function () {
+	var data = {};
+
+	for (var tile_type in TILE_TYPE_TO_CLASS) {
+		data[ tile_type ] = [];
+	}
+
+	return data;
+};
+
 SceneStage.prototype.parseAndCreateMap = function(map) {
 	var stage = stage1_map;
 
@@ -1508,22 +2063,28 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 		var line = stage[pos_y];
 		for (var pos_x = 0; pos_x < line.length; pos_x++) {
 			var tile = line[pos_x];
-			var x = pos_x * CONSTANT.TILE_SIZE + offset_x;
-			var y = pos_y * CONSTANT.TILE_SIZE + offset_y;
+			var x = pos_x * CONSTANT.TILE_SIZE + offset_x + 12; // 12 = TILE TIP SIZE * 1.5 / 2
+			var y = pos_y * CONSTANT.TILE_SIZE + offset_y + 12;
 
 			var Class = TILE_TYPE_TO_CLASS[ tile ];
-			if(Class) {
-				var instance = new Class(this);
-				instance.init(x, y);
-				this.addObject(instance);
-			}
+
+			if(!Class) continue; // 何もタイルがなければ何も表示しない
+
+			// シーンにオブジェクト追加
+			var instance = new Class(this);
+			instance.init(x, y);
+			this.addObject(instance);
+
+			// タイルの種類毎にオブジェクトを管理
+			if(!this.objects_by_tile_type[ tile ]) this.objects_by_tile_type[ tile ] = []; //初期化
+			this.objects_by_tile_type[ tile ].push(instance);
 		}
 	}
 };
 
 module.exports = SceneStage;
 
-},{"../constant":1,"../hakurei":3,"../object/tile/block_blue":16,"../object/tile/block_brown":17,"../object/tile/block_green":18,"../object/tile/block_purple":19,"../object/tile/block_red":20,"../object/tile/enemy":21,"../object/tile/item":22,"../object/tile/ladder":23,"../object/tile/player":24,"./map/stage1":26,"./stage/play":28,"./stage/talk":29}],28:[function(require,module,exports){
+},{"../constant":1,"../hakurei":3,"../object/tile/block_blue":19,"../object/tile/block_brown":20,"../object/tile/block_green":21,"../object/tile/block_purple":22,"../object/tile/block_red":23,"../object/tile/enemy":24,"../object/tile/item":25,"../object/tile/ladder":26,"../object/tile/player":27,"./map/stage1":29,"./stage/play":31,"./stage/talk":32}],31:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../../hakurei').scene.base;
@@ -1542,11 +2103,23 @@ SceneStagePlay.prototype.init = function(){
 
 SceneStagePlay.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.core.isKeyDown(CONSTANT.BUTTON_LEFT)) {
+		this.parent.player().moveLeft();
+	}
+
+	if(this.core.isKeyDown(CONSTANT.BUTTON_RIGHT)) {
+		this.parent.player().moveRight();
+	}
+
+	if(this.core.isKeyPush(CONSTANT.BUTTON_X)) {
+		this.parent.player().startExchange();
+	}
 };
 
 module.exports = SceneStagePlay;
 
-},{"../../hakurei":3}],29:[function(require,module,exports){
+},{"../../hakurei":3}],32:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 20;
@@ -1707,7 +2280,7 @@ SceneStageTalk.prototype._showMessage = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":3,"../../logic/serif/stage1/before":13,"../../logic/serif_manager":14}],30:[function(require,module,exports){
+},{"../../hakurei":3,"../../logic/serif/stage1/before":13,"../../logic/serif_manager":14}],33:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../hakurei').scene.base;
@@ -1754,14 +2327,32 @@ SceneTitle.prototype.draw = function(){
 		ctx.globalAlpha = 1.0;
 	}
 
+
+	var title_bg = this.core.image_loader.getImage('title_bg');
+	// 背景画像表示
+	ctx.drawImage(title_bg,
+					0,
+					0,
+					title_bg.width,
+					title_bg.height,
+					0,
+					0,
+					this.core.width,
+					this.core.height);
+
 	// show game title text
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.textAlign = 'right';
-	ctx.font = "30px 'ＭＳ ゴシック'";
-	ctx.fillText('Kekkai(仮)', 400, 225);
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.textAlign = 'center';
+	ctx.font = "60px 'ＭＳ ゴシック'";
+	ctx.fillText('タイトルロゴ(仮)', this.core.width/2, 100);
 
 	// show press z
-	ctx.fillText('Press Z to Start', 400, 350);
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.font = "35px 'ＭＳ ゴシック'";
+	ctx.textAlign = 'left';
+	ctx.fillText('→ Story Start', 280, 400);
+	ctx.fillText('　 Stage Select', 280, 450);
 	ctx.restore();
 };
 
