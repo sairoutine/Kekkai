@@ -11,7 +11,7 @@ var FALL_SPEED = 4;
 // 交代アニメーション時間
 var EXCHANGE_ANIM_SPAN = 60;
 
-// 壁ブロック一覧
+// 地面ブロック一覧
 var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_GREEN,
 	CONSTANT.BLOCK_BLUE,
@@ -19,6 +19,15 @@ var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_PURPLE,
 	CONSTANT.BLOCK_BROWN,
 	CONSTANT.LADDER, // はしごも
+];
+
+// 壁ブロック一覧
+var BLOCK_TILE_TYPES2 = [
+	CONSTANT.BLOCK_GREEN,
+	CONSTANT.BLOCK_BLUE,
+	CONSTANT.BLOCK_RED,
+	CONSTANT.BLOCK_PURPLE,
+	CONSTANT.BLOCK_BROWN,
 ];
 
 
@@ -93,8 +102,15 @@ Player.prototype.beforeDraw = function(){
 			this.removeSubObject(this.exchange_anim);
 		}
 	}
+
+	// 壁との接触判定
+	var repulse_x = this.checkCollisionWithLeftRightBlocks();
+	if(repulse_x) {
+		this.moveX(repulse_x);
+	}
 };
 
+// 落下判定
 Player.prototype.checkCollisionWithBlocks = function() {
 	var self = this;
 	// 壁と自機の衝突判定
@@ -117,6 +133,39 @@ Player.prototype.checkCollisionWithBlocks = function() {
 
 	return is_collision;
 };
+
+// 壁との衝突判定
+Player.prototype.checkCollisionWithLeftRightBlocks = function() {
+	var self = this;
+	// 壁と自機の衝突判定
+	var repulse_x = 0;
+	for (var i = 0; i < BLOCK_TILE_TYPES2.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES2[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+
+			// 壁の衝突判定なので自機より上あるいは下のブロックは無視する
+			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue; // 自機より下
+			if(self.y+self.collisionHeight()/2 < obj.y+obj.collisionHeight()/2) continue; // 自機より上
+			if(self.checkCollision(obj)) {
+				repulse_x = self.x - obj.x;
+				break;
+			}
+		}
+	}
+
+	return repulse_x;
+};
+
+
+
+
+
+
+
+
 
 Player.prototype.checkCollisionWithLadder = function() {
 	var self = this;
@@ -156,6 +205,11 @@ Player.prototype.moveRight = function() {
 	this.alterego.x -= MOVE_SPEED;
 };
 
+Player.prototype.moveX = function(x) {
+	if(!this.isEnableMove()) return;
+	this.x += x;
+	this.alterego.x -= x;
+};
 Player.prototype.moveY = function(y) {
 	if(!this.isEnableMove()) return;
 	this.y += y;
