@@ -105,6 +105,9 @@ Player.prototype.checkCollisionWithBlocks = function() {
 
 		for (var j = 0; j < tile_objects.length; j++) {
 			var obj = tile_objects[j];
+
+			// 落下判定なので、自機より上のブロックは無視する
+			if(self.y-self.collisionHeight()/2 > obj.y-self.collisionHeight()/2) continue;
 			if(self.checkCollision(obj)) {
 				is_collision = true;
 				break;
@@ -289,7 +292,7 @@ Player.prototype.onCollision = function(obj) {
 };
 */
 Player.prototype.collisionWidth = function() {
-	return 16;
+	return 24;
 };
 Player.prototype.collisionHeight = function() {
 	return 48;
