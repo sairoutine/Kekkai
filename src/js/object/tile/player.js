@@ -99,14 +99,18 @@ Player.prototype.checkCollisionWithBlocks = function() {
 	var self = this;
 	// 壁と自機の衝突判定
 	var is_collision = false;
-	BLOCK_TILE_TYPES.forEach(function (tile_type) {
-		self.scene.objects_by_tile_type[tile_type].forEach(function(obj) {
+	for (var i = 0; i < BLOCK_TILE_TYPES.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
 			if(self.checkCollision(obj)) {
 				is_collision = true;
-				// TODO: break;
+				break;
 			}
-		});
-	});
+		}
+	}
 
 	return is_collision;
 };
