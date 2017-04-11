@@ -8,10 +8,10 @@ var BlockBase = function (scene) {
 util.inherit(BlockBase, base_object);
 
 BlockBase.prototype.collisionWidth = function() {
-	return 32;
+	return 24;
 };
 BlockBase.prototype.collisionHeight = function() {
-	return 32;
+	return 24;
 };
 
 // sprite configuration
