@@ -75,12 +75,15 @@ Player.prototype.beforeDraw = function(){
 	}
 
 	// はしごを降りている
-	if(this.checkCollisionWithLadder()) {
+	var collision_ladder = this.checkCollisionWithLadder();
+	if(collision_ladder) {
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+			this.x = collision_ladder.x;
 			this.moveY(FALL_SPEED);
 			this.is_down_ladder = true;
 		}
 		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+			this.x = collision_ladder.x;
 			this.moveY(-FALL_SPEED);
 			this.is_down_ladder = true;
 		}
@@ -170,16 +173,16 @@ Player.prototype.checkCollisionWithLeftRightBlocks = function() {
 Player.prototype.checkCollisionWithLadder = function() {
 	var self = this;
 	// はしごと自機の衝突判定
-	var is_collision = false;
+	var collision_ladder = false;
 
 	self.scene.objects_by_tile_type[CONSTANT.LADDER].forEach(function(obj) {
 		if(self.checkCollision(obj)) {
-			is_collision = true;
+			collision_ladder = obj;
 			// TODO: break;
 		}
 	});
 
-	return is_collision;
+	return collision_ladder;
 };
 
 
