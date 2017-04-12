@@ -10,6 +10,8 @@ var FALL_SPEED = 4;
 
 // 交代アニメーション時間
 var EXCHANGE_ANIM_SPAN = 60;
+// 死亡アニメーション時間
+var DIE_ANIM_SPAN = 180;
 
 // 地面ブロック一覧
 var BLOCK_TILE_TYPES = [
@@ -54,6 +56,8 @@ Player.prototype.init = function(x, y) {
 
 	this.exchange_animation_start_count = 0; // 交代アニメーション開始時刻
 
+	this.die_animation_start_count = 0; // 死亡アニメーション開始時刻
+
 	this.alterego = new AlterEgo(this.scene);
 	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
 	this.addSubObject(this.alterego);
@@ -66,12 +70,14 @@ Player.prototype.beforeDraw = function(){
 
 
 	// 落下していく
-	if(!this.checkCollisionWithBlocks()) {
-		this.moveY(FALL_SPEED);
-		this.is_down = true;
-	}
-	else {
-		this.is_down = false;
+	if(!this.isDying()) {
+		if(!this.checkCollisionWithBlocks()) {
+			this.moveY(FALL_SPEED);
+			this.is_down = true;
+		}
+		else {
+			this.is_down = false;
+		}
 	}
 
 	// はしごを降りている
@@ -106,6 +112,14 @@ Player.prototype.beforeDraw = function(){
 		}
 	}
 
+	// 死亡アニメーションが終了するかどうか
+	if(this.isDying()) {
+		// 交代アニメーション終了
+		if(this.frame_count - this.die_animation_start_count > DIE_ANIM_SPAN) {
+			this.scene.restart();
+		}
+	}
+
 	// 壁との接触判定
 	var repulse_x = this.checkCollisionWithLeftRightBlocks();
 	if(repulse_x) {
@@ -122,6 +136,13 @@ Player.prototype.beforeDraw = function(){
 			console.log("stage clear!");
 		}
 	}
+
+	// 死亡判定
+	var is_collision_to_death = this.checkCollisionWithDeathOrEnemy();
+	if(!this.isDying() && is_collision_to_death) {
+		this.startDie();
+	}
+
 };
 
 // 落下判定
@@ -203,6 +224,24 @@ Player.prototype.checkCollisionWithItems = function() {
 	return collision_item;
 };
 
+Player.prototype.checkCollisionWithDeathOrEnemy = function() {
+	var self = this;
+	// 死亡ゾーン or 敵と自機の衝突判定
+	var is_collision = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.DEATH]
+		.concat(self.scene.objects_by_tile_type[CONSTANT.ENEMY])
+		.forEach(function(obj) {
+		if(self.checkCollision(obj)) {
+			is_collision = obj;
+			// TODO: break;
+		}
+	});
+
+	return is_collision;
+};
+
+
 
 
 
@@ -271,6 +310,16 @@ Player.prototype.exchange_position = function() {
 	this.alterego.y = player_y;
 };
 
+// 死亡開始
+Player.prototype.startDie = function() {
+	this.die_animation_start_count = this.frame_count;
+};
+// 死亡中かどうか
+Player.prototype.isDying = function() {
+	return this.die_animation_start_count ? true : false;
+};
+
+
 
 
 
@@ -311,6 +360,18 @@ Player.prototype.draw = function() {
 	ctx.restore();
 };
 */
+
+Player.prototype.isShow = function() {
+	if(this.isDying()) { // 死亡中は点滅する
+		return this.frame_count % 40 > 20;
+	}
+	else {
+		return true;
+	}
+};
+
+
+
 Player.prototype.spriteName = function(){
 	return "player";
 };

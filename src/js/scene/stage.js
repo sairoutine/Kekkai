@@ -70,6 +70,13 @@ SceneStage.prototype.beforeDraw = function(){
 	var player = self.player();
 
 };
+
+SceneStage.prototype.restart = function(){
+	this.core.changeScene("stage");
+};
+
+
+
 // プレイヤー(1ステージにプレイヤーは1人の想定)
 SceneStage.prototype.player = function () {
 	return this.objects_by_tile_type[ CONSTANT.PLAYER ][0];
@@ -128,6 +135,7 @@ SceneStage.prototype.addReimuItemNum = function () {
 
 SceneStage.prototype.parseAndCreateMap = function(map) {
 	var stage = stage1_map;
+
 
 	for (var pos_y = 0; pos_y < map.length; pos_y++) {
 		var line = stage[pos_y];
