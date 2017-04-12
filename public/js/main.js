@@ -13,6 +13,7 @@ var CONSTANT = {
 	PLAYER:       7,
 	ENEMY:        8,
 	ITEM:         9,
+	DEATH:       10,
 };
 
 module.exports = CONSTANT;
@@ -43,7 +44,7 @@ Game.prototype.init = function () {
 
 module.exports = Game;
 
-},{"./hakurei":3,"./scene/loading":28,"./scene/stage":30,"./scene/title":33}],3:[function(require,module,exports){
+},{"./hakurei":3,"./scene/loading":29,"./scene/stage":31,"./scene/title":34}],3:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -635,6 +636,7 @@ Sprite.prototype.beforeDraw = function(){
 	}
 };
 Sprite.prototype.draw = function(){
+	if(!this.isShow()) return;
 
 	var image = this.core.image_loader.getImage(this.spriteName());
 
@@ -656,8 +658,8 @@ Sprite.prototype.draw = function(){
 	if(!sprite_width)  sprite_width = image.width;
 	if(!sprite_height) sprite_height = image.height;
 
-	var width  = sprite_width * this.scaleWidth();
-	var height = sprite_height * this.scaleHeight();
+	var width  = this.width();
+	var height = this.height();
 
 	// reflect left or right
 	if(this.isReflect()) {
@@ -689,6 +691,21 @@ Sprite.prototype.spriteIndexX = function(){
 Sprite.prototype.spriteIndexY = function(){
 	return this.spriteIndices()[this.current_sprite_index].y;
 };
+Sprite.prototype.width = function(){
+	return this.spriteWidth() * this.scaleWidth();
+};
+Sprite.prototype.height = function(){
+	return this.spriteHeight() * this.scaleHeight();
+};
+
+
+
+
+Sprite.prototype.isShow = function(){
+	return 1;
+};
+
+
 Sprite.prototype.spriteAnimationSpan = function(){
 	return 0;
 };
@@ -1253,10 +1270,10 @@ var BlockBase = function (scene) {
 util.inherit(BlockBase, base_object);
 
 BlockBase.prototype.collisionWidth = function() {
-	return 32;
+	return 24;
 };
 BlockBase.prototype.collisionHeight = function() {
-	return 32;
+	return 24;
 };
 
 // sprite configuration
@@ -1408,6 +1425,46 @@ module.exports = BlockGreen;
 },{"../../constant":1,"../../hakurei":3,"./block_base":18}],24:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
+var base_object = require('../../hakurei').object.sprite;
+var util = require('../../hakurei').util;
+
+var Death = function (scene) {
+	base_object.apply(this, arguments);
+};
+util.inherit(Death, base_object);
+
+Death.prototype.init = function(x, y) {
+	base_object.prototype.init.apply(this, arguments);
+	this.x = x;
+	this.y = y;
+	this.is_show = true;
+};
+
+// sprite configuration
+
+Death.prototype.spriteName = function(){
+	return "water";
+};
+Death.prototype.spriteIndices = function(){
+	return [{x: 0, y: 0}];
+};
+Death.prototype.spriteWidth = function(){
+	return 16;
+};
+Death.prototype.spriteHeight = function(){
+	return 16;
+};
+Death.prototype.scaleWidth = function(){
+	return 1.5;
+};
+Death.prototype.scaleHeight = function(){
+	return 1.5;
+};
+module.exports = Death;
+
+},{"../../constant":1,"../../hakurei":3}],25:[function(require,module,exports){
+'use strict';
+var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.base;
 var util = require('../../hakurei').util;
 
@@ -1440,7 +1497,7 @@ BlockGreen.prototype.draw = function() {
 
 module.exports = BlockGreen;
 
-},{"../../constant":1,"../../hakurei":3}],25:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3}],26:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -1455,7 +1512,26 @@ Item.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
+	this.is_show = true;
 };
+
+Item.prototype.got = function() {
+	this.is_show = false;
+};
+
+Item.prototype.isShow = function() {
+	return this.is_show;
+};
+
+
+
+
+
+
+
+
+
+
 // sprite configuration
 
 Item.prototype.spriteName = function(){
@@ -1479,7 +1555,7 @@ Item.prototype.scaleHeight = function(){
 
 module.exports = Item;
 
-},{"../../constant":1,"../../hakurei":3}],26:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3}],27:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -1554,7 +1630,7 @@ Ladder.prototype.collisionHeight = function() {
 
 module.exports = Ladder;
 
-},{"../../constant":1,"../../hakurei":3}],27:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3}],28:[function(require,module,exports){
 'use strict';
 
 var CONSTANT = require('../../constant');
@@ -1567,8 +1643,10 @@ var FALL_SPEED = 4;
 
 // 交代アニメーション時間
 var EXCHANGE_ANIM_SPAN = 60;
+// 死亡アニメーション時間
+var DIE_ANIM_SPAN = 180;
 
-// 壁ブロック一覧
+// 地面ブロック一覧
 var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_GREEN,
 	CONSTANT.BLOCK_BLUE,
@@ -1576,6 +1654,15 @@ var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_PURPLE,
 	CONSTANT.BLOCK_BROWN,
 	CONSTANT.LADDER, // はしごも
+];
+
+// 壁ブロック一覧
+var BLOCK_TILE_TYPES2 = [
+	CONSTANT.BLOCK_GREEN,
+	CONSTANT.BLOCK_BLUE,
+	CONSTANT.BLOCK_RED,
+	CONSTANT.BLOCK_PURPLE,
+	CONSTANT.BLOCK_BROWN,
 ];
 
 
@@ -1602,6 +1689,8 @@ Player.prototype.init = function(x, y) {
 
 	this.exchange_animation_start_count = 0; // 交代アニメーション開始時刻
 
+	this.die_animation_start_count = 0; // 死亡アニメーション開始時刻
+
 	this.alterego = new AlterEgo(this.scene);
 	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
 	this.addSubObject(this.alterego);
@@ -1614,21 +1703,26 @@ Player.prototype.beforeDraw = function(){
 
 
 	// 落下していく
-	if(!this.checkCollisionWithBlocks()) {
-		this.moveY(FALL_SPEED);
-		this.is_down = true;
-	}
-	else {
-		this.is_down = false;
+	if(!this.isDying()) {
+		if(!this.checkCollisionWithBlocks()) {
+			this.moveY(FALL_SPEED);
+			this.is_down = true;
+		}
+		else {
+			this.is_down = false;
+		}
 	}
 
 	// はしごを降りている
-	if(this.checkCollisionWithLadder()) {
+	var collision_ladder = this.checkCollisionWithLadder();
+	if(collision_ladder) {
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+			this.x = collision_ladder.x;
 			this.moveY(FALL_SPEED);
 			this.is_down_ladder = true;
 		}
 		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+			this.x = collision_ladder.x;
 			this.moveY(-FALL_SPEED);
 			this.is_down_ladder = true;
 		}
@@ -1650,38 +1744,136 @@ Player.prototype.beforeDraw = function(){
 			this.removeSubObject(this.exchange_anim);
 		}
 	}
+
+	// 死亡アニメーションが終了するかどうか
+	if(this.isDying()) {
+		// 交代アニメーション終了
+		if(this.frame_count - this.die_animation_start_count > DIE_ANIM_SPAN) {
+			this.scene.restart();
+		}
+	}
+
+	// 壁との接触判定
+	var repulse_x = this.checkCollisionWithLeftRightBlocks();
+	if(repulse_x) {
+		this.moveX(repulse_x);
+	}
+
+	// アイテムとの接触判定
+	var item = this.checkCollisionWithItems();
+	if(item) {
+		item.got(); // 獲得済
+		this.scene.addReimuItemNum();
+		if (this.scene.isClear()) {
+			// TODO: ステージクリア
+			console.log("stage clear!");
+		}
+	}
+
+	// 死亡判定
+	var is_collision_to_death = this.checkCollisionWithDeathOrEnemy();
+	if(!this.isDying() && is_collision_to_death) {
+		this.startDie();
+	}
+
 };
 
+// 落下判定
 Player.prototype.checkCollisionWithBlocks = function() {
 	var self = this;
 	// 壁と自機の衝突判定
 	var is_collision = false;
-	BLOCK_TILE_TYPES.forEach(function (tile_type) {
-		self.scene.objects_by_tile_type[tile_type].forEach(function(obj) {
+	for (var i = 0; i < BLOCK_TILE_TYPES.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+
+			// 落下判定なので、自機より上のブロックは無視する
+			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
 			if(self.checkCollision(obj)) {
 				is_collision = true;
-				// TODO: break;
+				break;
 			}
-		});
-	});
+		}
+	}
 
 	return is_collision;
+};
+
+// 壁との衝突判定
+Player.prototype.checkCollisionWithLeftRightBlocks = function() {
+	var self = this;
+	// 壁と自機の衝突判定
+	var repulse_x = 0;
+	for (var i = 0; i < BLOCK_TILE_TYPES2.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES2[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+
+			// 壁の衝突判定なので自機より上あるいは下のブロックは無視する
+			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue; // 自機より下
+			if(self.y+self.collisionHeight()/2 < obj.y+obj.collisionHeight()/2) continue; // 自機より上
+			if(self.checkCollision(obj)) {
+				repulse_x = self.x - obj.x;
+				break;
+			}
+		}
+	}
+
+	return repulse_x;
 };
 
 Player.prototype.checkCollisionWithLadder = function() {
 	var self = this;
 	// はしごと自機の衝突判定
-	var is_collision = false;
+	var collision_ladder = false;
 
 	self.scene.objects_by_tile_type[CONSTANT.LADDER].forEach(function(obj) {
 		if(self.checkCollision(obj)) {
-			is_collision = true;
+			collision_ladder = obj;
+			// TODO: break;
+		}
+	});
+
+	return collision_ladder;
+};
+
+Player.prototype.checkCollisionWithItems = function() {
+	var self = this;
+	// アイテムと自機の衝突判定
+	var collision_item = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.ITEM].forEach(function(obj) {
+		if(obj.isShow() && self.checkCollision(obj)) {
+			collision_item = obj;
+			// TODO: break;
+		}
+	});
+
+	return collision_item;
+};
+
+Player.prototype.checkCollisionWithDeathOrEnemy = function() {
+	var self = this;
+	// 死亡ゾーン or 敵と自機の衝突判定
+	var is_collision = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.DEATH]
+		.concat(self.scene.objects_by_tile_type[CONSTANT.ENEMY])
+		.forEach(function(obj) {
+		if(self.checkCollision(obj)) {
+			is_collision = obj;
 			// TODO: break;
 		}
 	});
 
 	return is_collision;
 };
+
 
 
 
@@ -1706,6 +1898,11 @@ Player.prototype.moveRight = function() {
 	this.alterego.x -= MOVE_SPEED;
 };
 
+Player.prototype.moveX = function(x) {
+	if(!this.isEnableMove()) return;
+	this.x += x;
+	this.alterego.x -= x;
+};
 Player.prototype.moveY = function(y) {
 	if(!this.isEnableMove()) return;
 	this.y += y;
@@ -1745,6 +1942,16 @@ Player.prototype.exchange_position = function() {
 	this.alterego.x = player_x;
 	this.alterego.y = player_y;
 };
+
+// 死亡開始
+Player.prototype.startDie = function() {
+	this.die_animation_start_count = this.frame_count;
+};
+// 死亡中かどうか
+Player.prototype.isDying = function() {
+	return this.die_animation_start_count ? true : false;
+};
+
 
 
 
@@ -1786,6 +1993,18 @@ Player.prototype.draw = function() {
 	ctx.restore();
 };
 */
+
+Player.prototype.isShow = function() {
+	if(this.isDying()) { // 死亡中は点滅する
+		return this.frame_count % 40 > 20;
+	}
+	else {
+		return true;
+	}
+};
+
+
+
 Player.prototype.spriteName = function(){
 	return "player";
 };
@@ -1842,7 +2061,7 @@ Player.prototype.onCollision = function(obj) {
 };
 */
 Player.prototype.collisionWidth = function() {
-	return 16;
+	return 24;
 };
 Player.prototype.collisionHeight = function() {
 	return 48;
@@ -1854,7 +2073,7 @@ Player.prototype.collisionHeight = function() {
 
 module.exports = Player;
 
-},{"../../constant":1,"../../hakurei":3,"../alterego":16,"../exchange_anim":17,"./block_base":18}],28:[function(require,module,exports){
+},{"../../constant":1,"../../hakurei":3,"../alterego":16,"../exchange_anim":17,"./block_base":18}],29:[function(require,module,exports){
 'use strict';
 
 // scene to load image and sound
@@ -1871,6 +2090,7 @@ SceneLoading.prototype.init = function() {
 	base_scene.prototype.init.apply(this, arguments);
 	this.core.image_loader.loadImage("title_bg", "./image/title_bg.jpg");
 	this.core.image_loader.loadImage("block", "./image/block.png");
+	this.core.image_loader.loadImage("water", "./image/water.png");
 	this.core.image_loader.loadImage("player", "./image/player.png");
 	this.core.image_loader.loadImage("alterego", "./image/alterego.png");
 	this.core.image_loader.loadImage("exchange", "./image/exchange.png");
@@ -1910,10 +2130,12 @@ SceneLoading.prototype.draw = function(){
 
 module.exports = SceneLoading;
 
-},{"../hakurei":3}],29:[function(require,module,exports){
+},{"../hakurei":3}],30:[function(require,module,exports){
 'use strict';
 var N = -1;
+var D = 10;
 	// 横:30, 縦20
+	// N: 何もなし
 	// 0: 背景
 	// 1: 緑ブロック
 	// 2: 青ブロック
@@ -1924,13 +2146,14 @@ var N = -1;
 	// 7: プレイヤー
 	// 8: 敵
 	// 9: アイテム
+	// D: 死亡ゾーン
 var stage = [
 	[0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,7,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,N,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,7,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,N,0,0,0,0,0,0],
 	[0,2,2,2,2,2,2,2,6,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
 	[0,0,0,0,2,2,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0],
 	[0,0,0,0,2,2,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0],
@@ -1944,16 +2167,18 @@ var stage = [
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
 ];
 
 module.exports = stage;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 	var offset_x = 25;
 	var offset_y = 50;
+
+var MAX_REIMU_ITEM_NUM = 3;
 
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
@@ -1967,6 +2192,7 @@ var Ladder      = require('../object/tile/ladder');
 var Player      = require('../object/tile/player');
 var Enemy       = require('../object/tile/enemy');
 var Item        = require('../object/tile/item');
+var Death       = require('../object/tile/death');
 
 // tile_type => クラス名
 var TILE_TYPE_TO_CLASS = {};
@@ -1980,7 +2206,7 @@ TILE_TYPE_TO_CLASS[CONSTANT.LADDER]       = Ladder;
 TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]       = Player;
 TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]        = Enemy;
 TILE_TYPE_TO_CLASS[CONSTANT.ITEM]         = Item;
-
+TILE_TYPE_TO_CLASS[CONSTANT.DEATH]        = Death;
 
 
 var base_scene = require('../hakurei').scene.base;
@@ -2000,6 +2226,8 @@ util.inherit(SceneStage, base_scene);
 SceneStage.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
+	this.reimu_item_num = 0;
+
 	// タイルの種類毎のオブジェクトの配列
 	this.objects_by_tile_type = this.initializeObjectsByTileType();
 
@@ -2017,10 +2245,25 @@ SceneStage.prototype.beforeDraw = function(){
 	var player = self.player();
 
 };
+
+SceneStage.prototype.restart = function(){
+	this.core.changeScene("stage");
+};
+
+
+
 // プレイヤー(1ステージにプレイヤーは1人の想定)
 SceneStage.prototype.player = function () {
 	return this.objects_by_tile_type[ CONSTANT.PLAYER ][0];
 };
+// ステージをクリアしたかどうか
+SceneStage.prototype.isClear = function () {
+	return this.reimu_item_num >= MAX_REIMU_ITEM_NUM ? true : false;
+};
+
+
+
+
 SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;
 
@@ -2056,8 +2299,18 @@ SceneStage.prototype.initializeObjectsByTileType = function () {
 	return data;
 };
 
+// 霊夢用アイテム獲得
+SceneStage.prototype.addReimuItemNum = function () {
+	this.reimu_item_num += 1;
+};
+
+
+
+
+
 SceneStage.prototype.parseAndCreateMap = function(map) {
 	var stage = stage1_map;
+
 
 	for (var pos_y = 0; pos_y < map.length; pos_y++) {
 		var line = stage[pos_y];
@@ -2084,7 +2337,7 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 
 module.exports = SceneStage;
 
-},{"../constant":1,"../hakurei":3,"../object/tile/block_blue":19,"../object/tile/block_brown":20,"../object/tile/block_green":21,"../object/tile/block_purple":22,"../object/tile/block_red":23,"../object/tile/enemy":24,"../object/tile/item":25,"../object/tile/ladder":26,"../object/tile/player":27,"./map/stage1":29,"./stage/play":31,"./stage/talk":32}],31:[function(require,module,exports){
+},{"../constant":1,"../hakurei":3,"../object/tile/block_blue":19,"../object/tile/block_brown":20,"../object/tile/block_green":21,"../object/tile/block_purple":22,"../object/tile/block_red":23,"../object/tile/death":24,"../object/tile/enemy":25,"../object/tile/item":26,"../object/tile/ladder":27,"../object/tile/player":28,"./map/stage1":30,"./stage/play":32,"./stage/talk":33}],32:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../../hakurei').scene.base;
@@ -2119,7 +2372,7 @@ SceneStagePlay.prototype.beforeDraw = function(){
 
 module.exports = SceneStagePlay;
 
-},{"../../hakurei":3}],32:[function(require,module,exports){
+},{"../../hakurei":3}],33:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 20;
@@ -2280,7 +2533,7 @@ SceneStageTalk.prototype._showMessage = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":3,"../../logic/serif/stage1/before":13,"../../logic/serif_manager":14}],33:[function(require,module,exports){
+},{"../../hakurei":3,"../../logic/serif/stage1/before":13,"../../logic/serif_manager":14}],34:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../hakurei').scene.base;
