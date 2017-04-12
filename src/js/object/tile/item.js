@@ -12,7 +12,26 @@ Item.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
+	this.is_show = true;
 };
+
+Item.prototype.got = function() {
+	this.is_show = false;
+};
+
+Item.prototype.isShow = function() {
+	return this.is_show;
+};
+
+
+
+
+
+
+
+
+
+
 // sprite configuration
 
 Item.prototype.spriteName = function(){

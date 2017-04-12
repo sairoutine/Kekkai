@@ -3,6 +3,8 @@
 	var offset_x = 25;
 	var offset_y = 50;
 
+var MAX_REIMU_ITEM_NUM = 3;
+
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
 
@@ -48,6 +50,8 @@ util.inherit(SceneStage, base_scene);
 SceneStage.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
+	this.reimu_item_num = 0;
+
 	// タイルの種類毎のオブジェクトの配列
 	this.objects_by_tile_type = this.initializeObjectsByTileType();
 
@@ -69,6 +73,14 @@ SceneStage.prototype.beforeDraw = function(){
 SceneStage.prototype.player = function () {
 	return this.objects_by_tile_type[ CONSTANT.PLAYER ][0];
 };
+// ステージをクリアしたかどうか
+SceneStage.prototype.isClear = function () {
+	return this.reimu_item_num >= MAX_REIMU_ITEM_NUM ? true : false;
+};
+
+
+
+
 SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;
 
@@ -103,6 +115,15 @@ SceneStage.prototype.initializeObjectsByTileType = function () {
 
 	return data;
 };
+
+// 霊夢用アイテム獲得
+SceneStage.prototype.addReimuItemNum = function () {
+	this.reimu_item_num += 1;
+};
+
+
+
+
 
 SceneStage.prototype.parseAndCreateMap = function(map) {
 	var stage = stage1_map;

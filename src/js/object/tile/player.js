@@ -111,6 +111,17 @@ Player.prototype.beforeDraw = function(){
 	if(repulse_x) {
 		this.moveX(repulse_x);
 	}
+
+	// アイテムとの接触判定
+	var item = this.checkCollisionWithItems();
+	if(item) {
+		item.got(); // 獲得済
+		this.scene.addReimuItemNum();
+		if (this.scene.isClear()) {
+			// TODO: ステージクリア
+			console.log("stage clear!");
+		}
+	}
 };
 
 // 落下判定
@@ -162,14 +173,6 @@ Player.prototype.checkCollisionWithLeftRightBlocks = function() {
 	return repulse_x;
 };
 
-
-
-
-
-
-
-
-
 Player.prototype.checkCollisionWithLadder = function() {
 	var self = this;
 	// はしごと自機の衝突判定
@@ -183,6 +186,21 @@ Player.prototype.checkCollisionWithLadder = function() {
 	});
 
 	return collision_ladder;
+};
+
+Player.prototype.checkCollisionWithItems = function() {
+	var self = this;
+	// アイテムと自機の衝突判定
+	var collision_item = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.ITEM].forEach(function(obj) {
+		if(obj.isShow() && self.checkCollision(obj)) {
+			collision_item = obj;
+			// TODO: break;
+		}
+	});
+
+	return collision_item;
 };
 
 
