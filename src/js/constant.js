@@ -12,6 +12,7 @@ var CONSTANT = {
 	PLAYER:       7,
 	ENEMY:        8,
 	ITEM:         9,
+	DEATH:       10,
 };
 
 module.exports = CONSTANT;

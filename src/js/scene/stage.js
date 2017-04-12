@@ -17,6 +17,7 @@ var Ladder      = require('../object/tile/ladder');
 var Player      = require('../object/tile/player');
 var Enemy       = require('../object/tile/enemy');
 var Item        = require('../object/tile/item');
+var Death       = require('../object/tile/death');
 
 // tile_type => クラス名
 var TILE_TYPE_TO_CLASS = {};
@@ -30,7 +31,7 @@ TILE_TYPE_TO_CLASS[CONSTANT.LADDER]       = Ladder;
 TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]       = Player;
 TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]        = Enemy;
 TILE_TYPE_TO_CLASS[CONSTANT.ITEM]         = Item;
-
+TILE_TYPE_TO_CLASS[CONSTANT.DEATH]        = Death;
 
 
 var base_scene = require('../hakurei').scene.base;
