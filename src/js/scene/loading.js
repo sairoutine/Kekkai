@@ -16,6 +16,7 @@ SceneLoading.prototype.init = function() {
 	this.core.image_loader.loadImage("block", "./image/block.png");
 	this.core.image_loader.loadImage("water", "./image/water.png");
 	this.core.image_loader.loadImage("player", "./image/player.png");
+	this.core.image_loader.loadImage("enemy", "./image/enemy.png");
 	this.core.image_loader.loadImage("alterego", "./image/alterego.png");
 	this.core.image_loader.loadImage("exchange", "./image/exchange.png");
 	this.core.image_loader.loadImage("hashigo", "./image/hashigo.png");
