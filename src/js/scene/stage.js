@@ -44,15 +44,19 @@ TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE3]       = BlockStone3;
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
-var SceneStageTalk = require("./stage/talk");
-var SceneStagePlay = require("./stage/play");
+var SceneStageTalk           = require("./stage/talk");
+var SceneStagePlay           = require("./stage/play");
+var SceneStageResultClear    = require("./stage/result_clear");
+var SceneStageResultGameOver = require("./stage/result_gameover");
 var stage1_map = require("./map/stage1");
 
 var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
 
-	this.addSubScene("talk", new SceneStageTalk(core, this));
-	this.addSubScene("play", new SceneStagePlay(core, this));
+	this.addSubScene("talk",            new SceneStageTalk(core, this));
+	this.addSubScene("play",            new SceneStagePlay(core, this));
+	this.addSubScene("result_clear",    new SceneStageResultClear(core, this));
+	this.addSubScene("result_gameover", new SceneStageResultGameOver(core, this));
 };
 util.inherit(SceneStage, base_scene);
 
