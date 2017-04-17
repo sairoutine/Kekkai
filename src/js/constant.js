@@ -13,6 +13,10 @@ var CONSTANT = {
 	ENEMY:        8,
 	ITEM:         9,
 	DEATH:       10,
+	BLOCK_STONE1:11,
+	BLOCK_STONE2:12,
+	BLOCK_STONE3:13,
+
 };
 
 module.exports = CONSTANT;
