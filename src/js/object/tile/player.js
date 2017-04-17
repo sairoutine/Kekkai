@@ -122,7 +122,8 @@ Player.prototype.beforeDraw = function(){
 	if(this.isDying()) {
 		// 交代アニメーション終了
 		if(this.frame_count - this.die_animation_start_count > DIE_ANIM_SPAN) {
-			this.scene.restart();
+			this.scene.notifyPlayerDie();
+			this.quitDie();
 		}
 	}
 
@@ -137,9 +138,9 @@ Player.prototype.beforeDraw = function(){
 	if(item) {
 		item.got(); // 獲得済
 		this.scene.addReimuItemNum();
+		// ステージクリア
 		if (this.scene.isClear()) {
-			// TODO: ステージクリア
-			console.log("stage clear!");
+			this.scene.notifyStageClear();
 		}
 	}
 
@@ -323,6 +324,9 @@ Player.prototype.startDie = function() {
 // 死亡中かどうか
 Player.prototype.isDying = function() {
 	return this.die_animation_start_count ? true : false;
+};
+Player.prototype.quitDie = function() {
+	this.die_animation_start_count = 0;
 };
 
 

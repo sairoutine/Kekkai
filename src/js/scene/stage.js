@@ -86,9 +86,21 @@ SceneStage.prototype.beforeDraw = function(){
 
 };
 
-SceneStage.prototype.restart = function(){
-	this.core.changeScene("stage");
+SceneStage.prototype.notifyPlayerDie = function(){
+	this.changeSubScene("result_gameover");
 };
+SceneStage.prototype.notifyStageClear = function(){
+	this.changeSubScene("result_clear");
+};
+
+
+SceneStage.prototype.notifyClearEnd = function(){
+	// TODO: ステージクリア
+};
+SceneStage.prototype.notifyGameOverEnd = function(){
+	// TODO: ゲームオーバー終了
+};
+
 
 
 

@@ -11,11 +11,11 @@ util.inherit(SceneStageResultClear, base_scene);
 
 // リザルト画面が終了した
 SceneStageResultClear.prototype.notifyResultEnd = function () {
-	this.parent.notifyClearEnd();
+	this.parent.notifyGameOverEnd();
 };
 
 SceneStageResultClear.prototype.resultName = function(){
-	return "STAGE CLEAR !";
+	return "GAME OVER...";
 };
 
 module.exports = SceneStageResultClear;
