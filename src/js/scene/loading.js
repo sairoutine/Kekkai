@@ -15,6 +15,7 @@ SceneLoading.prototype.init = function() {
 	this.core.image_loader.loadImage("title_bg", "./image/title_bg.png");
 	this.core.image_loader.loadImage("block", "./image/block.png");
 	this.core.image_loader.loadImage("water", "./image/water.png");
+	this.core.image_loader.loadImage("medama", "./image/medama.jpg");
 	this.core.image_loader.loadImage("player", "./image/player.png");
 	this.core.image_loader.loadImage("enemy", "./image/enemy.png");
 	this.core.image_loader.loadImage("alterego", "./image/alterego.png");

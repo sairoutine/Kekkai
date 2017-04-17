@@ -8,6 +8,8 @@ var MAX_REIMU_ITEM_NUM = 3;
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
 
+var BackGroundEye  = require('../object/background_eye');
+
 var BlockGreen  = require('../object/tile/block_green');
 var BlockBlue   = require('../object/tile/block_blue');
 var BlockRed    = require('../object/tile/block_red');
@@ -56,6 +58,9 @@ SceneStage.prototype.init = function(){
 	// タイルの種類毎のオブジェクトの配列
 	this.objects_by_tile_type = this.initializeObjectsByTileType();
 
+	// 背景の目玉を作成
+	this.createBackGroundEyes();
+
 	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(stage1_map);
 
@@ -95,14 +100,15 @@ SceneStage.prototype.draw = function() {
 	ctx.save();
 
 	// background
-	ctx.fillStyle = util.hexToRGBString("EEEEEE");
+	ctx.fillStyle = util.hexToRGBString("000000");
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
 	ctx.restore();
 
 	ctx.save();
 
-	ctx.fillStyle = util.hexToRGBString("DDDDDD");
+	// stage background
+	ctx.fillStyle = util.hexToRGBString("000000");
 	ctx.fillRect(
 		offset_x, offset_y,
 		CONSTANT.TILE_SIZE * 30, CONSTANT.TILE_SIZE * 20
@@ -159,5 +165,26 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 		}
 	}
 };
+
+SceneStage.prototype.createBackGroundEyes = function() {
+	var width = this.width;
+	var height = this.height;
+
+	for (var i = 0; i < 10; i++) {
+		var x = Math.floor(Math.random() * width);
+		var y = Math.floor(Math.random() * height);
+
+		var instance = new BackGroundEye(this);
+		instance.init(x, y);
+		this.addObject(instance);
+	}
+};
+
+
+
+
+
+
+
 
 module.exports = SceneStage;
