@@ -73,7 +73,6 @@ Player.prototype.init = function(x, y) {
 	this.y = y;
 
 	this.is_reflect = false; // 左を向いているか
-	this.is_down = false; // 落下中かどうか
 	this.is_down_ladder = false; // はしごを降りている最中かどうか
 
 	this.exchange_animation_start_count = 0; // 交代アニメーション開始時刻
@@ -107,10 +106,10 @@ Player.prototype.beforeDraw = function(){
 	if(!this.isDying()) {
 		if(!this.checkCollisionWithBlocks()) {
 			this.moveY(FALL_SPEED);
-			this.is_down = true;
+			this.changeState(CONSTANT.STATE_FALLDOWN);
 		}
 		else {
-			this.is_down = false;
+			this.changeState(CONSTANT.STATE_NORMAL);
 		}
 	}
 
@@ -283,7 +282,7 @@ Player.prototype.checkCollisionWithDeathOrEnemy = function() {
 
 Player.prototype.moveLeft = function() {
 	if(!this.isEnableMove()) return;
-	if(this.is_down) return;
+	if(this.currentState() instanceof StateFallDown) return;
 
 	this.x -= MOVE_SPEED;
 	this.is_reflect = true;
@@ -292,7 +291,7 @@ Player.prototype.moveLeft = function() {
 };
 Player.prototype.moveRight = function() {
 	if(!this.isEnableMove()) return;
-	if(this.is_down) return;
+	if(this.currentState() instanceof StateFallDown) return;
 
 	this.x += MOVE_SPEED;
 	this.is_reflect = false;
