@@ -73,7 +73,6 @@ Player.prototype.init = function(x, y) {
 	this.y = y;
 
 	this.is_reflect = false; // 左を向いているか
-	this.is_down_ladder = false; // はしごを降りている最中かどうか
 
 	this.exchange_animation_start_count = 0; // 交代アニメーション開始時刻
 
@@ -119,16 +118,12 @@ Player.prototype.beforeDraw = function(){
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
 			this.x = collision_ladder.x;
 			this.moveY(FALL_SPEED);
-			this.is_down_ladder = true;
 		}
 		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
 			this.x = collision_ladder.x;
 			this.moveY(-FALL_SPEED);
-			this.is_down_ladder = true;
 		}
-	}
-	else {
-		this.is_down_ladder = false;
+		this.changeState(CONSTANT.STATE_CLIMBDOWN);
 	}
 
 
@@ -442,7 +437,7 @@ Player.prototype.spriteName = function(){
 	return "player";
 };
 Player.prototype.spriteIndices = function(){
-	return this.is_down_ladder ? [{x: 1, y: 3}] : [{x: 1, y: 2}];
+	return this.currentState() instanceof StateClimbDown ? [{x: 1, y: 3}] : [{x: 1, y: 2}];
 };
 Player.prototype.spriteWidth = function(){
 	return 32;
