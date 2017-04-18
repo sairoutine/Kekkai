@@ -85,7 +85,19 @@ Player.prototype.init = function(x, y) {
 	this.addSubObject(this.alterego);
 
 	this.exchange_anim = new ExchangeAnim(this.scene);
+
+	this.changeState(CONSTANT.STATE_NORMAL);
 };
+
+
+Player.prototype.changeState = function(state) {
+	this.state = state;
+	this.currentState().init();
+};
+Player.prototype.currentState = function() {
+	return this.states[this.state];
+};
+
 
 Player.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
