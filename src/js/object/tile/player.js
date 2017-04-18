@@ -295,6 +295,11 @@ Player.prototype.isEnableMove = function() {
 // 位置移動
 Player.prototype.startExchange = function() {
 	if(!this.isEnableMove()) return;
+
+	// 分身が壁とぶつかってるなら、位置移動できない
+	if(this.checkCollisionBetweenAlterEgoAndBlocks()) return;
+
+
 	this.exchange_animation_start_count = this.frame_count;
 
 	this.exchange_anim.init(this.x, this.y, EXCHANGE_ANIM_SPAN);
@@ -303,6 +308,30 @@ Player.prototype.startExchange = function() {
 	// 紫もアニメーション
 	this.alterego.startExchange(EXCHANGE_ANIM_SPAN);
 };
+// 分身が壁とぶつかっているかどうか
+Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
+	var is_collision = false;
+	for (var i = 0; i < BLOCK_TILE_TYPES2.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES2[i];
+		var tile_objects = this.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+			if(this.alterego.checkCollision(obj)) {
+				is_collision = true;
+				break;
+			}
+		}
+	}
+
+	return is_collision;
+};
+
+
+
+
+
+
 
 Player.prototype.exchange_position = function() {
 	var player_x = this.x;

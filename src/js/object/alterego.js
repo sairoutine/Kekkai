@@ -33,6 +33,16 @@ AlterEgo.prototype.beforeDraw = function(){
 
 };
 
+AlterEgo.prototype.collisionWidth = function(){
+	return 32;
+};
+AlterEgo.prototype.collisionHeight = function(){
+	return 32;
+};
+
+
+
+
 AlterEgo.prototype.spriteName = function(){
 	return "alterego";
 };
