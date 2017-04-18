@@ -46,8 +46,24 @@ var AlterEgo = require('../alterego');
 var ExchangeAnim = require('../exchange_anim');
 var util = require('../../hakurei').util;
 
+// プレイヤーの状態一覧
+var StateNormal    = require('./player/state_normal');
+var StateClimbDown = require('./player/state_climbdown');
+var StateDying     = require('./player/state_dying');
+var StateExchange  = require('./player/state_exchange');
+var StateFallDown  = require('./player/state_falldown');
+
 var Player = function (scene) {
 	base_object.apply(this, arguments);
+
+	// プレイヤーの状態一覧
+	this.state = null;
+	this.states = {};
+	this.states[ CONSTANT.STATE_NORMAL ]    = new StateNormal(scene, this);
+	this.states[ CONSTANT.STATE_CLIMBDOWN ] = new StateClimbDown(scene, this);
+	this.states[ CONSTANT.STATE_DYING ]     = new StateDying(scene, this);
+	this.states[ CONSTANT.STATE_EXCHANGE ]  = new StateExchange(scene, this);
+	this.states[ CONSTANT.STATE_FALLDOWN ]  = new StateFallDown(scene, this);
 };
 util.inherit(Player, base_object);
 
