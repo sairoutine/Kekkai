@@ -4,6 +4,7 @@
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
+var AssetsConfig = require('../assets_config');
 
 var SceneLoading = function(core) {
 	base_scene.apply(this, arguments);
@@ -12,26 +13,11 @@ util.inherit(SceneLoading, base_scene);
 
 SceneLoading.prototype.init = function() {
 	base_scene.prototype.init.apply(this, arguments);
-	this.core.image_loader.loadImage("title_bg", "./image/title_bg.png");
-	this.core.image_loader.loadImage("block", "./image/block.png");
-	this.core.image_loader.loadImage("water", "./image/water.png");
-	this.core.image_loader.loadImage("medama", "./image/medama.jpg");
-	this.core.image_loader.loadImage("player", "./image/player.png");
-	this.core.image_loader.loadImage("enemy", "./image/enemy.png");
-	this.core.image_loader.loadImage("alterego", "./image/alterego.png");
-	this.core.image_loader.loadImage("exchange", "./image/exchange.png");
-	this.core.image_loader.loadImage("hashigo", "./image/hashigo.png");
-	this.core.image_loader.loadImage("item", "./image/item.png");
-	this.core.image_loader.loadImage("reimu_angry", "./image/reimu_angry.png");
-	this.core.image_loader.loadImage("reimu_laugh", "./image/reimu_laugh.png");
-	this.core.image_loader.loadImage("reimu_laugh2", "./image/reimu_laugh2.png");
-	this.core.image_loader.loadImage("reimu_normal", "./image/reimu_normal.png");
-	this.core.image_loader.loadImage("reimu_yoyu", "./image/reimu_yoyu.png");
-	this.core.image_loader.loadImage("yukari_angry", "./image/yukari_angry.png");
-	this.core.image_loader.loadImage("yukari_angry", "./image/yukari_angry.png");
-	this.core.image_loader.loadImage("yukari_laugh", "./image/yukari_laugh.png");
-	this.core.image_loader.loadImage("yukari_normal", "./image/yukari_normal.png");
 
+	// ゲームで使用する画像一覧
+	for (var key in AssetsConfig) {
+		this.core.image_loader.loadImage(key, AssetsConfig[key]);
+	}
 };
 
 SceneLoading.prototype.beforeDraw = function() {
