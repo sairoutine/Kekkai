@@ -94,7 +94,7 @@ Player.prototype.beforeDraw = function(){
 	// 落下していく
 	if(!this.isDying() && !this.isExchanging()) {
 		if(!this.checkCollisionWithBlocks()) {
-			this.moveY(FALL_SPEED);
+			this.fallDown();
 			this.changeState(CONSTANT.STATE_FALLDOWN);
 		}
 		else {
@@ -107,11 +107,11 @@ Player.prototype.beforeDraw = function(){
 	if(collision_ladder && !this.isExchanging()) {
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
 			this.x = collision_ladder.x;
-			this.moveY(FALL_SPEED);
+			this.climbDown();
 		}
 		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
 			this.x = collision_ladder.x;
-			this.moveY(-FALL_SPEED);
+			this.climbUp();
 		}
 		this.changeState(CONSTANT.STATE_CLIMBDOWN);
 	}
@@ -268,22 +268,60 @@ Player.prototype.currentState = function() {
 	return this.states[this.state];
 };
 
+// 左右移動
 Player.prototype.moveLeft = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
+	// 自機の移動
 	this.x -= MOVE_SPEED;
 	this.is_reflect = true;
 
+	// 分身の移動
 	this.alterego.x += MOVE_SPEED;
 };
 Player.prototype.moveRight = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
+	// 自機の移動
 	this.x += MOVE_SPEED;
 	this.is_reflect = false;
 
+	// 分身の移動
 	this.alterego.x -= MOVE_SPEED;
 };
+
+// はしご上下移動
+Player.prototype.climbUp = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	// 自機の移動
+	this.y -= FALL_SPEED;
+	// 分身の移動
+	this.alterego.y -= FALL_SPEED;
+};
+// はしご上下移動
+Player.prototype.climbDown = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	// 自機の移動
+	this.y += FALL_SPEED;
+	// 分身の移動
+	this.alterego.y += FALL_SPEED;
+};
+// 落下
+Player.prototype.fallDown = function() {
+	// 自機の移動
+	this.y += FALL_SPEED;
+	// 分身の移動
+	this.alterego.y += FALL_SPEED;
+};
+
+
+
+
+
+
+
 
 Player.prototype.moveX = function(x) {
 	if(!this.isEnableMove()) return;
