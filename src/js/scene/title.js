@@ -62,7 +62,7 @@ SceneTitle.prototype.draw = function(){
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 	ctx.textAlign = 'center';
 	ctx.font = "60px 'ＭＳ ゴシック'";
-	ctx.fillText('タイトルロゴ(仮)', this.core.width/2, 100);
+	ctx.fillText('紫と霊夢の終わらない夏', this.core.width/2, 100);
 
 	// show press z
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
