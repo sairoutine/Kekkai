@@ -116,6 +116,7 @@ Player.prototype.beforeDraw = function(){
 		}
 	}
 
+	// はしごを降りるのが終了したかどうか判定
 	if(!collision_ladder && this.isClimbDown()) {
 		this.changeState(CONSTANT.STATE_NORMAL);
 	}
@@ -128,28 +129,24 @@ Player.prototype.beforeDraw = function(){
 		}
 	}
 
-
-	// 交代アニメーション再生
-	if(this.isExchanging()) {
-		// 交代アニメーション終了
-		if(this.currentState().frame_count > EXCHANGE_ANIM_SPAN) {
-			// 位置移動
-			this.exchangePosition();
-
-			// リセット
-			this.quitExchange();
-			this.removeSubObject(this.exchange_anim);
-		}
-	}
-
-	// 死亡アニメーションが終了するかどうか
+	// 死亡アニメーションが終了判定
 	if(this.isDying()) {
-		// 交代アニメーション終了
 		if(this.currentState().frame_count > DIE_ANIM_SPAN) {
 			this.scene.notifyPlayerDie();
 			this.quitDie();
 		}
 	}
+
+	// 交代アニメーション終了判定
+	if(this.isExchanging() && this.currentState().frame_count > EXCHANGE_ANIM_SPAN) {
+		// 位置移動
+		this.exchangePosition();
+
+		// リセット
+		this.quitExchange();
+		this.removeSubObject(this.exchange_anim);
+	}
+
 
 	// 落下
 	if (this.isFallingDown()) {
