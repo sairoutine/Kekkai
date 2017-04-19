@@ -269,8 +269,7 @@ Player.prototype.currentState = function() {
 };
 
 Player.prototype.moveLeft = function() {
-	if(!this.isEnableMove()) return;
-	if(this.currentState() instanceof StateFallDown) return;
+	if(!this.currentState().isEnableToPlayMove()) return;
 
 	this.x -= MOVE_SPEED;
 	this.is_reflect = true;
@@ -278,8 +277,7 @@ Player.prototype.moveLeft = function() {
 	this.alterego.x += MOVE_SPEED;
 };
 Player.prototype.moveRight = function() {
-	if(!this.isEnableMove()) return;
-	if(this.currentState() instanceof StateFallDown) return;
+	if(!this.currentState().isEnableToPlayMove()) return;
 
 	this.x += MOVE_SPEED;
 	this.is_reflect = false;
