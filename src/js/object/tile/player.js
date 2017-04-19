@@ -74,8 +74,6 @@ Player.prototype.init = function(x, y) {
 
 	this.is_reflect = false; // 左を向いているか
 
-	this.exchange_animation_start_count = 0; // 交代アニメーション開始時刻
-
 	this.alterego = new AlterEgo(this.scene);
 	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
 	this.addSubObject(this.alterego);
@@ -101,7 +99,7 @@ Player.prototype.beforeDraw = function(){
 	this.currentState().beforeDraw();
 
 	// 落下していく
-	if(!this.isDying()) {
+	if(!this.isDying() && !this.isExchanging()) {
 		if(!this.checkCollisionWithBlocks()) {
 			this.moveY(FALL_SPEED);
 			this.changeState(CONSTANT.STATE_FALLDOWN);
@@ -113,7 +111,7 @@ Player.prototype.beforeDraw = function(){
 
 	// はしごを降りている
 	var collision_ladder = this.checkCollisionWithLadder();
-	if(collision_ladder) {
+	if(collision_ladder && !this.isExchanging()) {
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
 			this.x = collision_ladder.x;
 			this.moveY(FALL_SPEED);
@@ -127,14 +125,14 @@ Player.prototype.beforeDraw = function(){
 
 
 	// 交代アニメーション再生
-	if(this.exchange_animation_start_count) {
+	if(this.isExchanging()) {
 		// 交代アニメーション終了
-		if(this.frame_count - this.exchange_animation_start_count > EXCHANGE_ANIM_SPAN) {
+		if(this.currentState().frame_count > EXCHANGE_ANIM_SPAN) {
 			// 位置移動
 			this.exchange_position();
 
 			// リセット
-			this.exchange_animation_start_count = 0;
+			this.quitExchange();
 			this.removeSubObject(this.exchange_anim);
 		}
 	}
@@ -305,7 +303,7 @@ Player.prototype.moveY = function(y) {
 };
 
 Player.prototype.isEnableMove = function() {
-	if(this.exchange_animation_start_count) return false; // 位置移動中は実行できない
+	if(this.isExchanging()) return false; // 位置移動中は実行できない
 
 	return true;
 };
@@ -321,7 +319,7 @@ Player.prototype.startExchange = function() {
 	if(this.checkCollisionBetweenAlterEgoAndBlocks()) return;
 
 
-	this.exchange_animation_start_count = this.frame_count;
+	this.changeState(CONSTANT.STATE_EXCHANGE);
 
 	this.exchange_anim.init(this.x, this.y, EXCHANGE_ANIM_SPAN);
 	this.addSubObject(this.exchange_anim);
@@ -329,6 +327,16 @@ Player.prototype.startExchange = function() {
 	// 紫もアニメーション
 	this.alterego.startExchange(EXCHANGE_ANIM_SPAN);
 };
+Player.prototype.isExchanging = function() {
+	return this.currentState() instanceof StateExchange;
+};
+Player.prototype.quitExchange = function() {
+	this.changeState(CONSTANT.STATE_NORMAL);
+};
+
+
+
+
 // 分身が壁とぶつかっているかどうか
 Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
 	var is_collision = false;
@@ -445,8 +453,8 @@ Player.prototype.spriteHeight = function(){
 	return 48;
 };
 Player.prototype.scaleWidth = function(){
-	if(this.exchange_animation_start_count && (EXCHANGE_ANIM_SPAN/2) < this.frame_count - this.exchange_animation_start_count) {
-		return (EXCHANGE_ANIM_SPAN/2 - (this.frame_count - this.exchange_animation_start_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
+	if(this.isExchanging() && (EXCHANGE_ANIM_SPAN/2) < this.currentState().frame_count) {
+		return (EXCHANGE_ANIM_SPAN/2 - (this.currentState().frame_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
 	}
 	else {
 		return 1;
@@ -454,8 +462,8 @@ Player.prototype.scaleWidth = function(){
 
 };
 Player.prototype.scaleHeight = function(){
-	if(this.exchange_animation_start_count && (EXCHANGE_ANIM_SPAN/2) < this.frame_count - this.exchange_animation_start_count) {
-		return (EXCHANGE_ANIM_SPAN/2 - (this.frame_count - this.exchange_animation_start_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
+	if(this.isExchanging() && (EXCHANGE_ANIM_SPAN/2) < this.currentState().frame_count) {
+		return (EXCHANGE_ANIM_SPAN/2 - (this.currentState().frame_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
 	}
 	else {
 		return 1;
