@@ -74,6 +74,8 @@ Player.prototype.init = function(x, y) {
 
 	this.is_reflect = false; // 左を向いているか
 
+	this.fall_blocks = {}; //着地している落下ブロック
+
 	// 分身
 	this.alterego = new AlterEgo(this.scene);
 	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
@@ -171,6 +173,20 @@ Player.prototype.beforeDraw = function(){
 		}
 	}
 
+	// もう既に設地していない落下ブロックは削除
+	for (var key in this.fall_blocks) {
+		var obj = this.fall_blocks[key];
+		if(!this.checkCollision(obj)) {
+			obj.fall();
+			delete this.fall_blocks[obj.id];
+		}
+	}
+
+	// 設地している落下ブロックを保存しておく
+	var brown_block = this.checkCollisionWithFallBlock();
+	if(brown_block) {
+		this.fall_blocks[brown_block.id] = brown_block;
+	}
 };
 
 // 落下判定
@@ -187,7 +203,7 @@ Player.prototype.checkCollisionWithBlocks = function() {
 
 			// 落下判定なので、自機より上のブロックは無視する
 			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
-			if(self.checkCollision(obj)) {
+			if(obj.isShow() && self.checkCollision(obj)) {
 				is_collision = true;
 				break;
 			}
@@ -212,7 +228,7 @@ Player.prototype.checkCollisionWithLeftRightBlocks = function() {
 			// 壁の衝突判定なので自機より上あるいは下のブロックは無視する
 			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue; // 自機より下
 			if(self.y+self.collisionHeight()/2 < obj.y+obj.collisionHeight()/2) continue; // 自機より上
-			if(self.checkCollision(obj)) {
+			if(obj.isShow() && self.checkCollision(obj)) {
 				repulse_x = self.x - obj.x;
 				break;
 			}
@@ -265,6 +281,27 @@ Player.prototype.checkCollisionWithDeathOrEnemy = function() {
 			// TODO: break;
 		}
 	});
+
+	return is_collision;
+};
+
+// 自分の下に落下ブロックがあるか
+Player.prototype.checkCollisionWithFallBlock = function() {
+	var self = this;
+	var is_collision = null;
+
+	var tile_objects = self.scene.objects_by_tile_type[CONSTANT.BLOCK_BROWN];
+
+	for (var j = 0; j < tile_objects.length; j++) {
+		var obj = tile_objects[j];
+
+		// 落下判定なので、自機より上のブロックは無視する
+		if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+		if(obj.isShow() && self.checkCollision(obj)) {
+			is_collision = obj;
+			break;
+		}
+	}
 
 	return is_collision;
 };
