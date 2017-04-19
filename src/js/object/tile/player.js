@@ -76,8 +76,6 @@ Player.prototype.init = function(x, y) {
 
 	this.exchange_animation_start_count = 0; // 交代アニメーション開始時刻
 
-	this.die_animation_start_count = 0; // 死亡アニメーション開始時刻
-
 	this.alterego = new AlterEgo(this.scene);
 	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
 	this.addSubObject(this.alterego);
@@ -100,6 +98,7 @@ Player.prototype.currentState = function() {
 Player.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
+	this.currentState().beforeDraw();
 
 	// 落下していく
 	if(!this.isDying()) {
@@ -143,7 +142,7 @@ Player.prototype.beforeDraw = function(){
 	// 死亡アニメーションが終了するかどうか
 	if(this.isDying()) {
 		// 交代アニメーション終了
-		if(this.frame_count - this.die_animation_start_count > DIE_ANIM_SPAN) {
+		if(this.currentState().frame_count > DIE_ANIM_SPAN) {
 			this.scene.notifyPlayerDie();
 			this.quitDie();
 		}
@@ -370,14 +369,14 @@ Player.prototype.exchange_position = function() {
 
 // 死亡開始
 Player.prototype.startDie = function() {
-	this.die_animation_start_count = this.frame_count;
+	this.changeState(CONSTANT.STATE_DYING);
 };
 // 死亡中かどうか
 Player.prototype.isDying = function() {
-	return this.die_animation_start_count ? true : false;
+	return this.currentState() instanceof StateDying;
 };
 Player.prototype.quitDie = function() {
-	this.die_animation_start_count = 0;
+	this.changeState(CONSTANT.STATE_NORMAL);
 };
 
 
