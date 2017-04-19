@@ -8,7 +8,7 @@ var base_scene = require('../../hakurei').scene.base;
 var CONSTANT = require('../../hakurei').constant;
 var util = require('../../hakurei').util;
 
-var SerifManager = require("../../logic/serif_manager");
+var SerifManager = require('../../hakurei').serif_manager;
 var serif_before = require("../../logic/serif/stage1/before");
 
 var SceneStageTalk = function(core) {
