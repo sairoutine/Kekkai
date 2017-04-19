@@ -103,7 +103,7 @@ Player.prototype.beforeDraw = function(){
 
 	// はしごを降りているか判定
 	var collision_ladder = this.checkCollisionWithLadder();
-	if(collision_ladder && !this.isExchanging()) {
+	if(collision_ladder && this.currentState().isEnableToPlayMove()) {
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
 			this.x = collision_ladder.x;
 			this.climbDown();
