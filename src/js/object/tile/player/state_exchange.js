@@ -23,6 +23,11 @@ StateNormal.prototype.isEnableToPlayExchange = function () {
 StateNormal.prototype.isFallDown = function () {
 	return false;
 };
+// 敵と接触するなどして死ねるかどうか
+StateNormal.prototype.isEnableToDie = function () {
+	return false;
+};
+
 
 
 

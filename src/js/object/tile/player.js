@@ -101,17 +101,7 @@ Player.prototype.beforeDraw = function(){
 		}
 	}
 
-	// 落下
-	if (this.isFallingDown()) {
-		this.fallDown();
-	}
-
-
-
-
-
-
-	// はしごを降りている
+	// はしごを降りているか判定
 	var collision_ladder = this.checkCollisionWithLadder();
 	if(collision_ladder && !this.isExchanging()) {
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
@@ -123,6 +113,14 @@ Player.prototype.beforeDraw = function(){
 			this.climbUp();
 		}
 		this.changeState(CONSTANT.STATE_CLIMBDOWN);
+	}
+
+	// 死亡判定
+	if (this.currentState().isEnableToDie()) {
+		var is_collision_to_death = this.checkCollisionWithDeathOrEnemy();
+		if(is_collision_to_death) {
+			this.startDie();
+		}
 	}
 
 
@@ -148,6 +146,11 @@ Player.prototype.beforeDraw = function(){
 		}
 	}
 
+	// 落下
+	if (this.isFallingDown()) {
+		this.fallDown();
+	}
+
 	// 壁との接触判定
 	var repulse_x = this.checkCollisionWithLeftRightBlocks();
 	if(repulse_x) {
@@ -164,12 +167,6 @@ Player.prototype.beforeDraw = function(){
 		if (this.scene.isClear()) {
 			this.scene.notifyStageClear();
 		}
-	}
-
-	// 死亡判定
-	var is_collision_to_death = this.checkCollisionWithDeathOrEnemy();
-	if(!this.isDying() && is_collision_to_death) {
-		this.startDie();
 	}
 
 };

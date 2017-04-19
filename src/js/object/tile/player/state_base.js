@@ -21,8 +21,8 @@ StateBase.prototype.isFallDown = function () {
 	return true;
 };
 
-// 敵と当たり判定をするかどうか
-StateBase.prototype.isCollisionWithEnemy = function () {
+// 敵と接触するなどして死ねるかどうか
+StateBase.prototype.isEnableToDie = function () {
 	return true;
 };
 
