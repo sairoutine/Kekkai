@@ -11,4 +11,9 @@ var StateNormal = function (scene) {
 };
 util.inherit(StateNormal, base_object);
 
+// 移動操作ができるか
+StateNormal.prototype.isEnableToPlayMove = function () {
+	return false;
+};
+
 module.exports = StateNormal;
