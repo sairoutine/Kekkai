@@ -21,4 +21,12 @@ StateBase.prototype.isFallDown = function () {
 	return true;
 };
 
+// 敵と当たり判定をするかどうか
+StateBase.prototype.isCollisionWithEnemy = function () {
+	return true;
+};
+
+
+
+
 module.exports = StateBase;

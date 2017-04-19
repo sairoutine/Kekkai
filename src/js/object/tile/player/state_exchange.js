@@ -15,6 +15,11 @@ util.inherit(StateNormal, base_object);
 StateNormal.prototype.isEnableToPlayMove = function () {
 	return false;
 };
+// 交代操作ができるか
+StateNormal.prototype.isEnableToPlayExchange = function () {
+	return false;
+};
+
 
 
 

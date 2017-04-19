@@ -122,7 +122,7 @@ Player.prototype.beforeDraw = function(){
 		// 交代アニメーション終了
 		if(this.currentState().frame_count > EXCHANGE_ANIM_SPAN) {
 			// 位置移動
-			this.exchange_position();
+			this.exchangePosition();
 
 			// リセット
 			this.quitExchange();
@@ -309,6 +309,10 @@ Player.prototype.climbDown = function() {
 	// 分身の移動
 	this.alterego.y += FALL_SPEED;
 };
+// はしご移動中かどうか
+Player.prototype.isClimbDown = function() {
+	return this.currentState() instanceof StateClimbDown;
+};
 // 落下
 Player.prototype.fallDown = function() {
 	// 自機の移動
@@ -319,18 +323,19 @@ Player.prototype.fallDown = function() {
 
 // 位置移動
 Player.prototype.startExchange = function() {
-	if(this.isExchanging()) return false; // 位置移動中は実行できない
+	if(!this.currentState().isEnableToPlayExchange()) return;
 
 	// 分身が壁とぶつかってるなら、位置移動できない
 	if(this.checkCollisionBetweenAlterEgoAndBlocks()) return;
 
-
+	// 状態を位置移動状態に変更
 	this.changeState(CONSTANT.STATE_EXCHANGE);
 
+	// 位置移動アニメーション
 	this.exchange_anim.init(this.x, this.y, EXCHANGE_ANIM_SPAN);
 	this.addSubObject(this.exchange_anim);
 
-	// 紫もアニメーション
+	// 分身もアニメーション
 	this.alterego.startExchange(EXCHANGE_ANIM_SPAN);
 };
 Player.prototype.isExchanging = function() {
@@ -339,9 +344,6 @@ Player.prototype.isExchanging = function() {
 Player.prototype.quitExchange = function() {
 	this.changeState(CONSTANT.STATE_NORMAL);
 };
-
-
-
 
 // 分身が壁とぶつかっているかどうか
 Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
@@ -362,13 +364,8 @@ Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
 	return is_collision;
 };
 
-
-
-
-
-
-
-Player.prototype.exchange_position = function() {
+// 自機と分身の位置入れ替え
+Player.prototype.exchangePosition = function() {
 	var player_x = this.x;
 	var player_y = this.y;
 	var alterego_x = this.alterego.x;
@@ -394,47 +391,6 @@ Player.prototype.quitDie = function() {
 };
 
 
-
-
-
-
-/*
-Player.prototype.draw = function() {
-	base_object.prototype.draw.apply(this, arguments);
-
-	var ctx = this.core.ctx;
-	var player = this.core.image_loader.getImage("player");
-
-	var player_width=32;
-
-	ctx.save();
-	if (this.is_left_to) {
-		ctx.transform(-1, 0, 0, 1, player_width,  0); // 左右反転
-		ctx.drawImage(player,
-			// sprite position
-			32 * 1, 48 * 2,
-			// sprite size to get
-			32, 48,
-			-this.x, this.y,
-			// sprite size to show
-			32, 48
-		);
-	}
-	else {
-		ctx.drawImage(player,
-			// sprite position
-			32 * 1, 48 * 2,
-			// sprite size to get
-			32, 48,
-			this.x, this.y,
-			// sprite size to show
-			32, 48
-		);
-	}
-	ctx.restore();
-};
-*/
-
 Player.prototype.isShow = function() {
 	if(this.isDying()) { // 死亡中は点滅する
 		return this.frame_count % 40 > 20;
@@ -450,7 +406,7 @@ Player.prototype.spriteName = function(){
 	return "player";
 };
 Player.prototype.spriteIndices = function(){
-	return this.currentState() instanceof StateClimbDown ? [{x: 1, y: 3}] : [{x: 1, y: 2}];
+	return this.isClimbDown() ? [{x: 1, y: 3}] : [{x: 1, y: 2}];
 };
 Player.prototype.spriteWidth = function(){
 	return 32;
