@@ -105,14 +105,19 @@ Player.prototype.beforeDraw = function(){
 	var collision_ladder = this.checkCollisionWithLadder();
 	if(collision_ladder && this.currentState().isEnableToPlayMove()) {
 		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+			this.changeState(CONSTANT.STATE_CLIMBDOWN);
 			this.x = collision_ladder.x;
 			this.climbDown();
 		}
 		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+			this.changeState(CONSTANT.STATE_CLIMBDOWN);
 			this.x = collision_ladder.x;
 			this.climbUp();
 		}
-		this.changeState(CONSTANT.STATE_CLIMBDOWN);
+	}
+
+	if(!collision_ladder && this.isClimbDown()) {
+		this.changeState(CONSTANT.STATE_NORMAL);
 	}
 
 	// 死亡判定
