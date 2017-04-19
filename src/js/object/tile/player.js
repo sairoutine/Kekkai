@@ -91,16 +91,25 @@ Player.prototype.beforeDraw = function(){
 
 	this.currentState().beforeDraw();
 
-	// 落下していく
-	if(!this.isDying() && !this.isExchanging()) {
+	// 落下判定
+	if(this.currentState().isFallDown()) {
 		if(!this.checkCollisionWithBlocks()) {
-			this.fallDown();
 			this.changeState(CONSTANT.STATE_FALLDOWN);
 		}
 		else {
 			this.changeState(CONSTANT.STATE_NORMAL);
 		}
 	}
+
+	// 落下
+	if (this.isFallingDown()) {
+		this.fallDown();
+	}
+
+
+
+
+
 
 	// はしごを降りている
 	var collision_ladder = this.checkCollisionWithLadder();
@@ -320,7 +329,9 @@ Player.prototype.fallDown = function() {
 	// 分身の移動
 	this.alterego.y += FALL_SPEED;
 };
-
+Player.prototype.isFallingDown = function() {
+	return this.currentState() instanceof StateFallDown;
+};
 // 位置移動
 Player.prototype.startExchange = function() {
 	if(!this.currentState().isEnableToPlayExchange()) return;
@@ -436,36 +447,11 @@ Player.prototype.isReflect = function(){
 };
 
 
-
-
-
-
-
-
-
-
-
-/*
-Player.prototype.onCollision = function(obj) {
-	if (obj instanceof BlockBase) {
-		var player_down_y = this.globalDownY();
-		var block_up_y = obj.globalUpY();
-
-		if(player_down_y < block_up_y) { // 落下させない
-			this.y = block_up_y - 48;
-		}
-	}
-};
-*/
 Player.prototype.collisionWidth = function() {
 	return 24;
 };
 Player.prototype.collisionHeight = function() {
 	return 48;
 };
-
-
-
-
 
 module.exports = Player;

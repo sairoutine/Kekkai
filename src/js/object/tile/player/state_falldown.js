@@ -15,5 +15,4 @@ util.inherit(StateNormal, base_object);
 StateNormal.prototype.isEnableToPlayMove = function () {
 	return false;
 };
-
 module.exports = StateNormal;

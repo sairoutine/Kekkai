@@ -19,6 +19,11 @@ StateNormal.prototype.isEnableToPlayMove = function () {
 StateNormal.prototype.isEnableToPlayExchange = function () {
 	return false;
 };
+// 落下するかどうか
+StateNormal.prototype.isFallDown = function () {
+	return false;
+};
+
 
 
 
