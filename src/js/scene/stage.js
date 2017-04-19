@@ -139,7 +139,17 @@ SceneStage.prototype.draw = function() {
 
 	ctx.save();
 
-	base_scene.prototype.draw.apply(this, arguments);
+	// タイル毎に順番にレンダリング
+
+	for (var i = 0; i < CONSTANT.RENDER_SORT.length; i++) {
+		var tile = CONSTANT.RENDER_SORT[i];
+		for(var j = 0, len = this.objects_by_tile_type[tile].length; j < len; j++) {
+			this.objects_by_tile_type[tile][j].draw();
+		}
+	}
+
+	// draw sub scene
+	if(this.currentSubScene()) this.currentSubScene().draw();
 };
 
 SceneStage.prototype.initializeObjectsByTileType = function () {
