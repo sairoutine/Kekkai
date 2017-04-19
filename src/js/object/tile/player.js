@@ -142,7 +142,8 @@ Player.prototype.beforeDraw = function(){
 	// 壁との接触判定
 	var repulse_x = this.checkCollisionWithLeftRightBlocks();
 	if(repulse_x) {
-		this.moveX(repulse_x);
+		this.x += repulse_x;
+		this.alterego.x -= repulse_x;
 	}
 
 	// アイテムとの接触判定
@@ -316,36 +317,9 @@ Player.prototype.fallDown = function() {
 	this.alterego.y += FALL_SPEED;
 };
 
-
-
-
-
-
-
-
-Player.prototype.moveX = function(x) {
-	if(!this.isEnableMove()) return;
-	this.x += x;
-	this.alterego.x -= x;
-};
-Player.prototype.moveY = function(y) {
-	if(!this.isEnableMove()) return;
-	this.y += y;
-	this.alterego.y += y;
-};
-
-Player.prototype.isEnableMove = function() {
-	if(this.isExchanging()) return false; // 位置移動中は実行できない
-
-	return true;
-};
-
-
-
-
 // 位置移動
 Player.prototype.startExchange = function() {
-	if(!this.isEnableMove()) return;
+	if(this.isExchanging()) return false; // 位置移動中は実行できない
 
 	// 分身が壁とぶつかってるなら、位置移動できない
 	if(this.checkCollisionBetweenAlterEgoAndBlocks()) return;
