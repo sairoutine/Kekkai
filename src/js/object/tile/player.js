@@ -74,24 +74,17 @@ Player.prototype.init = function(x, y) {
 
 	this.is_reflect = false; // 左を向いているか
 
+	// 分身
 	this.alterego = new AlterEgo(this.scene);
 	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
 	this.addSubObject(this.alterego);
 
+	// 位置交換アニメーション
 	this.exchange_anim = new ExchangeAnim(this.scene);
 
+	// 初期状態
 	this.changeState(CONSTANT.STATE_NORMAL);
 };
-
-
-Player.prototype.changeState = function(state) {
-	this.state = state;
-	this.currentState().init();
-};
-Player.prototype.currentState = function() {
-	return this.states[this.state];
-};
-
 
 Player.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
@@ -267,10 +260,13 @@ Player.prototype.checkCollisionWithDeathOrEnemy = function() {
 	return is_collision;
 };
 
-
-
-
-
+Player.prototype.changeState = function(state) {
+	this.state = state;
+	this.currentState().init();
+};
+Player.prototype.currentState = function() {
+	return this.states[this.state];
+};
 
 Player.prototype.moveLeft = function() {
 	if(!this.isEnableMove()) return;
