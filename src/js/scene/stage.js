@@ -72,7 +72,7 @@ SceneStage.prototype.init = function(){
 	this.createBackGroundEyes();
 
 	// マップデータからオブジェクト生成
-	this.parseAndCreateMap(stage1_map);
+	this.parseAndCreateMap(stage1_map.map);
 
 	// 会話シーン
 	this.changeSubScene("talk");
@@ -172,7 +172,7 @@ SceneStage.prototype.addReimuItemNum = function () {
 
 
 SceneStage.prototype.parseAndCreateMap = function(map) {
-	var stage = stage1_map;
+	var stage = map;
 
 
 	for (var pos_y = 0; pos_y < map.length; pos_y++) {
