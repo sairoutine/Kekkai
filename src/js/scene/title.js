@@ -62,14 +62,31 @@ SceneTitle.prototype.draw = function(){
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 	ctx.textAlign = 'center';
 	ctx.font = "60px 'ＭＳ ゴシック'";
-	ctx.fillText('紫と霊夢の終わらない夏', this.core.width/2, 100);
+
+	var text = '紫と霊夢の終わらない夏';
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, this.core.width/2, 100);
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText(text, this.core.width/2, 100);
 
 	// show press z
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.font = "35px 'ＭＳ ゴシック'";
+	ctx.font = "38px 'ＭＳ ゴシック'";
 	ctx.textAlign = 'left';
-	ctx.fillText('→ Story Start', 280, 400);
-	ctx.fillText('　 Stage Select', 280, 450);
+
+	if(this.frame_count % 80 > 40) {
+		text = "Press Z to Start";
+		ctx.fillStyle = 'rgb( 0, 0, 0 )';
+		ctx.lineWidth = 4.0;
+		ctx.strokeText(text, 280, 420);
+
+		ctx.fillStyle = 'rgb( 255, 255, 255 )';
+		ctx.fillText(text, 280, 420);
+	}
+
+
+	//ctx.fillText('→ Story Start', 280, 400);
+	//ctx.fillText('　 Stage Select', 280, 450);
 	ctx.restore();
 };
 
