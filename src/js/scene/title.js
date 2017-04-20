@@ -71,17 +71,17 @@ SceneTitle.prototype.draw = function(){
 	ctx.fillText(text, this.core.width/2, 100);
 
 	// show press z
-	ctx.font = "38px 'ＭＳ ゴシック'";
-	ctx.textAlign = 'left';
+	ctx.font = "38px 'PixelMplus'";
+	ctx.textAlign = 'center';
 
 	if(this.frame_count % 80 > 40) {
 		text = "Press Z to Start";
 		ctx.fillStyle = 'rgb( 0, 0, 0 )';
 		ctx.lineWidth = 4.0;
-		ctx.strokeText(text, 280, 420);
+		ctx.strokeText(text, this.core.width/2, 420);
 
 		ctx.fillStyle = 'rgb( 255, 255, 255 )';
-		ctx.fillText(text, 280, 420);
+		ctx.fillText(text, this.core.width/2, 420);
 	}
 
 

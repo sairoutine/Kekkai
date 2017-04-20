@@ -130,7 +130,7 @@ SceneStageTalk.prototype._showMessage = function() {
 	var ctx = this.core.ctx;
 	ctx.save();
 
-	ctx.font = "18px 'Migu'";
+	ctx.font = "18px 'PixelMplus'";
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
