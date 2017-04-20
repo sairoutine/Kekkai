@@ -42,19 +42,7 @@ window.runGame = function () {
 window.stopGame = function () {
 	game.stopRun();
 };
-window.changeFullScreen = function () {
-	var mainCanvas = document.getElementById('mainCanvas');
-	if (mainCanvas.requestFullscreen) {
-		mainCanvas.requestFullscreen();
-	}
-	else if (mainCanvas.msRequestuestFullscreen) {
-		mainCanvas.msRequestuestFullscreen();
-	}
-	else if (mainCanvas.mozRequestFullScreen) {
-		mainCanvas.mozRequestFullScreen();
-	}
-	else if (mainCanvas.webkitRequestFullscreen) {
-		mainCanvas.webkitRequestFullscreen();
-	}
-};
 */
+window.changeFullScreen = function () {
+	game.fullscreen();
+};
