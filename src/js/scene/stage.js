@@ -74,6 +74,9 @@ SceneStage.prototype.init = function(){
 	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(stage1_map.map);
 
+	// このマップでの位置交代可能回数
+	this.max_exchange_num = stage1_map.exchange_num;
+
 	// 会話シーン
 	this.changeSubScene("talk");
 };
@@ -119,22 +122,29 @@ SceneStage.prototype.isClear = function () {
 SceneStage.prototype.draw = function() {
 	var ctx = this.core.ctx;
 
-	ctx.save();
-
 	// background
+	ctx.save();
 	ctx.fillStyle = util.hexToRGBString("000000");
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
-
 	ctx.restore();
 
-	ctx.save();
-
 	// stage background
+	ctx.save();
 	ctx.fillStyle = util.hexToRGBString("000000");
 	ctx.fillRect(
 		offset_x, offset_y,
 		CONSTANT.TILE_SIZE * 30, CONSTANT.TILE_SIZE * 20
 	);
+	ctx.restore();
+
+	// show exchange num
+	ctx.save();
+	var player = this.player();
+	var num = this.player().remainExchangeNum();
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.textAlign = 'left';
+	ctx.font = "18px 'PixelMplus'";
+	ctx.fillText("交換可能数: " + num, 0, 20);
 	ctx.restore();
 
 	ctx.save();

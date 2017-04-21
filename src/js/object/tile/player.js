@@ -72,6 +72,8 @@ Player.prototype.init = function(x, y) {
 	this.x = x;
 	this.y = y;
 
+	this.exchange_num = 0; //位置移動した回数
+
 	this.is_reflect = false; // 左を向いているか
 
 	this.fall_blocks = {}; //着地している落下ブロック
@@ -375,6 +377,9 @@ Player.prototype.startExchange = function() {
 	// 分身が壁とぶつかってるなら、位置移動できない
 	if(this.checkCollisionBetweenAlterEgoAndBlocks()) return;
 
+	// 交換可能回数上限に達したら
+	if(this.remainExchangeNum() <= 0) return;
+
 	// 状態を位置移動状態に変更
 	this.changeState(CONSTANT.STATE_EXCHANGE);
 
@@ -384,6 +389,8 @@ Player.prototype.startExchange = function() {
 
 	// 分身もアニメーション
 	this.alterego.startExchange(EXCHANGE_ANIM_SPAN);
+
+	this.exchange_num++;
 };
 Player.prototype.isExchanging = function() {
 	return this.currentState() instanceof StateExchange;
@@ -436,6 +443,13 @@ Player.prototype.isDying = function() {
 Player.prototype.quitDie = function() {
 	this.changeState(CONSTANT.STATE_NORMAL);
 };
+
+Player.prototype.remainExchangeNum = function() {
+	return this.scene.max_exchange_num - this.exchange_num;
+};
+
+
+
 
 
 Player.prototype.isShow = function() {
