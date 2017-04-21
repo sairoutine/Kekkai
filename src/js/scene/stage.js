@@ -3,7 +3,7 @@
 	var offset_x = 25;
 	var offset_y = 50;
 
-var MAX_REIMU_ITEM_NUM = 3;
+var MAX_REIMU_ITEM_NUM = 14;
 
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
