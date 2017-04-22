@@ -136,7 +136,8 @@ SceneStage.prototype.notifyClearEnd = function() {
 		this.core.changeScene("stage", this.stage_no + 1);
 	}
 	else {
-		// TODO: ステージを全てクリア後
+		// ステージを全てクリア後
+		this.core.changeScene("title");
 	}
 };
 // ゲームオーバー後
