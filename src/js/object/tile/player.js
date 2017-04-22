@@ -74,7 +74,13 @@ Player.prototype.init = function(x, y) {
 
 	this.exchange_num = 0; //位置移動した回数
 
-	this.is_reflect = false; // 左を向いているか
+	// 右を向いているか左を向いているか
+	if (this.scene.width/2 < this.x) {
+		this.is_reflect = true;
+	}
+	else {
+		this.is_reflect = false;
+	}
 
 	this.fall_blocks = {}; //着地している落下ブロック
 
