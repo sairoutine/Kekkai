@@ -47,7 +47,24 @@ var SceneStageTalk           = require("./stage/talk");
 var SceneStagePlay           = require("./stage/play");
 var SceneStageResultClear    = require("./stage/result_clear");
 var SceneStageResultGameOver = require("./stage/result_gameover");
-var stage1_map = require("./map/stage1");
+
+
+var MAPS = [
+	null,
+	require("./map/stage1"),
+	require("./map/stage2"),
+	require("./map/stage3"),
+	require("./map/stage4"),
+	require("./map/stage5"),
+];
+var SERIF_BEFORES = [
+	null,
+	require("../logic/serif/stage1/before"),
+	require("../logic/serif/stage2/before"),
+	require("../logic/serif/stage3/before"),
+	require("../logic/serif/stage4/before"),
+	require("../logic/serif/stage5/before"),
+];
 
 var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
@@ -59,16 +76,17 @@ var SceneStage = function(core) {
 };
 util.inherit(SceneStage, base_scene);
 
-SceneStage.prototype.init = function(){
+SceneStage.prototype.init = function(stage_no){
 	base_scene.prototype.init.apply(this, arguments);
 
+	if(!stage_no) stage_no = 1;
 	this.reimu_item_num = 0;
 
 	// このマップでの位置交代可能回数
-	this.max_exchange_num = stage1_map.exchange_num;
+	this.max_exchange_num = MAPS[stage_no].exchange_num;
 
 	// 位置交代が垂直か水平か(true: 垂直, false: 水平)
-	this._is_vertical = stage1_map.is_vertical;
+	this._is_vertical = MAPS[stage_no].is_vertical;
 
 	// タイルの種類毎のオブジェクトの配列
 	this.objects_by_tile_type = this.initializeObjectsByTileType();
@@ -77,13 +95,13 @@ SceneStage.prototype.init = function(){
 	this.createBackGroundEyes();
 
 	// マップデータからオブジェクト生成
-	this.parseAndCreateMap(stage1_map.map);
+	this.parseAndCreateMap(MAPS[stage_no].map);
 
 	// ステージ内で集めないといけないアイテム数
 	this.max_item_num = this.calcItemNum();
 
 	// 会話シーン
-	this.changeSubScene("talk");
+	this.changeSubScene("talk", SERIF_BEFORES[stage_no]);
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
@@ -102,10 +120,10 @@ SceneStage.prototype.notifyStageClear = function(){
 };
 
 
-SceneStage.prototype.notifyClearEnd = function(){
+SceneStage.prototype.notifyClearEnd = function() {
 	// TODO: ステージクリア
 };
-SceneStage.prototype.notifyGameOverEnd = function(){
+SceneStage.prototype.notifyGameOverEnd = function() {
 	// TODO: ゲームオーバー終了
 };
 

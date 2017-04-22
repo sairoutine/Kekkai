@@ -25,7 +25,7 @@ SceneTitle.prototype.beforeDraw = function(){
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
 			//TODO: this.core.playSound('select');
-			this.core.changeScene("stage");
+			this.core.changeScene("stage", 1); // ステージ1
 	}
 };
 

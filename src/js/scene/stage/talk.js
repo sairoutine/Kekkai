@@ -9,18 +9,17 @@ var CONSTANT = require('../../hakurei').constant;
 var util = require('../../hakurei').util;
 
 var SerifManager = require('../../hakurei').serif_manager;
-var serif_before = require("../../logic/serif/stage1/before");
 
 var SceneStageTalk = function(core) {
 	base_scene.apply(this, arguments);
-	this.serif = new SerifManager(serif_before);
+	this.serif = new SerifManager();
 };
 
 util.inherit(SceneStageTalk, base_scene);
 
-SceneStageTalk.prototype.init = function(){
+SceneStageTalk.prototype.init = function(serif_before){
 	base_scene.prototype.init.apply(this, arguments);
-	this.serif.init();
+	this.serif.init(serif_before);
 };
 
 SceneStageTalk.prototype.beforeDraw = function(){
