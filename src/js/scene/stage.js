@@ -3,7 +3,6 @@
 	var offset_x = 25;
 	var offset_y = 50;
 
-var MAX_REIMU_ITEM_NUM = 14;
 
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
@@ -80,6 +79,9 @@ SceneStage.prototype.init = function(){
 	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(stage1_map.map);
 
+	// ステージ内で集めないといけないアイテム数
+	this.max_item_num = this.calcItemNum();
+
 	// 会話シーン
 	this.changeSubScene("talk");
 };
@@ -116,7 +118,7 @@ SceneStage.prototype.player = function () {
 };
 // ステージをクリアしたかどうか
 SceneStage.prototype.isClear = function () {
-	return this.reimu_item_num >= MAX_REIMU_ITEM_NUM ? true : false;
+	return this.reimu_item_num >= this.max_item_num ? true : false;
 };
 
 // 位置移動が垂直かどうか
@@ -232,7 +234,9 @@ SceneStage.prototype.createBackGroundEyes = function() {
 };
 
 
-
+SceneStage.prototype.calcItemNum = function() {
+	return this.objects_by_tile_type[CONSTANT.ITEM].length;
+};
 
 
 
