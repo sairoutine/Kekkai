@@ -8,12 +8,6 @@ var BlockGreen = function (scene) {
 };
 util.inherit(BlockGreen, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
-	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
-};
-
 BlockGreen.prototype.spriteIndices = function(){
 	return [{x: 4, y: 0}];
 };

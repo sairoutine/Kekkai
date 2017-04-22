@@ -37,6 +37,10 @@ Enemy.prototype.beforeDraw = function() {
 	}
 };
 
+Enemy.prototype.isCollision = function() {
+	return true;
+};
+
 
 
 

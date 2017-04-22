@@ -13,6 +13,13 @@ Ladder.prototype.init = function(x, y) {
 	this.x = x;
 	this.y = y;
 };
+
+Ladder.prototype.isCollision = function() {
+	return true;
+};
+
+
+
 /*
 Ladder.prototype.draw = function() {
 	base_object.prototype.draw.apply(this, arguments);

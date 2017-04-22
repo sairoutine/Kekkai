@@ -15,6 +15,10 @@ Death.prototype.init = function(x, y) {
 	this.is_show = true;
 };
 
+Death.prototype.isCollision = function() {
+	return true;
+};
+
 // sprite configuration
 
 Death.prototype.spriteName = function(){

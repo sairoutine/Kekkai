@@ -13,14 +13,20 @@ Item.prototype.init = function(x, y) {
 	this.x = x;
 	this.y = y;
 	this.is_show = true;
+	this.is_collision = true;
 };
 
 Item.prototype.got = function() {
 	this.is_show = false;
+	this.is_collision = false;
 };
 
 Item.prototype.isShow = function() {
 	return this.is_show;
+};
+
+Item.prototype.isCollision = function() {
+	return this.is_collision;
 };
 
 

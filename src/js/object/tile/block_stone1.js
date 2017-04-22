@@ -8,12 +8,6 @@ var BlockStone1 = function (scene) {
 };
 util.inherit(BlockStone1, base_object);
 
-BlockStone1.prototype.init = function(x, y) {
-	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
-};
-
 BlockStone1.prototype.spriteIndices = function(){
 	return [{x: 0, y: 0}];
 };
