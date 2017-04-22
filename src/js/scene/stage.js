@@ -65,6 +65,12 @@ SceneStage.prototype.init = function(){
 
 	this.reimu_item_num = 0;
 
+	// このマップでの位置交代可能回数
+	this.max_exchange_num = stage1_map.exchange_num;
+
+	// 位置交代が垂直か水平か(true: 垂直, false: 水平)
+	this._is_vertical = stage1_map.is_vertical;
+
 	// タイルの種類毎のオブジェクトの配列
 	this.objects_by_tile_type = this.initializeObjectsByTileType();
 
@@ -73,9 +79,6 @@ SceneStage.prototype.init = function(){
 
 	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(stage1_map.map);
-
-	// このマップでの位置交代可能回数
-	this.max_exchange_num = stage1_map.exchange_num;
 
 	// 会話シーン
 	this.changeSubScene("talk");
@@ -115,6 +118,12 @@ SceneStage.prototype.player = function () {
 SceneStage.prototype.isClear = function () {
 	return this.reimu_item_num >= MAX_REIMU_ITEM_NUM ? true : false;
 };
+
+// 位置移動が垂直かどうか
+SceneStage.prototype.isVertical = function () {
+	return this._is_vertical;
+};
+
 
 
 

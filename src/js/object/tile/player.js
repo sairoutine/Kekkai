@@ -80,7 +80,13 @@ Player.prototype.init = function(x, y) {
 
 	// 分身
 	this.alterego = new AlterEgo(this.scene);
-	this.alterego.init(this.scene.width - this.x, this.y); // TODO: not only verticies
+
+	if (this.scene.isVertical()) {
+		this.alterego.init(this.x, this.scene.height - this.y); // 垂直
+	}
+	else {
+		this.alterego.init(this.scene.width - this.x, this.y); // 水平
+	}
 	this.addSubObject(this.alterego);
 
 	// 位置交換アニメーション
@@ -160,8 +166,15 @@ Player.prototype.beforeDraw = function(){
 	// 壁との接触判定
 	var repulse_x = this.checkCollisionWithLeftRightBlocks();
 	if(repulse_x) {
+		// 自機の調整
 		this.x += repulse_x;
-		this.alterego.x -= repulse_x;
+		// 分身の調整
+		if (this.scene.isVertical()) {
+			this.alterego.x += repulse_x;
+		}
+		else {
+			this.alterego.x -= repulse_x;
+		}
 	}
 
 	// アイテムとの接触判定
@@ -325,7 +338,12 @@ Player.prototype.moveLeft = function() {
 	this.is_reflect = true;
 
 	// 分身の移動
-	this.alterego.x += MOVE_SPEED;
+	if (this.scene.isVertical()) {
+		this.alterego.x -= MOVE_SPEED;
+	}
+	else {
+		this.alterego.x += MOVE_SPEED;
+	}
 };
 Player.prototype.moveRight = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
@@ -335,7 +353,13 @@ Player.prototype.moveRight = function() {
 	this.is_reflect = false;
 
 	// 分身の移動
-	this.alterego.x -= MOVE_SPEED;
+	if (this.scene.isVertical()) {
+		this.alterego.x += MOVE_SPEED;
+	}
+	else {
+		this.alterego.x -= MOVE_SPEED;
+	}
+
 };
 
 // はしご上下移動
@@ -345,7 +369,13 @@ Player.prototype.climbUp = function() {
 	// 自機の移動
 	this.y -= FALL_SPEED;
 	// 分身の移動
-	this.alterego.y -= FALL_SPEED;
+	if (this.scene.isVertical()) {
+		this.alterego.y += FALL_SPEED;
+	}
+	else {
+		this.alterego.y -= FALL_SPEED;
+	}
+
 };
 // はしご上下移動
 Player.prototype.climbDown = function() {
@@ -354,7 +384,12 @@ Player.prototype.climbDown = function() {
 	// 自機の移動
 	this.y += FALL_SPEED;
 	// 分身の移動
-	this.alterego.y += FALL_SPEED;
+	if (this.scene.isVertical()) {
+		this.alterego.y -= FALL_SPEED;
+	}
+	else {
+		this.alterego.y += FALL_SPEED;
+	}
 };
 // はしご移動中かどうか
 Player.prototype.isClimbDown = function() {
@@ -365,7 +400,13 @@ Player.prototype.fallDown = function() {
 	// 自機の移動
 	this.y += FALL_SPEED;
 	// 分身の移動
-	this.alterego.y += FALL_SPEED;
+	if (this.scene.isVertical()) {
+		this.alterego.y -= FALL_SPEED;
+	}
+	else {
+		this.alterego.y += FALL_SPEED;
+	}
+
 };
 Player.prototype.isFallingDown = function() {
 	return this.currentState() instanceof StateFallDown;
