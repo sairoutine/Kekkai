@@ -14,11 +14,15 @@ Item.prototype.init = function(x, y) {
 	this.y = y;
 	this.is_show = true;
 	this.is_collision = true;
+
+	this.start_got_animation_frame_count = 0;
 };
 
 Item.prototype.got = function() {
-	this.is_show = false;
 	this.is_collision = false;
+
+	// start animation
+	this.start_got_animation_frame_count = this.frame_count;
 };
 
 Item.prototype.isShow = function() {
@@ -29,6 +33,23 @@ Item.prototype.isCollision = function() {
 	return this.is_collision;
 };
 
+Item.prototype.beforeDraw = function(){
+	base_object.prototype.beforeDraw.apply(this, arguments);
+
+	if (this.start_got_animation_frame_count) {
+		var count = this.frame_count - this.start_got_animation_frame_count;
+		if (10 > count && count >= 0) {
+			this.y -= 5;
+		}
+		else if (15 > count && count >= 10) {
+
+		}
+		else {
+			this.is_show = false;
+			this.start_got_animation_frame_count = 0; //reset
+		}
+	}
+};
 
 
 
