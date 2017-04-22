@@ -76,17 +76,22 @@ var SceneStage = function(core) {
 };
 util.inherit(SceneStage, base_scene);
 
-SceneStage.prototype.init = function(stage_no){
+SceneStage.prototype.init = function(stage_no, sub_scene){
 	base_scene.prototype.init.apply(this, arguments);
 
-	if(!stage_no) stage_no = 1;
+	// stage no
+	this.stage_no = stage_no || 1;
+
+	// デフォルトは talk シーンから開始
+	if(!sub_scene) sub_scene = "talk";
+
 	this.reimu_item_num = 0;
 
 	// このマップでの位置交代可能回数
-	this.max_exchange_num = MAPS[stage_no].exchange_num;
+	this.max_exchange_num = MAPS[this.stage_no].exchange_num;
 
 	// 位置交代が垂直か水平か(true: 垂直, false: 水平)
-	this._is_vertical = MAPS[stage_no].is_vertical;
+	this._is_vertical = MAPS[this.stage_no].is_vertical;
 
 	// タイルの種類毎のオブジェクトの配列
 	this.objects_by_tile_type = this.initializeObjectsByTileType();
@@ -95,13 +100,18 @@ SceneStage.prototype.init = function(stage_no){
 	this.createBackGroundEyes();
 
 	// マップデータからオブジェクト生成
-	this.parseAndCreateMap(MAPS[stage_no].map);
+	this.parseAndCreateMap(MAPS[this.stage_no].map);
 
 	// ステージ内で集めないといけないアイテム数
 	this.max_item_num = this.calcItemNum();
 
 	// 会話シーン
-	this.changeSubScene("talk", SERIF_BEFORES[stage_no]);
+	if(sub_scene === "talk") {
+		this.changeSubScene("talk", SERIF_BEFORES[this.stage_no]);
+	}
+	else {
+		this.changeSubScene(sub_scene);
+	}
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
@@ -120,15 +130,24 @@ SceneStage.prototype.notifyStageClear = function(){
 };
 
 
+// ステージクリア
 SceneStage.prototype.notifyClearEnd = function() {
-	// TODO: ステージクリア
+	if (this.hasNextStage()) {
+		this.core.changeScene("stage", this.stage_no + 1);
+	}
+	else {
+		// TODO: ステージを全てクリア後
+	}
 };
+// ゲームオーバー後
 SceneStage.prototype.notifyGameOverEnd = function() {
-	// TODO: ゲームオーバー終了
+	// 当該ステージの最初から
+	this.core.changeScene("stage", this.stage_no, "play");
 };
 
-
-
+SceneStage.prototype.hasNextStage = function() {
+	return MAPS[this.stage_no + 1] ? true : false;
+};
 
 // プレイヤー(1ステージにプレイヤーは1人の想定)
 SceneStage.prototype.player = function () {
