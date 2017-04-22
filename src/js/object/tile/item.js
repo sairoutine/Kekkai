@@ -65,13 +65,13 @@ Item.prototype.spriteName = function(){
 	return "item";
 };
 Item.prototype.spriteIndices = function(){
-	return [{x: 3, y: 2}];
+	return [{x: 12, y: 2}];
 };
 Item.prototype.spriteWidth = function(){
-	return 32;
+	return 24;
 };
 Item.prototype.spriteHeight = function(){
-	return 32;
+	return 24;
 };
 Item.prototype.scaleWidth = function(){
 	return 1;

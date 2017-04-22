@@ -9,13 +9,13 @@ var Serif= [
 	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"暇そうにしてたから♪"},
 	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"それよりほら、見て"},
 	{"pos":"left","exp":"angry","chara":"reimu","fukidashi":"normal","serif":"なによ"},
-	{"pos":"left","exp":"laugh2","chara":"reimu","fukidashi":"normal","serif":"あ、お金！"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"せっかくだから、拾って帰りましょう"},
+	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"御札が落ちてるわ"},
+	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"あれを全部拾うと帰れるわよ"},
+	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"どういう理屈よ"},
 	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"わたしじゃ取れない場所にあるじゃない"},
 	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"手伝ってあげるわよ"},
 	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"Xボタンで私と霊夢の位置を入れかえることができるわ"},
 	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私は霊夢と反対の位置にいるから"},
 	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"Xボタンね"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"ステージにあるお金を全部取れたら、帰れるわよ"},
 ];
 module.exports = Serif;
