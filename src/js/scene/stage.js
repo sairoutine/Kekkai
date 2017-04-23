@@ -87,6 +87,9 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 
 	this.reimu_item_num = 0;
 
+	// 背景の眼
+	this.eyes = [];
+
 	// このマップでの位置交代可能回数
 	this.max_exchange_num = MAPS[this.stage_no].exchange_num;
 
@@ -203,8 +206,12 @@ SceneStage.prototype.draw = function() {
 
 	ctx.save();
 
-	// タイル毎に順番にレンダリング
+	// 眼を描画
+	for(var h = 0, len1 = this.eyes.length; h < len1; h++) {
+		this.eyes[h].draw();
+	}
 
+	// タイル毎に順番にレンダリング
 	for (var i = 0; i < CONSTANT.RENDER_SORT.length; i++) {
 		var tile = CONSTANT.RENDER_SORT[i];
 		for(var j = 0, len = this.objects_by_tile_type[tile].length; j < len; j++) {
@@ -280,16 +287,16 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 };
 
 SceneStage.prototype.createBackGroundEyes = function() {
-	var width = this.width;
-	var height = this.height;
+	var width = CONSTANT.TILE_SIZE * 30;
+	var height = CONSTANT.TILE_SIZE * 20;
 
 	for (var i = 0; i < 10; i++) {
-		var x = Math.floor(Math.random() * width);
-		var y = Math.floor(Math.random() * height);
+		var x = offset_x + Math.floor(Math.random() * width);
+		var y = offset_y + Math.floor(Math.random() * height);
 
 		var instance = new BackGroundEye(this);
 		instance.init(x, y);
-		this.addObject(instance);
+		this.eyes.push(instance);
 	}
 };
 
