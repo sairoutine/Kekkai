@@ -71,7 +71,7 @@ Enemy.prototype.checkCollisionWithBlocks = function() {
 
 			// 落下判定なので、自機より上のブロックは無視する
 			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
-			if(self.checkCollision(obj)) {
+			if(obj.isCollision() && self.checkCollision(obj)) {
 				is_collision = true;
 				break;
 			}
