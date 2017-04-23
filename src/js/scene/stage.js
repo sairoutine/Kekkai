@@ -66,6 +66,21 @@ var SERIF_BEFORES = [
 	require("../logic/serif/stage5/before"),
 ];
 
+var EYES_NUM = [
+	null,
+	0,
+	1,
+	3,
+	4,
+	6,
+];
+
+
+
+
+
+
+
 var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
 
@@ -290,7 +305,7 @@ SceneStage.prototype.createBackGroundEyes = function() {
 	var width = CONSTANT.TILE_SIZE * 30;
 	var height = CONSTANT.TILE_SIZE * 20;
 
-	for (var i = 0; i < 10; i++) {
+	for (var i = 0; i < EYES_NUM[this.stage_no]; i++) {
 		var x = offset_x + Math.floor(Math.random() * width);
 		var y = offset_y + Math.floor(Math.random() * height);
 
