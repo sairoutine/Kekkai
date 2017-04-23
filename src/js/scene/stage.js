@@ -198,6 +198,7 @@ SceneStage.prototype.draw = function() {
 	ctx.textAlign = 'left';
 	ctx.font = "18px 'PixelMplus'";
 	ctx.fillText("交換可能数: " + num, 0, 20);
+	ctx.fillText("ステージ: " + this.stage_no, 0, 40);
 	ctx.restore();
 
 	ctx.save();
