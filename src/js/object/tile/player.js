@@ -107,6 +107,9 @@ Player.prototype.beforeDraw = function(){
 
 	this.currentState().beforeDraw();
 
+};
+
+Player.prototype.update = function(){
 	// 落下判定
 	if(this.currentState().isFallDown()) {
 		if(!this.checkCollisionWithBlocks()) {
