@@ -63,10 +63,10 @@ Ladder.prototype.scaleHeight = function(){
 // collision configuration
 
 Ladder.prototype.collisionWidth = function() {
-	return 32;
+	return 24;
 };
 Ladder.prototype.collisionHeight = function() {
-	return 32;
+	return 24;
 };
 
 
