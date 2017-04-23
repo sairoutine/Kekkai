@@ -1,6 +1,7 @@
 'use strict';
 
 var CONSTANT = {
+	DEBUG: true,
 	TILE_SIZE:  24,
 
 	BLOCK_GREEN:  1,

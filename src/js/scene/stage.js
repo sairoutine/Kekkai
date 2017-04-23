@@ -99,6 +99,10 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 	// 背景の目玉を作成
 	this.createBackGroundEyes();
 
+	// マップデータが正しいかチェック
+	if (CONSTANT.DEBUG) {
+		this.checkValidMap(MAPS[this.stage_no].map);
+	}
 	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(MAPS[this.stage_no].map);
 
@@ -227,8 +231,25 @@ SceneStage.prototype.addReimuItemNum = function () {
 };
 
 
+// マップデータが正しいか確認する
+SceneStage.prototype.checkValidMap = function(map) {
+	if (map.length !== 20) {
+		window.alert("マップの縦が20行である必要があります。");
+	}
 
+	var is_exists_player = false;
+	for (var pos_y = 0; pos_y < map.length; pos_y++) {
+		var line = map[pos_y];
+		for (var pos_x = 0; pos_x < line.length; pos_x++) {
+			var tile = line[pos_x];
+			if (tile === CONSTANT.PLAYER) is_exists_player = true;
+		}
+	}
 
+	if(!is_exists_player) {
+		window.alert("このマップではプレイヤーの位置が定義されていません。");
+	}
+};
 
 SceneStage.prototype.parseAndCreateMap = function(map) {
 	var stage = map;
