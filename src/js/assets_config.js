@@ -3,6 +3,7 @@
 var AssetsConfig = {
 	title_bg:      "./image/title_bg.png",
 	serif_window:  "./image/serif_window.png",
+	stage_bg:      "./image/stage_bg.png",
 	block:         "./image/block.png",
 	water:         "./image/water.png",
 	medama:        "./image/medama.jpg",

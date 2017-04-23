@@ -195,7 +195,11 @@ SceneStage.prototype.draw = function() {
 
 	// background
 	ctx.save();
-	ctx.fillStyle = util.hexToRGBString("333333");
+
+	var bg = this.core.image_loader.getImage("stage_bg");
+	var cpt = ctx.createPattern(bg, "repeat");
+
+	ctx.fillStyle = cpt; 
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 	ctx.restore();
 
