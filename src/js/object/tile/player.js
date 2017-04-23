@@ -279,8 +279,8 @@ Player.prototype.checkCollisionWithLeftRightBlocks = function() {
 			var obj = tile_objects[j];
 
 			// 壁の衝突判定なので自機より上あるいは下のブロックは無視する
-			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue; // 自機より下
-			if(self.y+self.collisionHeight()/2 < obj.y+obj.collisionHeight()/2) continue; // 自機より上
+			if(self.getCollisionUpY() > obj.getCollisionUpY()) continue; // 自機より下
+			if(self.getCollisionDownY() < obj.getCollisionDownY()) continue; // 自機より上
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				repulse_x = self.x - obj.x;
 				break;
