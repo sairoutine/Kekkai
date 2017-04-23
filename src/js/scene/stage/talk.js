@@ -24,6 +24,13 @@ SceneStageTalk.prototype.init = function(serif_before){
 
 SceneStageTalk.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// セリフのないステージならば、そのままプレイに移行
+	if(this.frame_count === 1 && this.serif.is_end()) {
+		this.parent.changeSubScene("play");
+		return;
+	}
+
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
 		if(this.serif.is_end()) {
 			this.parent.changeSubScene("play");
