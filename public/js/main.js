@@ -404,6 +404,9 @@ var util = require('../util');
 
 var id = 0;
 
+// is draw collision size
+var IS_SHOW_COLLISION = false;
+
 var ObjectBase = function(scene, object) {
 	this.scene = scene;
 	this.core = scene.core;
@@ -451,6 +454,17 @@ ObjectBase.prototype.beforeDraw = function(){
 };
 
 ObjectBase.prototype.draw = function() {
+	var ctx = this.core.ctx;
+	// TODO: DEBUG
+	if(IS_SHOW_COLLISION) {
+		ctx.save();
+		ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
+		ctx.globalAlpha = 0.4;
+		ctx.fillRect(this.getCollisionLeftX(), this.getCollisionUpY(), this.collisionWidth(), this.collisionHeight());
+		ctx.restore();
+	}
+
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].draw();
 	}
@@ -552,10 +566,16 @@ ObjectBase.prototype.checkCollision = function(obj) {
 ObjectBase.prototype.getCollisionLeftX = function() {
 	return this.x - this.collisionWidth() / 2;
 };
-
+ObjectBase.prototype.getCollisionRightX = function() {
+	return this.x + this.collisionWidth() / 2;
+};
 ObjectBase.prototype.getCollisionUpY = function() {
 	return this.y - this.collisionHeight() / 2;
 };
+ObjectBase.prototype.getCollisionDownY = function() {
+	return this.y + this.collisionHeight() / 2;
+};
+
 
 
 
@@ -1265,7 +1285,7 @@ AlterEgo.prototype.beforeDraw = function(){
 };
 
 AlterEgo.prototype.collisionWidth = function(){
-	return 32;
+	return 24;
 };
 AlterEgo.prototype.collisionHeight = function(){
 	return 32;
@@ -1947,10 +1967,10 @@ Ladder.prototype.scaleHeight = function(){
 // collision configuration
 
 Ladder.prototype.collisionWidth = function() {
-	return 32;
+	return 24;
 };
 Ladder.prototype.collisionHeight = function() {
-	return 32;
+	return 24;
 };
 
 
@@ -2089,15 +2109,17 @@ Player.prototype.update = function(){
 	// はしごを降りているか判定
 	var collision_ladder = this.checkCollisionWithLadder();
 	if(collision_ladder && this.currentState().isEnableToPlayMove()) {
-		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
-			this.changeState(CONSTANT.STATE_CLIMBDOWN);
-			this.x = collision_ladder.x;
-			this.climbDown();
-		}
-		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
-			this.changeState(CONSTANT.STATE_CLIMBDOWN);
-			this.x = collision_ladder.x;
-			this.climbUp();
+		if(!this.isClimbDown() || !this.checkCollisionWithBlocks2()) {
+			if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+				this.changeState(CONSTANT.STATE_CLIMBDOWN);
+				this.x = collision_ladder.x;
+				this.climbDown();
+			}
+			else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+				this.changeState(CONSTANT.STATE_CLIMBDOWN);
+				this.x = collision_ladder.x;
+				this.climbUp();
+			}
 		}
 	}
 
@@ -2178,6 +2200,14 @@ Player.prototype.update = function(){
 	if(brown_block) {
 		this.fall_blocks[brown_block.id] = brown_block;
 	}
+
+
+	// 踏んでいるブロックにめり込んでいるなら修正
+	var collision_block = this.checkCollisionWithBlocks3();
+	if(this.isNormal() && collision_block) {
+		this.y = collision_block.getCollisionUpY() - this.collisionHeight()/2 + 1;
+		this.alterego.y = this.y;
+	}
 };
 
 // 落下判定
@@ -2195,6 +2225,29 @@ Player.prototype.checkCollisionWithBlocks = function() {
 			// 落下判定なので、自機より上のブロックは無視する
 			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
 			if(obj.isCollision() && self.checkCollision(obj)) {
+				is_collision = obj;
+				break;
+			}
+		}
+	}
+
+	return is_collision;
+};
+
+Player.prototype.checkCollisionWithBlocks2 = function() {
+	var self = this;
+	// 壁と自機の衝突判定
+	var is_collision = false;
+	for (var i = 0; i < BLOCK_TILE_TYPES2.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES2[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+
+			// 落下判定なので、自機より上のブロックは無視する
+			//if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+			if(obj.isCollision() && self.checkCollision(obj)) {
 				is_collision = true;
 				break;
 			}
@@ -2203,6 +2256,32 @@ Player.prototype.checkCollisionWithBlocks = function() {
 
 	return is_collision;
 };
+
+Player.prototype.checkCollisionWithBlocks3 = function() {
+	var self = this;
+	// 壁と自機の衝突判定
+	var is_collision = false;
+	for (var i = 0; i < BLOCK_TILE_TYPES2.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES2[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+
+			// 落下判定なので、自機より上のブロックは無視する
+			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+			if(obj.isCollision() && self.checkCollision(obj)) {
+				is_collision = obj;
+				break;
+			}
+		}
+	}
+
+	return is_collision;
+};
+
+
+
 
 // 壁との衝突判定
 Player.prototype.checkCollisionWithLeftRightBlocks = function() {
@@ -2217,8 +2296,8 @@ Player.prototype.checkCollisionWithLeftRightBlocks = function() {
 			var obj = tile_objects[j];
 
 			// 壁の衝突判定なので自機より上あるいは下のブロックは無視する
-			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue; // 自機より下
-			if(self.y+self.collisionHeight()/2 < obj.y+obj.collisionHeight()/2) continue; // 自機より上
+			if(self.getCollisionUpY() > obj.getCollisionUpY()) continue; // 自機より下
+			if(self.getCollisionDownY() < obj.getCollisionDownY()) continue; // 自機より上
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				repulse_x = self.x - obj.x;
 				break;
@@ -2415,6 +2494,12 @@ Player.prototype.isExchanging = function() {
 Player.prototype.quitExchange = function() {
 	this.changeState(CONSTANT.STATE_NORMAL);
 };
+
+
+Player.prototype.isNormal = function() {
+	return this.currentState() instanceof StateNormal;
+};
+
 
 // 分身が壁とぶつかっているかどうか
 Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
