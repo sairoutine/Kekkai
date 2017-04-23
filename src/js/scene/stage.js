@@ -180,7 +180,7 @@ SceneStage.prototype.draw = function() {
 
 	// background
 	ctx.save();
-	ctx.fillStyle = util.hexToRGBString("000000");
+	ctx.fillStyle = util.hexToRGBString("333333");
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 	ctx.restore();
 
