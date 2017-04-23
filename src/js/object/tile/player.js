@@ -123,15 +123,17 @@ Player.prototype.update = function(){
 	// はしごを降りているか判定
 	var collision_ladder = this.checkCollisionWithLadder();
 	if(collision_ladder && this.currentState().isEnableToPlayMove()) {
-		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
-			this.changeState(CONSTANT.STATE_CLIMBDOWN);
-			this.x = collision_ladder.x;
-			this.climbDown();
-		}
-		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
-			this.changeState(CONSTANT.STATE_CLIMBDOWN);
-			this.x = collision_ladder.x;
-			this.climbUp();
+		if(!this.isClimbDown() || !this.checkCollisionWithBlocks2()) {
+			if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+				this.changeState(CONSTANT.STATE_CLIMBDOWN);
+				this.x = collision_ladder.x;
+				this.climbDown();
+			}
+			else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+				this.changeState(CONSTANT.STATE_CLIMBDOWN);
+				this.x = collision_ladder.x;
+				this.climbUp();
+			}
 		}
 	}
 
@@ -237,6 +239,32 @@ Player.prototype.checkCollisionWithBlocks = function() {
 
 	return is_collision;
 };
+
+Player.prototype.checkCollisionWithBlocks2 = function() {
+	var self = this;
+	// 壁と自機の衝突判定
+	var is_collision = false;
+	for (var i = 0; i < BLOCK_TILE_TYPES2.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES2[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+
+			// 落下判定なので、自機より上のブロックは無視する
+			//if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+			if(obj.isCollision() && self.checkCollision(obj)) {
+				is_collision = true;
+				break;
+			}
+		}
+	}
+
+	return is_collision;
+};
+
+
+
 
 // 壁との衝突判定
 Player.prototype.checkCollisionWithLeftRightBlocks = function() {
