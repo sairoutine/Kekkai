@@ -199,8 +199,9 @@ SceneStage.prototype.draw = function() {
 	var bg = this.core.image_loader.getImage("stage_bg");
 	var cpt = ctx.createPattern(bg, "repeat");
 
-	ctx.fillStyle = cpt; 
-	ctx.fillRect(0, 0, this.core.width, this.core.height);
+	ctx.fillStyle = cpt;
+	ctx.translate(-this.frame_count%103,-103 + this.frame_count%103);
+	ctx.fillRect(0, 0, 1648, 1648);
 	ctx.restore();
 
 	// stage background
