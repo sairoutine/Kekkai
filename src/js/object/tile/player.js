@@ -175,6 +175,7 @@ Player.prototype.update = function(){
 	// 壁との接触判定
 	var repulse_x = this.checkCollisionWithLeftRightBlocks();
 	if(repulse_x) {
+		repulse_x = repulse_x > 0 ? MOVE_SPEED : -MOVE_SPEED;
 		// 自機の調整
 		this.x += repulse_x;
 		// 分身の調整
