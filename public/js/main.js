@@ -3,6 +3,8 @@
 
 var AssetsConfig = {
 	title_bg:      "./image/title_bg.png",
+	serif_window:  "./image/serif_window.png",
+	stage_bg:      "./image/stage_bg.png",
 	block:         "./image/block.png",
 	water:         "./image/water.png",
 	medama:        "./image/medama.jpg",
@@ -28,6 +30,7 @@ module.exports = AssetsConfig;
 'use strict';
 
 var CONSTANT = {
+	DEBUG: true,
 	TILE_SIZE:  24,
 
 	BLOCK_GREEN:  1,
@@ -1744,7 +1747,7 @@ Enemy.prototype.checkCollisionWithBlocks = function() {
 
 			// 落下判定なので、自機より上のブロックは無視する
 			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
-			if(self.checkCollision(obj)) {
+			if(obj.isCollision() && self.checkCollision(obj)) {
 				is_collision = true;
 				break;
 			}
@@ -2070,6 +2073,9 @@ Player.prototype.beforeDraw = function(){
 
 	this.currentState().beforeDraw();
 
+};
+
+Player.prototype.update = function(){
 	// 落下判定
 	if(this.currentState().isFallDown()) {
 		if(!this.checkCollisionWithBlocks()) {
@@ -2135,6 +2141,7 @@ Player.prototype.beforeDraw = function(){
 	// 壁との接触判定
 	var repulse_x = this.checkCollisionWithLeftRightBlocks();
 	if(repulse_x) {
+		repulse_x = repulse_x > 0 ? MOVE_SPEED : -MOVE_SPEED;
 		// 自機の調整
 		this.x += repulse_x;
 		// 分身の調整
@@ -3075,6 +3082,21 @@ var SERIF_BEFORES = [
 	require("../logic/serif/stage5/before"),
 ];
 
+var EYES_NUM = [
+	null,
+	0,
+	1,
+	3,
+	4,
+	6,
+];
+
+
+
+
+
+
+
 var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
 
@@ -3096,6 +3118,9 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 
 	this.reimu_item_num = 0;
 
+	// 背景の眼
+	this.eyes = [];
+
 	// このマップでの位置交代可能回数
 	this.max_exchange_num = MAPS[this.stage_no].exchange_num;
 
@@ -3108,6 +3133,10 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 	// 背景の目玉を作成
 	this.createBackGroundEyes();
 
+	// マップデータが正しいかチェック
+	if (CONSTANT.DEBUG) {
+		this.checkValidMap(MAPS[this.stage_no].map);
+	}
 	// マップデータからオブジェクト生成
 	this.parseAndCreateMap(MAPS[this.stage_no].map);
 
@@ -3182,8 +3211,13 @@ SceneStage.prototype.draw = function() {
 
 	// background
 	ctx.save();
-	ctx.fillStyle = util.hexToRGBString("000000");
-	ctx.fillRect(0, 0, this.core.width, this.core.height);
+
+	var bg = this.core.image_loader.getImage("stage_bg");
+	var cpt = ctx.createPattern(bg, "repeat");
+
+	ctx.fillStyle = cpt;
+	ctx.translate(-this.frame_count%103,-103 + this.frame_count%103);
+	ctx.fillRect(0, 0, 1648, 1648);
 	ctx.restore();
 
 	// stage background
@@ -3203,12 +3237,17 @@ SceneStage.prototype.draw = function() {
 	ctx.textAlign = 'left';
 	ctx.font = "18px 'PixelMplus'";
 	ctx.fillText("交換可能数: " + num, 0, 20);
+	ctx.fillText("ステージ: " + this.stage_no, 0, 40);
 	ctx.restore();
 
 	ctx.save();
 
-	// タイル毎に順番にレンダリング
+	// 眼を描画
+	for(var h = 0, len1 = this.eyes.length; h < len1; h++) {
+		this.eyes[h].draw();
+	}
 
+	// タイル毎に順番にレンダリング
 	for (var i = 0; i < CONSTANT.RENDER_SORT.length; i++) {
 		var tile = CONSTANT.RENDER_SORT[i];
 		for(var j = 0, len = this.objects_by_tile_type[tile].length; j < len; j++) {
@@ -3236,8 +3275,25 @@ SceneStage.prototype.addReimuItemNum = function () {
 };
 
 
+// マップデータが正しいか確認する
+SceneStage.prototype.checkValidMap = function(map) {
+	if (map.length !== 20) {
+		window.alert("マップの縦が20行である必要があります。");
+	}
 
+	var is_exists_player = false;
+	for (var pos_y = 0; pos_y < map.length; pos_y++) {
+		var line = map[pos_y];
+		for (var pos_x = 0; pos_x < line.length; pos_x++) {
+			var tile = line[pos_x];
+			if (tile === CONSTANT.PLAYER) is_exists_player = true;
+		}
+	}
 
+	if(!is_exists_player) {
+		window.alert("このマップではプレイヤーの位置が定義されていません。");
+	}
+};
 
 SceneStage.prototype.parseAndCreateMap = function(map) {
 	var stage = map;
@@ -3267,16 +3323,16 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 };
 
 SceneStage.prototype.createBackGroundEyes = function() {
-	var width = this.width;
-	var height = this.height;
+	var width = CONSTANT.TILE_SIZE * 30;
+	var height = CONSTANT.TILE_SIZE * 20;
 
-	for (var i = 0; i < 10; i++) {
-		var x = Math.floor(Math.random() * width);
-		var y = Math.floor(Math.random() * height);
+	for (var i = 0; i < EYES_NUM[this.stage_no]; i++) {
+		var x = offset_x + Math.floor(Math.random() * width);
+		var y = offset_y + Math.floor(Math.random() * height);
 
 		var instance = new BackGroundEye(this);
 		instance.init(x, y);
-		this.addObject(instance);
+		this.eyes.push(instance);
 	}
 };
 
@@ -3310,6 +3366,8 @@ SceneStagePlay.prototype.init = function(){
 
 SceneStagePlay.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	this.parent.player().update();
 
 	if(this.core.isKeyDown(CONSTANT.BUTTON_LEFT)) {
 		this.parent.player().moveLeft();
@@ -3510,7 +3568,7 @@ module.exports = SceneStageResultClear;
 },{"../../hakurei":4,"./result_base":52}],55:[function(require,module,exports){
 'use strict';
 
-var MESSAGE_WINDOW_OUTLINE_MARGIN = 20;
+var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
 var TALKER_MOVE_PX = 5;
 var SCALE = 0.5;
 
@@ -3534,6 +3592,15 @@ SceneStageTalk.prototype.init = function(serif_before){
 
 SceneStageTalk.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	this.parent.player().update();
+
+	// セリフのないステージならば、そのままプレイに移行
+	if(this.frame_count === 1 && this.serif.is_end()) {
+		this.parent.changeSubScene("play");
+		return;
+	}
+
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
 		if(this.serif.is_end()) {
 			this.parent.changeSubScene("play");
@@ -3618,20 +3685,19 @@ SceneStageTalk.prototype._showLeftChara = function () {
 SceneStageTalk.prototype._showMessageWindow = function(){
 	var ctx = this.core.ctx;
 	// show message window
-	ctx.save();
 
+	ctx.save();
 	var message_height = 100;
 
-	ctx.globalAlpha = 0.5;
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.fillRect(
+	var fukidashi = this.core.image_loader.getImage("serif_window");
+	ctx.drawImage(fukidashi,
 		MESSAGE_WINDOW_OUTLINE_MARGIN,
 		this.core.height - message_height - MESSAGE_WINDOW_OUTLINE_MARGIN,
 		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
 		message_height
 	);
-
 	ctx.restore();
+
 };
 
 // セリフ表示
@@ -3642,18 +3708,18 @@ SceneStageTalk.prototype._showMessage = function() {
 	ctx.font = "18px 'Comic Sans MS'";
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillStyle = 'blue';
 
 	var x, y;
 	// セリフ表示
 	var lines = this.serif.lines();
 	if (lines.length) {
 		// セリフテキストの y 座標初期位置
-		var message_height = 100;
+		var message_height = 80;
 		y = this.core.height - message_height + MESSAGE_WINDOW_OUTLINE_MARGIN;
 
 		for(var i = 0, len = lines.length; i < len; i++) {
-			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2, y); // 1行表示
+			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
 
 			y+= 30;
 		}
@@ -3741,7 +3807,7 @@ SceneTitle.prototype.draw = function(){
 	ctx.fillText(text, this.core.width/2, 100);
 
 	// show press z
-	ctx.font = "38px 'PixelMplus'";
+	ctx.font = "38px 'Comic Sans MS'";
 	ctx.textAlign = 'center';
 
 	if(this.frame_count % 80 > 40) {
