@@ -84,6 +84,7 @@ var util = require('./hakurei').util;
 var SceneLoading = require('./scene/loading');
 var SceneTitle = require('./scene/title');
 var SceneStage = require('./scene/stage');
+var PreReleaseEnd = require('./scene/prerelease_end');
 
 var Game = function(canvas) {
 	core.apply(this, arguments);
@@ -94,6 +95,7 @@ Game.prototype.init = function () {
 	core.prototype.init.apply(this, arguments);
 
 	this.addScene("loading", new SceneLoading(this));
+	this.addScene("prerelease_end", new PreReleaseEnd(this));
 	this.addScene("title", new SceneTitle(this));
 	this.addScene("stage", new SceneStage(this));
 	this.changeScene("loading");
@@ -102,7 +104,7 @@ Game.prototype.init = function () {
 
 module.exports = Game;
 
-},{"./hakurei":4,"./scene/loading":44,"./scene/stage":50,"./scene/title":56}],4:[function(require,module,exports){
+},{"./hakurei":4,"./scene/loading":44,"./scene/prerelease_end":50,"./scene/stage":51,"./scene/title":57}],4:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -3101,6 +3103,96 @@ module.exports = {
 },{}],50:[function(require,module,exports){
 'use strict';
 
+var base_scene = require('../hakurei').scene.base;
+var util = require('../hakurei').util;
+var CONSTANT = require('../hakurei').constant;
+
+var SceneTitle = function(core) {
+	base_scene.apply(this, arguments);
+};
+util.inherit(SceneTitle, base_scene);
+
+SceneTitle.prototype.beforeDraw = function(){
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
+			//TODO: this.core.playSound('select');
+			this.core.changeScene("title");
+	}
+};
+
+// 画面更新
+SceneTitle.prototype.draw = function(){
+	this.core.clearCanvas();
+	var ctx = this.core.ctx;
+
+	ctx.save();
+
+
+	// background
+	ctx.fillStyle = util.hexToRGBString("000000");
+	ctx.fillRect(
+		0, 0,
+		this.core.width, this.core.height
+	);
+	ctx.restore();
+
+	// タイトル
+	var text = '体験版 終了';
+	ctx.textAlign = 'center';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.font = "60px 'ＭＳ ゴシック'";
+	ctx.fillText(text, this.core.width/2, 100);
+
+	// メッセージ
+	var texts = [
+		'ここまでプレイくださり',
+		'ありがとうございました。',
+		'',
+		'完成版は2017年夏コミで頒布予定です。',
+		'恐らく以下が豪華になります。',
+		'',
+		'1. ステージ数が 5 -> 40に増えます。',
+		'2. ゆかれいむ成分が増えます。',
+		'3. その他もろもろ増えます。',
+		'',
+		'完成版もよろしくお願いします..！',
+	];
+
+	for (var i = 0; i < texts.length; i++) {
+		ctx.font = "24px 'ＭＳ ゴシック'";
+		ctx.textAlign = 'left';
+		ctx.fillStyle = 'rgb( 255, 255, 255 )';
+		ctx.fillText(texts[i], 100, 180 + i*30);
+	}
+
+
+
+	// show press z
+	ctx.font = "38px 'ＭＳ ゴシック'";
+	ctx.textAlign = 'center';
+
+	if(this.frame_count % 80 > 40) {
+		text = "Press Z to Return";
+		ctx.fillStyle = 'rgb( 0, 0, 0 )';
+		ctx.lineWidth = 4.0;
+		ctx.strokeText(text, this.core.width/2, 550);
+
+		ctx.fillStyle = 'rgb( 255, 255, 255 )';
+		ctx.fillText(text, this.core.width/2, 550);
+	}
+
+
+	//ctx.fillText('→ Story Start', 280, 400);
+	//ctx.fillText('　 Stage Select', 280, 450);
+	ctx.restore();
+};
+
+module.exports = SceneTitle;
+
+},{"../hakurei":4}],51:[function(require,module,exports){
+'use strict';
+
 	var offset_x = 25;
 	var offset_y = 50;
 
@@ -3260,7 +3352,7 @@ SceneStage.prototype.notifyClearEnd = function() {
 	}
 	else {
 		// ステージを全てクリア後
-		this.core.changeScene("title");
+		this.core.changeScene("prerelease_end"); // 体験版終了
 	}
 };
 // ゲームオーバー後
@@ -3432,7 +3524,7 @@ SceneStage.prototype.calcItemNum = function() {
 
 module.exports = SceneStage;
 
-},{"../constant":2,"../hakurei":4,"../logic/serif/stage1/before":15,"../logic/serif/stage2/before":16,"../logic/serif/stage3/before":17,"../logic/serif/stage4/before":18,"../logic/serif/stage5/before":19,"../object/background_eye":22,"../object/tile/block_blue":25,"../object/tile/block_brown":26,"../object/tile/block_green":27,"../object/tile/block_purple":28,"../object/tile/block_red":29,"../object/tile/block_stone1":30,"../object/tile/block_stone2":31,"../object/tile/block_stone3":32,"../object/tile/death":33,"../object/tile/enemy":34,"../object/tile/item":35,"../object/tile/ladder":36,"../object/tile/player":37,"./map/stage1":45,"./map/stage2":46,"./map/stage3":47,"./map/stage4":48,"./map/stage5":49,"./stage/play":51,"./stage/result_clear":53,"./stage/result_gameover":54,"./stage/talk":55}],51:[function(require,module,exports){
+},{"../constant":2,"../hakurei":4,"../logic/serif/stage1/before":15,"../logic/serif/stage2/before":16,"../logic/serif/stage3/before":17,"../logic/serif/stage4/before":18,"../logic/serif/stage5/before":19,"../object/background_eye":22,"../object/tile/block_blue":25,"../object/tile/block_brown":26,"../object/tile/block_green":27,"../object/tile/block_purple":28,"../object/tile/block_red":29,"../object/tile/block_stone1":30,"../object/tile/block_stone2":31,"../object/tile/block_stone3":32,"../object/tile/death":33,"../object/tile/enemy":34,"../object/tile/item":35,"../object/tile/ladder":36,"../object/tile/player":37,"./map/stage1":45,"./map/stage2":46,"./map/stage3":47,"./map/stage4":48,"./map/stage5":49,"./stage/play":52,"./stage/result_clear":54,"./stage/result_gameover":55,"./stage/talk":56}],52:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../../hakurei').scene.base;
@@ -3469,7 +3561,7 @@ SceneStagePlay.prototype.beforeDraw = function(){
 
 module.exports = SceneStagePlay;
 
-},{"../../hakurei":4}],52:[function(require,module,exports){
+},{"../../hakurei":4}],53:[function(require,module,exports){
 'use strict';
 
 // メッセージを表示する間隔
@@ -3559,33 +3651,25 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 		alpha = 1.0;
 	}
 
-	ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
-	ctx.globalAlpha = alpha * 0.5; // タイトル背景黒は半透明
+	ctx.fillStyle = 'rgb(119, 66, 244)' ;
+	ctx.globalAlpha = alpha * 1.0; // タイトル背景黒は半透明
 	ctx.fillRect( this.parent.width/2 - 100, this.parent.height/2 - 140, 100*2, 140);
 
 	ctx.globalAlpha = alpha; // 文字を表示するので戻す
 
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.textAlign = 'center';
 	ctx.font = "18px 'Migu'" ;
 	ctx.fillText(this.resultName(), this.parent.width/2, 180);
 
 
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.textAlign = 'left';
 	ctx.font = "16px 'Migu'" ;
-	/*
-	ctx.fillText( 'Result', 100, 210);
-	ctx.textAlign = 'right' ;
-	ctx.fillText('Score: ' + this.parent.score, 380, 210);
-	*/
-	// ステージ名とタイトルの間の白い棒線
-	ctx.fillRect(100, 225, 280, 1);
-
 	// N秒ごとにメッセージを点滅
 	if (Math.floor(this.frame_count / SHOW_MESSAGE_INTERVAL) % 2 === 0) {
 		ctx.textAlign = 'center';
-		ctx.fillText('Press Z to Next', this.parent.width/2, 255);
+		ctx.fillText(this.resultMessage(), this.parent.width/2, 255);
 	}
 
 	ctx.restore();
@@ -3593,6 +3677,11 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 
 // リザルト画面のタイトル名
 SceneStageResultBase.prototype.resultName = function(){
+	return "";
+};
+
+// リザルト画面のメッセージ
+SceneStageResultBase.prototype.resultMessage = function(){
 	return "";
 };
 
@@ -3604,7 +3693,7 @@ SceneStageResultBase.prototype.notifyResultEnd = function(){
 module.exports = SceneStageResultBase;
 
 
-},{"../../hakurei":4}],53:[function(require,module,exports){
+},{"../../hakurei":4}],54:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -3624,10 +3713,14 @@ SceneStageResultClear.prototype.notifyResultEnd = function () {
 SceneStageResultClear.prototype.resultName = function(){
 	return "STAGE CLEAR !";
 };
+SceneStageResultClear.prototype.resultMessage = function(){
+	return "Press Z to Next";
+};
+
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":4,"./result_base":52}],54:[function(require,module,exports){
+},{"../../hakurei":4,"./result_base":53}],55:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -3647,10 +3740,14 @@ SceneStageResultClear.prototype.notifyResultEnd = function () {
 SceneStageResultClear.prototype.resultName = function(){
 	return "GAME OVER...";
 };
+SceneStageResultClear.prototype.resultMessage = function(){
+	return "Press Z to Retry";
+};
+
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":4,"./result_base":52}],55:[function(require,module,exports){
+},{"../../hakurei":4,"./result_base":53}],56:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
@@ -3818,7 +3915,7 @@ SceneStageTalk.prototype._showMessage = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":4}],56:[function(require,module,exports){
+},{"../../hakurei":4}],57:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../hakurei').scene.base;
