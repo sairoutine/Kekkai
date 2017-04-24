@@ -17,5 +17,9 @@ SceneStageResultClear.prototype.notifyResultEnd = function () {
 SceneStageResultClear.prototype.resultName = function(){
 	return "GAME OVER...";
 };
+SceneStageResultClear.prototype.resultMessage = function(){
+	return "Press Z to Retry";
+};
+
 
 module.exports = SceneStageResultClear;

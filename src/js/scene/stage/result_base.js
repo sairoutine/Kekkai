@@ -105,7 +105,7 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 	// N秒ごとにメッセージを点滅
 	if (Math.floor(this.frame_count / SHOW_MESSAGE_INTERVAL) % 2 === 0) {
 		ctx.textAlign = 'center';
-		ctx.fillText('Press Z to Next', this.parent.width/2, 255);
+		ctx.fillText(this.resultMessage(), this.parent.width/2, 255);
 	}
 
 	ctx.restore();
@@ -113,6 +113,11 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 
 // リザルト画面のタイトル名
 SceneStageResultBase.prototype.resultName = function(){
+	return "";
+};
+
+// リザルト画面のメッセージ
+SceneStageResultBase.prototype.resultMessage = function(){
 	return "";
 };
 

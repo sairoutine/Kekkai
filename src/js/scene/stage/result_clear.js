@@ -17,5 +17,9 @@ SceneStageResultClear.prototype.notifyResultEnd = function () {
 SceneStageResultClear.prototype.resultName = function(){
 	return "STAGE CLEAR !";
 };
+SceneStageResultClear.prototype.resultMessage = function(){
+	return "Press Z to Next";
+};
+
 
 module.exports = SceneStageResultClear;
