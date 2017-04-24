@@ -87,29 +87,21 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 		alpha = 1.0;
 	}
 
-	ctx.fillStyle = 'rgb( 255, 255, 255 )' ;
-	ctx.globalAlpha = alpha * 0.5; // タイトル背景黒は半透明
+	ctx.fillStyle = 'rgb(119, 66, 244)' ;
+	ctx.globalAlpha = alpha * 1.0; // タイトル背景黒は半透明
 	ctx.fillRect( this.parent.width/2 - 100, this.parent.height/2 - 140, 100*2, 140);
 
 	ctx.globalAlpha = alpha; // 文字を表示するので戻す
 
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.textAlign = 'center';
 	ctx.font = "18px 'Migu'" ;
 	ctx.fillText(this.resultName(), this.parent.width/2, 180);
 
 
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.textAlign = 'left';
 	ctx.font = "16px 'Migu'" ;
-	/*
-	ctx.fillText( 'Result', 100, 210);
-	ctx.textAlign = 'right' ;
-	ctx.fillText('Score: ' + this.parent.score, 380, 210);
-	*/
-	// ステージ名とタイトルの間の白い棒線
-	ctx.fillRect(100, 225, 280, 1);
-
 	// N秒ごとにメッセージを点滅
 	if (Math.floor(this.frame_count / SHOW_MESSAGE_INTERVAL) % 2 === 0) {
 		ctx.textAlign = 'center';
