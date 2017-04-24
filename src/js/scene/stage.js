@@ -159,7 +159,7 @@ SceneStage.prototype.notifyClearEnd = function() {
 	}
 	else {
 		// ステージを全てクリア後
-		this.core.changeScene("title");
+		this.core.changeScene("prerelease_end"); // 体験版終了
 	}
 };
 // ゲームオーバー後
