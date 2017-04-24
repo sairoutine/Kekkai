@@ -2207,8 +2207,14 @@ Player.prototype.update = function(){
 	// 踏んでいるブロックにめり込んでいるなら修正
 	var collision_block = this.checkCollisionWithBlocks3();
 	if(this.isNormal() && collision_block) {
+		var before_y = this.y;
 		this.y = collision_block.getCollisionUpY() - this.collisionHeight()/2 + 1;
-		this.alterego.y = this.y;
+		if (this.scene.isVertical()) {
+			this.alterego.y += before_y - this.y;
+		}
+		else {
+			this.alterego.y = this.y;
+		}
 	}
 };
 
