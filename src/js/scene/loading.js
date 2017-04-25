@@ -24,6 +24,12 @@ SceneLoading.prototype.init = function() {
 		this.core.audio_loader.loadSound(key2, AssetsConfig.sounds[key2]);
 	}
 
+	// ゲームで使用するBGM一覧
+	for (var key3 in AssetsConfig.bgms) {
+		var conf = AssetsConfig.bgms[key3];
+		this.core.audio_loader.loadBGM(key3, conf.path, 1.0, conf.loopStart, conf.loopEnd);
+	}
+
 };
 
 SceneLoading.prototype.beforeDraw = function() {
