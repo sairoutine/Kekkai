@@ -137,11 +137,6 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	var self = this;
-
-	var player = self.player();
-
 };
 
 SceneStage.prototype.notifyPlayerDie = function(){

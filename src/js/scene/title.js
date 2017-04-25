@@ -18,6 +18,13 @@ var SceneTitle = function(core) {
 };
 util.inherit(SceneTitle, base_scene);
 
+SceneTitle.prototype.init = function(){
+	base_scene.prototype.init.apply(this, arguments);
+
+	this.core.audio_loader.stopBGM();
+};
+
+
 SceneTitle.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
@@ -25,6 +32,7 @@ SceneTitle.prototype.beforeDraw = function(){
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
 			this.core.audio_loader.playSound('select');
+			this.core.audio_loader.playBGM("stage_a");
 			this.core.changeScene("stage");
 	}
 };
