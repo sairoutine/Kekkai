@@ -28,7 +28,9 @@ SceneStagePlay.prototype.beforeDraw = function(){
 	}
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_X)) {
-		this.parent.player().startExchange();
+		if(this.parent.player().startExchange()) {
+			this.core.audio_loader.playSound("boss_powerup");
+		}
 	}
 };
 
