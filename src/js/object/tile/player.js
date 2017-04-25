@@ -488,13 +488,13 @@ Player.prototype.isFallingDown = function() {
 };
 // 位置移動
 Player.prototype.startExchange = function() {
-	if(!this.currentState().isEnableToPlayExchange()) return;
+	if(!this.currentState().isEnableToPlayExchange()) return false;
 
 	// 分身が壁とぶつかってるなら、位置移動できない
-	if(this.checkCollisionBetweenAlterEgoAndBlocks()) return;
+	if(this.checkCollisionBetweenAlterEgoAndBlocks()) return false;
 
 	// 交換可能回数上限に達したら
-	if(this.remainExchangeNum() <= 0) return;
+	if(this.remainExchangeNum() <= 0) return false;
 
 	// 状態を位置移動状態に変更
 	this.changeState(CONSTANT.STATE_EXCHANGE);
@@ -507,6 +507,8 @@ Player.prototype.startExchange = function() {
 	this.alterego.startExchange(EXCHANGE_ANIM_SPAN);
 
 	this.exchange_num++;
+
+	return true;
 };
 Player.prototype.isExchanging = function() {
 	return this.currentState() instanceof StateExchange;
