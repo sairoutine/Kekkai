@@ -25,6 +25,7 @@ AssetsConfig.images = {
 };
 
 AssetsConfig.sounds = {
+	forbidden:    "./sound/forbidden.wav",
 	select:       "./sound/select.wav",
 	boss_powerup: "./sound/boss_powerup.wav",
 	dead:         "./sound/dead.wav",

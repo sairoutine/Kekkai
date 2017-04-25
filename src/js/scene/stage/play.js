@@ -31,6 +31,9 @@ SceneStagePlay.prototype.beforeDraw = function(){
 		if(this.parent.player().startExchange()) {
 			this.core.audio_loader.playSound("boss_powerup");
 		}
+		else {
+			this.core.audio_loader.playSound("forbidden");
+		}
 	}
 };
 
