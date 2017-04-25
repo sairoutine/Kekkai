@@ -21,6 +21,8 @@ Item.prototype.init = function(x, y) {
 Item.prototype.got = function() {
 	this.is_collision = false;
 
+	this.core.audio_loader.playSound("powerup");
+
 	// start animation
 	this.start_got_animation_frame_count = this.frame_count;
 };

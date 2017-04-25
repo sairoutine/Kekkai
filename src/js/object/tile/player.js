@@ -11,7 +11,7 @@ var FALL_SPEED = 4;
 // 交代アニメーション時間
 var EXCHANGE_ANIM_SPAN = 60;
 // 死亡アニメーション時間
-var DIE_ANIM_SPAN = 180;
+var DIE_ANIM_SPAN = 90;
 
 // 地面ブロック一覧
 var BLOCK_TILE_TYPES = [
@@ -558,6 +558,7 @@ Player.prototype.exchangePosition = function() {
 
 // 死亡開始
 Player.prototype.startDie = function() {
+	this.core.audio_loader.playSound("dead");
 	this.changeState(CONSTANT.STATE_DYING);
 };
 // 死亡中かどうか
