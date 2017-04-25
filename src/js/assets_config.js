@@ -31,4 +31,14 @@ AssetsConfig.sounds = {
 	dead:         "./sound/dead.wav",
 	powerup:      "./sound/powerup.wav",
 };
+
+AssetsConfig.bgms = {
+	stage_a: {
+		path: "./bgm/stage_a.wav",
+		loopStart: 0*60 + 29 + 0.03,
+		loopEnd: 1*60 + 51 + 0.10,
+	},
+};
+
+
 module.exports = AssetsConfig;
