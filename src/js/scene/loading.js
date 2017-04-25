@@ -15,9 +15,15 @@ SceneLoading.prototype.init = function() {
 	base_scene.prototype.init.apply(this, arguments);
 
 	// ゲームで使用する画像一覧
-	for (var key in AssetsConfig) {
-		this.core.image_loader.loadImage(key, AssetsConfig[key]);
+	for (var key in AssetsConfig.images) {
+		this.core.image_loader.loadImage(key, AssetsConfig.images[key]);
 	}
+
+	// ゲームで使用するSE一覧
+	for (var key2 in AssetsConfig.sounds) {
+		this.core.audio_loader.loadSound(key2, AssetsConfig.sounds[key2]);
+	}
+
 };
 
 SceneLoading.prototype.beforeDraw = function() {

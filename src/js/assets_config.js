@@ -1,6 +1,7 @@
 'use strict';
 
-var AssetsConfig = {
+var AssetsConfig = {};
+AssetsConfig.images = {
 	title_bg:      "./image/title_bg.png",
 	serif_window:  "./image/serif_window.png",
 	stage_bg:      "./image/stage_bg.png",
@@ -23,4 +24,10 @@ var AssetsConfig = {
 	yukari_normal: "./image/yukari_normal.png",
 };
 
+AssetsConfig.sounds = {
+	select:       "./sound/select.wav",
+	boss_powerup: "./sound/boss_powerup.wav",
+	dead:         "./sound/dead.wav",
+	powerup:      "./sound/powerup.wav",
+};
 module.exports = AssetsConfig;

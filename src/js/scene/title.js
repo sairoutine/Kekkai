@@ -24,7 +24,7 @@ SceneTitle.prototype.beforeDraw = function(){
 	// TODO: to play bgm
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
-			//TODO: this.core.playSound('select');
+			this.core.audio_loader.playSound('select');
 			this.core.changeScene("stage");
 	}
 };
