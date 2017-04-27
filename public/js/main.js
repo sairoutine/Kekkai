@@ -32,6 +32,16 @@ AssetsConfig.sounds = {
 	dead:         "./sound/dead.wav",
 	powerup:      "./sound/powerup.wav",
 };
+
+AssetsConfig.bgms = {
+	stage_a: {
+		path: "./bgm/stage_a.wav",
+		loopStart: 0*60 + 29 + 0.03,
+		loopEnd: 1*60 + 51 + 0.10,
+	},
+};
+
+
 module.exports = AssetsConfig;
 
 },{}],2:[function(require,module,exports){
@@ -121,8 +131,8 @@ module.exports = require("./hakureijs/index");
 'use strict';
 
 var AudioLoader = function() {
-	// TODO: split bgm and sound
-	this.audios = {};
+	this.sounds = {};
+	this.bgms = {};
 
 	this.loading_audio_num = 0;
 	this.loaded_audio_num = 0;
@@ -131,11 +141,21 @@ var AudioLoader = function() {
 
 	// flag which determine what sound.
 	this.soundflag = 0x00;
+
+	this.audio_context = new window.AudioContext();
+
+	// for legacy browser
+	this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
+	// playing AudioBufferSourceNode instance
+	this.audio_source = null;
+
+
 };
 AudioLoader.prototype.init = function() {
-	// TODO: cancel already loading audios
+	// TODO: cancel already loading bgms and sounds
 
-	this.audios = {};
+	this.sounds = {};
+	this.bgms = {};
 
 	this.loading_audio_num = 0;
 	this.loaded_audio_num = 0;
@@ -152,7 +172,7 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 
 	self.loading_audio_num++;
 
-	// it's done to load audio
+	// it's done to load sound
 	var onload_function = function() {
 		self.loaded_audio_num++;
 	};
@@ -161,10 +181,49 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 	audio.volume = volume;
 	audio.addEventListener('canplay', onload_function);
 	audio.load();
-	self.audios[name] = {
+	self.sounds[name] = {
 		id: 1 << self.id++,
 		audio: audio,
 	};
+};
+
+AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd) {
+	var self = this;
+
+	// it's done to load audio
+	var successCallback = function(audioBuffer) {
+		self.loaded_audio_num++;
+		self.bgms[name] = {
+			audio:     audioBuffer,
+			volume:    volume,
+			loopStart: loopStart,
+			loopEnd:   loopEnd,
+		};
+	};
+
+	var errorCallback = function(error) {
+		if (error instanceof Error) {
+			throw new Error(error.message);
+		} else {
+			throw error;
+		}
+	};
+
+	var xhr = new XMLHttpRequest();
+	xhr.onload = function() {
+		if(xhr.status !== 200) {
+			return;
+		}
+
+		var arrayBuffer = xhr.response;
+
+		// decode
+		self.audio_context.decodeAudioData(arrayBuffer, successCallback, errorCallback);
+	};
+
+	xhr.open('GET', path, true);
+	xhr.responseType = 'arraybuffer';
+	xhr.send(null);
 };
 
 AudioLoader.prototype.isAllLoaded = function() {
@@ -172,26 +231,67 @@ AudioLoader.prototype.isAllLoaded = function() {
 };
 
 AudioLoader.prototype.playSound = function(name) {
-	this.soundflag |= this.audios[name].id;
+	this.soundflag |= this.sounds[name].id;
 };
 
 AudioLoader.prototype.executePlaySound = function() {
 
-	for(var name in this.audios) {
-		if(this.soundflag & this.audios[name].id) {
+	for(var name in this.sounds) {
+		if(this.soundflag & this.sounds[name].id) {
 			// play
-			this.audios[name].audio.pause();
-			this.audios[name].audio.currentTime = 0;
-			this.audios[name].audio.play();
+			this.sounds[name].audio.pause();
+			this.sounds[name].audio.currentTime = 0;
+			this.sounds[name].audio.play();
 
 			// delete flag
-			this.soundflag &= ~this.audios[name].id;
+			this.soundflag &= ~this.sounds[name].id;
 
 		}
 	}
 };
+AudioLoader.prototype.playBGM = function(name) {
+	var self = this;
 
+	// stop playing bgm
+	self.stopBGM();
 
+	self.audio_source = self._createSourceNode(name);
+	self.audio_source.start(0);
+};
+AudioLoader.prototype.stopBGM = function() {
+	var self = this;
+	if(self.isPlayingBGM()) {
+		self.audio_source.stop(0);
+		self.audio_source = null;
+	}
+};
+AudioLoader.prototype.isPlayingBGM = function() {
+	return this.audio_source ? true : false;
+};
+
+// create AudioBufferSourceNode instance
+AudioLoader.prototype._createSourceNode = function(name) {
+	var self = this;
+	var data = self.bgms[name];
+
+	var source = self.audio_context.createBufferSource();
+	source.buffer = data.audio;
+
+	if(data.loopStart || data.loopEnd) { source.loop = true; }
+	if(data.loopStart) { source.loopStart = data.loopStart; }
+	if(data.loopEnd)   { source.loopEnd = data.loopEnd; }
+
+	var audio_gain = this.audio_context.createGain();
+	audio_gain.gain.value = data.volume || 1.0;
+
+	source.connect(audio_gain);
+
+	audio_gain.connect(self.audio_context.destination);
+	source.start = source.start || source.noteOn;
+	source.stop  = source.stop  || source.noteOff;
+
+	return source;
+};
 
 
 module.exports = AudioLoader;
@@ -2910,6 +3010,12 @@ SceneLoading.prototype.init = function() {
 		this.core.audio_loader.loadSound(key2, AssetsConfig.sounds[key2]);
 	}
 
+	// ゲームで使用するBGM一覧
+	for (var key3 in AssetsConfig.bgms) {
+		var conf = AssetsConfig.bgms[key3];
+		this.core.audio_loader.loadBGM(key3, conf.path, 1.0, conf.loopStart, conf.loopEnd);
+	}
+
 };
 
 SceneLoading.prototype.beforeDraw = function() {
@@ -3439,11 +3545,6 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	var self = this;
-
-	var player = self.player();
-
 };
 
 SceneStage.prototype.notifyPlayerDie = function(){
@@ -4048,6 +4149,13 @@ var SceneTitle = function(core) {
 	base_scene.apply(this, arguments);
 };
 util.inherit(SceneTitle, base_scene);
+
+SceneTitle.prototype.init = function(){
+	base_scene.prototype.init.apply(this, arguments);
+
+	this.core.audio_loader.stopBGM();
+};
+
 
 SceneTitle.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
