@@ -32,7 +32,6 @@ SceneTitle.prototype.beforeDraw = function(){
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
 			this.core.audio_loader.playSound('select');
-			this.core.audio_loader.playBGM("stage_a");
 			this.core.changeScene("stage");
 	}
 };
