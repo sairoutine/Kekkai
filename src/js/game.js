@@ -19,6 +19,7 @@ Game.prototype.init = function () {
 	this.addScene("prerelease_end", new PreReleaseEnd(this));
 	this.addScene("title", new SceneTitle(this));
 	this.addScene("stage", new SceneStage(this));
+
 	this.changeScene("loading");
 
 };
