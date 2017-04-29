@@ -14,15 +14,15 @@ BackGroundEye.prototype.init = function(x, y) {
 };
 
 BackGroundEye.prototype.spriteName = function(){
-	return "medama";
+	return "stage_tile_24";
 };
 BackGroundEye.prototype.spriteIndices = function(){
-	return [{x: 0, y: 0}];
+	return [{x: 0, y: 1}];
 };
 BackGroundEye.prototype.spriteWidth = function(){
-	return 31;
+	return 24;
 };
 BackGroundEye.prototype.spriteHeight = function(){
-	return 18;
+	return 24;
 };
 module.exports = BackGroundEye;
