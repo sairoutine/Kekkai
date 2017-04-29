@@ -44,47 +44,20 @@ AlterEgo.prototype.collisionHeight = function(){
 
 
 AlterEgo.prototype.spriteName = function(){
-	return "alterego";
+	return "stage_tile_32";
+};
+AlterEgo.prototype.spriteAnimationSpan = function(){
+	return 20;
 };
 AlterEgo.prototype.spriteIndices = function(){
-	return [{x: 0, y: 0}];
+	return [{x: 5, y: 0}, {x: 6, y: 0}];
 };
 AlterEgo.prototype.spriteWidth = function(){
-	return 200;
+	return 32;
 };
 AlterEgo.prototype.spriteHeight = function(){
-	return 200;
+	return 32;
 };
-AlterEgo.prototype.scaleWidth = function(){
-	return 0.2;
-};
-AlterEgo.prototype.scaleHeight = function(){
-	return 0.2;
-};
-
-AlterEgo.prototype.scaleWidth = function(){
-	if(this.exchange_animation_start_count && (this.span/2) < this.frame_count - this.exchange_animation_start_count) {
-		return 0.2 * (this.span/2 - (this.frame_count - this.exchange_animation_start_count -  this.span/2)) / (this.span/2);
-	}
-	else {
-		return 0.2;
-	}
-
-};
-AlterEgo.prototype.scaleHeight = function(){
-	if(this.exchange_animation_start_count && (this.span/2) < this.frame_count - this.exchange_animation_start_count) {
-		return 0.2 * (this.span/2 - (this.frame_count - this.exchange_animation_start_count -  this.span/2)) / (this.span/2);
-	}
-	else {
-		return 0.2;
-	}
-};
-
-
-
-
-
-
 // 位置移動
 AlterEgo.prototype.startExchange = function(span) {
 	this.exchange_animation_start_count = this.frame_count;
@@ -94,11 +67,4 @@ AlterEgo.prototype.startExchange = function(span) {
 	this.exchange_anim.init(this.x, this.y, span, is_yukari);
 	this.addSubObject(this.exchange_anim);
 };
-
-
-
-
-
-
-
 module.exports = AlterEgo;
