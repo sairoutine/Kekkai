@@ -22,21 +22,15 @@ Death.prototype.isCollision = function() {
 // sprite configuration
 
 Death.prototype.spriteName = function(){
-	return "water";
+	return "stage_tile_24";
 };
 Death.prototype.spriteIndices = function(){
-	return [{x: 0, y: 0}];
+	return [{x: 2, y: 0}];
 };
 Death.prototype.spriteWidth = function(){
-	return 16;
+	return 24;
 };
 Death.prototype.spriteHeight = function(){
-	return 16;
-};
-Death.prototype.scaleWidth = function(){
-	return 1.5;
-};
-Death.prototype.scaleHeight = function(){
-	return 1.5;
+	return 24;
 };
 module.exports = Death;
