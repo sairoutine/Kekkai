@@ -13,7 +13,7 @@ SceneTitle.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
-			this.core.audio_loader.playSound("select");
+			this.core.playSound("select");
 			this.core.changeScene("title");
 	}
 };

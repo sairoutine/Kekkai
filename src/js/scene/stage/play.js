@@ -29,10 +29,10 @@ SceneStagePlay.prototype.beforeDraw = function(){
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_X)) {
 		if(this.parent.player().startExchange()) {
-			this.core.audio_loader.playSound("boss_powerup");
+			this.core.playSound("boss_powerup");
 		}
 		else {
-			this.core.audio_loader.playSound("forbidden");
+			this.core.playSound("forbidden");
 		}
 	}
 };

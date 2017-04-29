@@ -31,7 +31,7 @@ SceneStageResultBase.prototype.beforeDraw = function(){
 	}
 	else {
 		if(this.core.isKeyPush(CONSTANT.BUTTON_Z) && !this.isInTransition()) {
-				this.core.audio_loader.playSound('select');
+				this.core.playSound('select');
 				this.setTransition();
 		}
 	}

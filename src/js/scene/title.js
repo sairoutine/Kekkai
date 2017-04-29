@@ -21,7 +21,7 @@ util.inherit(SceneTitle, base_scene);
 SceneTitle.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
-	this.core.audio_loader.stopBGM();
+	this.core.stopBGM();
 };
 
 
@@ -31,8 +31,8 @@ SceneTitle.prototype.beforeDraw = function(){
 	// TODO: to play bgm
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
-			this.core.audio_loader.playSound('select');
-			this.core.audio_loader.playBGM('stage_a');
+			this.core.playSound('select');
+			this.core.playBGM('stage_a');
 			this.core.changeScene("stage");
 	}
 };

@@ -558,7 +558,7 @@ Player.prototype.exchangePosition = function() {
 
 // 死亡開始
 Player.prototype.startDie = function() {
-	this.core.audio_loader.playSound("dead");
+	this.core.playSound("dead");
 	this.changeState(CONSTANT.STATE_DYING);
 };
 // 死亡中かどうか

@@ -21,7 +21,7 @@ Item.prototype.init = function(x, y) {
 Item.prototype.got = function() {
 	this.is_collision = false;
 
-	this.core.audio_loader.playSound("powerup");
+	this.core.playSound("powerup");
 
 	// start animation
 	this.start_got_animation_frame_count = this.frame_count;
@@ -75,11 +75,4 @@ Item.prototype.spriteWidth = function(){
 Item.prototype.spriteHeight = function(){
 	return 24;
 };
-Item.prototype.scaleWidth = function(){
-	return 1;
-};
-Item.prototype.scaleHeight = function(){
-	return 1;
-};
-
 module.exports = Item;

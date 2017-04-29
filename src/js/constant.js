@@ -2,6 +2,8 @@
 
 var CONSTANT = {
 	DEBUG: true,
+	SOUND_OFF: true,
+
 	TILE_SIZE:  24,
 
 	BLOCK_GREEN:  1,
