@@ -589,25 +589,34 @@ Player.prototype.isShow = function() {
 
 
 Player.prototype.spriteName = function(){
-	return "player";
+	return "stage_tile_32";
 };
 Player.prototype.spriteIndices = function(){
-	return this.isClimbDown() ? [{x: 1, y: 3}] : [{x: 1, y: 2}];
+	if(this.isClimbDown()) {
+		return [{x: 5, y: 2}, {x: 6, y: 2}];
+	}
+	else {
+		return this.is_reflect ? [{x: 3, y: 2}, {x: 4, y: 2}] : [{x: 1, y: 2}, {x: 2, y:2}];
+	}
 };
+Player.prototype.spriteAnimationSpan = function(){
+	return 20;
+};
+
 Player.prototype.spriteWidth = function(){
 	return 32;
 };
 Player.prototype.spriteHeight = function(){
-	return 48;
+	return 32;
 };
 Player.prototype.isShow = function(){
-	return this.isExchanging() ? false : true;
+	if(this.isDying()) { // 死亡中は点滅する
+		return this.frame_count % 40 > 20;
+	}
+	else {
+		return this.isExchanging() ? false : true; // 交代中は表示しない
+	}
 };
-Player.prototype.isReflect = function(){
-	return this.is_reflect;
-};
-
-
 Player.prototype.collisionWidth = function() {
 	return 24;
 };
