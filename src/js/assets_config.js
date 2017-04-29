@@ -37,7 +37,7 @@ AssetsConfig.sounds = {
 
 AssetsConfig.bgms = {
 	stage_a: {
-		path: "./bgm/stage_a.wav",
+		path: "./bgm/stage_a.ogg",
 		loopStart: 0*60 + 29 + 0.03,
 		loopEnd: 1*60 + 51 + 0.10,
 	},
