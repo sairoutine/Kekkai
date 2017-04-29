@@ -37,7 +37,7 @@ AlterEgo.prototype.collisionWidth = function(){
 	return 24;
 };
 AlterEgo.prototype.collisionHeight = function(){
-	return 32;
+	return 24;
 };
 
 AlterEgo.prototype.isShow = function(){

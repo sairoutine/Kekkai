@@ -621,7 +621,7 @@ Player.prototype.collisionWidth = function() {
 	return 24;
 };
 Player.prototype.collisionHeight = function() {
-	return 48;
+	return 32;
 };
 
 module.exports = Player;
