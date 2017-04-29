@@ -64,10 +64,10 @@ Item.prototype.beforeDraw = function(){
 // sprite configuration
 
 Item.prototype.spriteName = function(){
-	return "item";
+	return "stage_tile_24";
 };
 Item.prototype.spriteIndices = function(){
-	return [{x: 12, y: 2}];
+	return [{x: 1, y: 2}];
 };
 Item.prototype.spriteWidth = function(){
 	return 24;
