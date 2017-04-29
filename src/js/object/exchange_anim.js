@@ -7,10 +7,11 @@ var AlterEgo = function (scene) {
 };
 util.inherit(AlterEgo, base_object);
 
-AlterEgo.prototype.init = function(x, y, anim_span) {
+AlterEgo.prototype.init = function(x, y, anim_span, is_yukari) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x = x;
 	this.y = y;
+	this.is_yukari = is_yukari ? true : false;
 
 	this.anim_span = anim_span;
 };
@@ -20,33 +21,21 @@ AlterEgo.prototype.beforeDraw = function(){
 };
 
 AlterEgo.prototype.spriteName = function(){
-	return "exchange";
+	return "stage_tile_32";
 };
 AlterEgo.prototype.spriteIndices = function(){
-	return [{x: 0, y: 0}];
+	var y = this.is_yukari ? 1 : 3;
+	return [{x: 0, y: y}, {x: 1, y: y},{x: 2, y:y}, {x:3, y:y}, {x:4, y:y}, {x:5, y:y}];
 };
 AlterEgo.prototype.spriteWidth = function(){
-	return 200;
+	return 32;
 };
 AlterEgo.prototype.spriteHeight = function(){
-	return 200;
+	return 32;
 };
-AlterEgo.prototype.scaleWidth = function(){
-	if(this.frame_count < this.anim_span/2) {
-		return 0.25 * this.frame_count / (this.anim_span/2);
-	}
-	else {
-		return 0.25;
-	}
+AlterEgo.prototype.spriteAnimationSpan = function(){
+	return 10;
 };
-AlterEgo.prototype.scaleHeight = function(){
-	if(this.frame_count < this.anim_span/2) {
-		return 0.25 * this.frame_count / (this.anim_span/2);
-	}
-	else {
-		return 0.25;
-	}
 
-};
 
 module.exports = AlterEgo;

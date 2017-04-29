@@ -600,22 +600,8 @@ Player.prototype.spriteWidth = function(){
 Player.prototype.spriteHeight = function(){
 	return 48;
 };
-Player.prototype.scaleWidth = function(){
-	if(this.isExchanging() && (EXCHANGE_ANIM_SPAN/2) < this.currentState().frame_count) {
-		return (EXCHANGE_ANIM_SPAN/2 - (this.currentState().frame_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
-	}
-	else {
-		return 1;
-	}
-
-};
-Player.prototype.scaleHeight = function(){
-	if(this.isExchanging() && (EXCHANGE_ANIM_SPAN/2) < this.currentState().frame_count) {
-		return (EXCHANGE_ANIM_SPAN/2 - (this.currentState().frame_count -  EXCHANGE_ANIM_SPAN/2)) / (EXCHANGE_ANIM_SPAN/2);
-	}
-	else {
-		return 1;
-	}
+Player.prototype.isShow = function(){
+	return this.isExchanging() ? false : true;
 };
 Player.prototype.isReflect = function(){
 	return this.is_reflect;

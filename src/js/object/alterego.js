@@ -90,7 +90,8 @@ AlterEgo.prototype.startExchange = function(span) {
 	this.exchange_animation_start_count = this.frame_count;
 	this.span = span;
 
-	this.exchange_anim.init(this.x, this.y, span);
+	var is_yukari = true;
+	this.exchange_anim.init(this.x, this.y, span, is_yukari);
 	this.addSubObject(this.exchange_anim);
 };
 
