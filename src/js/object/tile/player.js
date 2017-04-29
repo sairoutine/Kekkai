@@ -9,7 +9,7 @@ var MOVE_SPEED = 4;
 var FALL_SPEED = 4;
 
 // 交代アニメーション時間
-var EXCHANGE_ANIM_SPAN = 60;
+var EXCHANGE_ANIM_SPAN = 10 * 5.9; //anim span * 5
 // 死亡アニメーション時間
 var DIE_ANIM_SPAN = 90;
 

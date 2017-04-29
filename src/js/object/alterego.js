@@ -40,6 +40,9 @@ AlterEgo.prototype.collisionHeight = function(){
 	return 32;
 };
 
+AlterEgo.prototype.isShow = function(){
+	return this.exchange_animation_start_count ? false : true; // 交換中は表示しない
+};
 
 
 
