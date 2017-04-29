@@ -92,13 +92,19 @@ Enemy.prototype.collisionHeight = function(){
 	return 24 + 1; // 地面との接触のため、+1
 };
 
+Enemy.prototype.isReflect = function(){
+	return !this.is_left;
+};
+
+
+
 // sprite configuration
 
 Enemy.prototype.spriteName = function(){
-	return "enemy";
+	return "stage_tile_32";
 };
 Enemy.prototype.spriteIndices = function(){
-	return [{x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}];
+	return [{x: 0, y: 4}, {x: 1, y: 4}];
 };
 
 Enemy.prototype.spriteAnimationSpan = function(){
@@ -112,10 +118,10 @@ Enemy.prototype.spriteHeight = function(){
 	return 32;
 };
 Enemy.prototype.scaleWidth = function(){
-	return 0.75;
+	return 1;
 };
 Enemy.prototype.scaleHeight = function(){
-	return 0.75;
+	return 1;
 };
 
 module.exports = Enemy;
