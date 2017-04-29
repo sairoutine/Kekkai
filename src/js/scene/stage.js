@@ -8,6 +8,8 @@ var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
 
 var BackGroundEye  = require('../object/background_eye');
+var StageFrame1  = require('../object/stage_frame1');
+var StageFrame2  = require('../object/stage_frame2');
 
 var BlockGreen  = require('../object/tile/block_green');
 var BlockBlue   = require('../object/tile/block_blue');
@@ -238,6 +240,9 @@ SceneStage.prototype.draw = function() {
 		}
 	}
 
+	// ステージ枠を描画
+	this.drawFrames();
+
 	// draw sub scene
 	if(this.currentSubScene()) this.currentSubScene().draw();
 };
@@ -304,6 +309,57 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 		}
 	}
 };
+
+SceneStage.prototype.drawFrames = function() {
+	var x,y, is_vertical;
+
+	var stage_frame1 = new StageFrame1(this);
+	var stage_frame2 = new StageFrame2(this);
+
+	for (var pos_y = 0; pos_y < 20-1; pos_y++) { //縦
+		// 左
+		x = offset_x;
+		y = pos_y * CONSTANT.TILE_SIZE + (offset_y) + 24;
+
+		is_vertical = true;
+		stage_frame1.draw(x, y, is_vertical);
+
+		// 右
+		x = offset_x + CONSTANT.TILE_SIZE * 30;
+
+		is_vertical = true;
+		stage_frame1.draw(x, y, is_vertical);
+
+	}
+	for (var pos_x = 0; pos_x < 30-1; pos_x++) { // 横
+		// 上
+		x = pos_x * CONSTANT.TILE_SIZE + (offset_x) + 24;
+		y = offset_y;
+
+		is_vertical = false;
+		stage_frame1.draw(x, y, is_vertical);
+
+		// 下
+		y = offset_y + CONSTANT.TILE_SIZE * 20;
+
+		is_vertical = false;
+		stage_frame1.draw(x, y, is_vertical);
+	}
+
+	// 角
+	stage_frame2.draw(offset_x, offset_y, 270);
+	stage_frame2.draw(offset_x+CONSTANT.TILE_SIZE*30, offset_y, 0);
+	stage_frame2.draw(offset_x, offset_y+CONSTANT.TILE_SIZE*20, 180);
+	stage_frame2.draw(offset_x+CONSTANT.TILE_SIZE*30, offset_y+CONSTANT.TILE_SIZE*20, 90);
+};
+
+
+
+
+
+
+
+
 
 SceneStage.prototype.createBackGroundEyes = function() {
 	var width = CONSTANT.TILE_SIZE * 30;
