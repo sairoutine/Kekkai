@@ -2,7 +2,7 @@
 
 var CONSTANT = {
 	DEBUG: true,
-	SOUND_OFF: true,
+	SOUND_OFF: false,
 
 	TILE_SIZE:  24,
 
