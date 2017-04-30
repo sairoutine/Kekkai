@@ -25,7 +25,7 @@ AlterEgo.prototype.spriteName = function(){
 };
 AlterEgo.prototype.spriteIndices = function(){
 	var y = this.is_yukari ? 1 : 3;
-	return [{x: 0, y: y}, {x: 1, y: y},{x: 2, y:y}, {x:3, y:y}, {x:4, y:y}, {x:5, y:y}];
+	return [{x: 0, y: y}, {x: 1, y: y},{x: 2, y:y}, {x:3, y:y}, {x:3, y:y}, {x:4, y:y}, {x:5, y:y}];
 };
 AlterEgo.prototype.spriteWidth = function(){
 	return 32;
@@ -34,7 +34,7 @@ AlterEgo.prototype.spriteHeight = function(){
 	return 32;
 };
 AlterEgo.prototype.spriteAnimationSpan = function(){
-	return 10;
+	return 5;
 };
 
 
