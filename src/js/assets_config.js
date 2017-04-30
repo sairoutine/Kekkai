@@ -2,6 +2,7 @@
 
 var AssetsConfig = {};
 AssetsConfig.images = {
+	title:         "./image/title.png",
 	title_bg:      "./image/title_bg.png",
 	serif_window:  "./image/serif_window.png",
 	stage_bg:      "./image/stage_bg.png",

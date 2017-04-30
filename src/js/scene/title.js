@@ -66,24 +66,20 @@ SceneTitle.prototype.draw = function(){
 					this.core.height);
 
 	// show game title text
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.textAlign = 'center';
-	ctx.font = "60px 'ＭＳ ゴシック'";
+	var title = this.core.image_loader.getImage('title');
+	ctx.drawImage(title,
+					20,
+					-20,
+					title.width,
+					title.height);
 
-	var text = '紫と霊夢の終わらない夏';
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.lineWidth = 4.0;
-	ctx.strokeText(text, this.core.width/2, 100);
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.fillText(text, this.core.width/2, 100);
 
 	// show press z
 	ctx.font = "38px 'Comic Sans MS'";
 	ctx.textAlign = 'center';
 
 	if(this.frame_count % 80 > 40) {
-		text = "Press Z to Start";
+		var text = "Press Z to Start";
 		ctx.fillStyle = 'rgb( 0, 0, 0 )';
 		ctx.lineWidth = 4.0;
 		ctx.strokeText(text, this.core.width/2, 420);
