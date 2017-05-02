@@ -43,6 +43,11 @@ AssetsConfig.bgms = {
 		loopStart: 0*60 + 29 + 0.03,
 		loopEnd: 1*60 + 51 + 0.10,
 	},
+	title: {
+		path: "./bgm/title.ogg",
+		loopStart: 0*60 + 10 + 0.07,
+		loopEnd: 0*60 + 51 + 0.14,
+	},
 };
 
 
@@ -191,10 +196,10 @@ AudioLoader.prototype.init = function() {
 
 AudioLoader.prototype.loadSound = function(name, path, volume) {
 	var self = this;
+	self.loading_audio_num++;
 
 	if(!volume) volume = 1.0;
 
-	self.loading_audio_num++;
 
 	// it's done to load sound
 	var onload_function = function() {
@@ -213,6 +218,7 @@ AudioLoader.prototype.loadSound = function(name, path, volume) {
 
 AudioLoader.prototype.loadBGM = function(name, path, volume, loopStart, loopEnd) {
 	var self = this;
+	self.loading_audio_num++;
 
 	// it's done to load audio
 	var successCallback = function(audioBuffer) {
@@ -3081,7 +3087,7 @@ SceneLoading.prototype.init = function() {
 SceneLoading.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	if (this.core.image_loader.isAllLoaded()) {
+	if (this.core.image_loader.isAllLoaded() && this.core.audio_loader.isAllLoaded()) {
 		this.core.changeScene("title");
 	}
 };
@@ -3561,7 +3567,7 @@ var SceneStage = function(core) {
 };
 util.inherit(SceneStage, base_scene);
 
-SceneStage.prototype.init = function(stage_no, sub_scene){
+SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	base_scene.prototype.init.apply(this, arguments);
 
 	// stage no
@@ -3569,6 +3575,11 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 
 	// デフォルトは talk シーンから開始
 	if(!sub_scene) sub_scene = "talk";
+
+	this.is_play_bgm = is_play_bgm ? true : false;
+	if(this.is_play_bgm) {
+		this.core.stopBGM();
+	}
 
 	this.reimu_item_num = 0;
 
@@ -3607,6 +3618,10 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.is_play_bgm && this.frame_count === 60) {
+		this.core.playBGM('stage_a');
+	}
 };
 
 SceneStage.prototype.notifyPlayerDie = function(){
@@ -4280,12 +4295,13 @@ SceneTitle.prototype.init = function(){
 SceneTitle.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	// TODO: to play bgm
+	if(this.frame_count === 60) {
+		this.core.playBGM("title");
+	}
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
-			this.core.playSound('select');
-			this.core.playBGM('stage_a');
-			this.core.changeScene("stage");
+		this.core.playSound('select');
+		this.core.changeScene("stage", 1, "talk", true); // stage_no = 1
 	}
 };
 
