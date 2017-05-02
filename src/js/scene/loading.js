@@ -35,7 +35,7 @@ SceneLoading.prototype.init = function() {
 SceneLoading.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	if (this.core.image_loader.isAllLoaded()) {
+	if (this.core.image_loader.isAllLoaded() && this.core.audio_loader.isAllLoaded()) {
 		this.core.changeScene("title");
 	}
 };

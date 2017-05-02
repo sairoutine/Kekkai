@@ -93,7 +93,7 @@ var SceneStage = function(core) {
 };
 util.inherit(SceneStage, base_scene);
 
-SceneStage.prototype.init = function(stage_no, sub_scene){
+SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	base_scene.prototype.init.apply(this, arguments);
 
 	// stage no
@@ -101,6 +101,11 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 
 	// デフォルトは talk シーンから開始
 	if(!sub_scene) sub_scene = "talk";
+
+	this.is_play_bgm = is_play_bgm ? true : false;
+	if(this.is_play_bgm) {
+		this.core.stopBGM();
+	}
 
 	this.reimu_item_num = 0;
 
@@ -139,6 +144,10 @@ SceneStage.prototype.init = function(stage_no, sub_scene){
 };
 SceneStage.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.is_play_bgm && this.frame_count === 60) {
+		this.core.playBGM('stage_a');
+	}
 };
 
 SceneStage.prototype.notifyPlayerDie = function(){

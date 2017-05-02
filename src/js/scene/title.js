@@ -28,12 +28,13 @@ SceneTitle.prototype.init = function(){
 SceneTitle.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	// TODO: to play bgm
+	if(this.frame_count === 60) {
+		this.core.playBGM("title");
+	}
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
-			this.core.playSound('select');
-			this.core.playBGM('stage_a');
-			this.core.changeScene("stage");
+		this.core.playSound('select');
+		this.core.changeScene("stage", 1, "talk", true); // stage_no = 1
 	}
 };
 
