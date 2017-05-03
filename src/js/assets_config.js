@@ -44,8 +44,8 @@ AssetsConfig.bgms = {
 	},
 	title: {
 		path: "./bgm/title.ogg",
-		loopStart: 0*60 + 10 + 0.07,
-		loopEnd: 0*60 + 52 + 0.00,
+		loopStart: 0*60 + 10.07,
+		loopEnd: 0*60 + 51.19,
 	},
 };
 
