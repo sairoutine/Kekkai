@@ -40,13 +40,13 @@ AssetsConfig.sounds = {
 AssetsConfig.bgms = {
 	stage_a: {
 		path: "./bgm/stage_a.ogg",
-		loopStart: 0*60 + 29 + 0.03,
-		loopEnd: 1*60 + 51 + 0.10,
+		loopStart: 0*60 + 29 + 0.143,
+		loopEnd: 1*60 + 51 + 0.429,
 	},
 	title: {
 		path: "./bgm/title.ogg",
-		loopStart: 0*60 + 10.07,
-		loopEnd: 0*60 + 51.19,
+		loopStart: 0*60 + 10 + 0.312,
+		loopEnd: 0*60 + 51 + 0.562,
 	},
 };
 
