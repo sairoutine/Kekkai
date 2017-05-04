@@ -2,22 +2,19 @@
 
 var AssetsConfig = {};
 AssetsConfig.images = {
+	// タイトルロゴ
 	title:         "./image/title.png",
+	// タイトル背景
 	title_bg:      "./image/title_bg.png",
 	serif_window:  "./image/serif_window.png",
+	// ステージ画面背景
 	stage_bg:      "./image/stage_bg.png",
+	// ステージ画面ステージ背景
 	bg:            "./image/bg.png",
 	stage_tile_24: "./image/stage_tile_24.png",
 	stage_tile_32: "./image/stage_tile_32.png",
 	block:         "./image/block.png",
-	water:         "./image/water.png",
-	medama:        "./image/medama.jpg",
-	player:        "./image/player.png",
-	enemy:         "./image/enemy.png",
-	alterego:      "./image/alterego.png",
-	exchange:      "./image/exchange.png",
 	hashigo:       "./image/hashigo.png",
-	item:          "./image/item.png",
 	reimu_angry:   "./image/reimu_angry.png",
 	reimu_laugh:   "./image/reimu_laugh.png",
 	reimu_laugh2:  "./image/reimu_laugh2.png",
