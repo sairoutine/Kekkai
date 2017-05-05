@@ -6,7 +6,6 @@ AssetsConfig.images = {
 	title:         "./image/title.png",
 	// タイトル背景
 	title_bg:      "./image/title_bg.png",
-	serif_window:  "./image/serif_window.png",
 	// ステージ画面背景
 	stage_bg:      "./image/stage_bg.png",
 	// ステージ画面ステージ背景
