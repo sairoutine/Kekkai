@@ -1,6 +1,6 @@
 'use strict';
 var DEBUG = {
-	ON: true,
+	ON: false,
 	SOUND_OFF: true,
 };
 
