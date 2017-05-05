@@ -1584,7 +1584,7 @@ AlterEgo.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 AlterEgo.prototype.spriteAnimationSpan = function(){
-	return 20;
+	return 30;
 };
 AlterEgo.prototype.spriteIndices = function(){
 	return [{x: 5, y: 0}, {x: 6, y: 0}];
@@ -2315,9 +2315,11 @@ var CONSTANT = require('../../constant');
 var H_CONSTANT = require('../../hakurei').constant;
 
 // 移動速度
-var MOVE_SPEED = 4;
+var MOVE_SPEED = 2;
 // 落下速度
-var FALL_SPEED = 4;
+var FALL_SPEED = 3;
+// はしごを上るスピード
+var LADDER_SPEED = 2;
 
 // 交代アニメーション時間
 var EXCHANGE_ANIM_SPAN = 5 * 6.9; //anim span * 7
@@ -2753,13 +2755,13 @@ Player.prototype.climbUp = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
 	// 自機の移動
-	this.y -= FALL_SPEED;
+	this.y -= LADDER_SPEED;
 	// 分身の移動
 	if (this.scene.isVertical()) {
-		this.alterego.y += FALL_SPEED;
+		this.alterego.y += LADDER_SPEED;
 	}
 	else {
-		this.alterego.y -= FALL_SPEED;
+		this.alterego.y -= LADDER_SPEED;
 	}
 
 };
@@ -2768,13 +2770,13 @@ Player.prototype.climbDown = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
 	// 自機の移動
-	this.y += FALL_SPEED;
+	this.y += LADDER_SPEED;
 	// 分身の移動
 	if (this.scene.isVertical()) {
-		this.alterego.y -= FALL_SPEED;
+		this.alterego.y -= LADDER_SPEED;
 	}
 	else {
-		this.alterego.y += FALL_SPEED;
+		this.alterego.y += LADDER_SPEED;
 	}
 };
 // はしご移動中かどうか
@@ -2911,7 +2913,7 @@ Player.prototype.spriteIndices = function(){
 	}
 };
 Player.prototype.spriteAnimationSpan = function(){
-	return 20;
+	return 10;
 };
 
 Player.prototype.spriteWidth = function(){
