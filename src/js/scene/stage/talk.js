@@ -2,7 +2,7 @@
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
 var TALKER_MOVE_PX = 5;
-var SCALE = 0.5;
+var SCALE = 1;
 
 var base_scene = require('../../hakurei').scene.base;
 var CONSTANT = require('../../hakurei').constant;
@@ -68,7 +68,7 @@ SceneStageTalk.prototype._showRightChara = function(){
 	var y = 50;
 
 	if(!this.serif.is_right_talking()) {
-		ctx.globalAlpha = 0.5;
+		ctx.globalAlpha = 0.75;
 	}
 	else {
 		x -= TALKER_MOVE_PX;
@@ -87,6 +87,38 @@ SceneStageTalk.prototype._showRightChara = function(){
 	ctx.restore();
 };
 
+SceneStageTalk.prototype._showLeftChara = function(){
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var x = -50;
+	var y = 25;
+
+	if(!this.serif.is_left_talking()) {
+		ctx.globalAlpha = 0.75;
+	}
+	else {
+		x += TALKER_MOVE_PX;
+		y -= TALKER_MOVE_PX;
+	}
+
+	var left_image = this.core.image_loader.getImage(this.serif.left_image());
+
+	ctx.drawImage(left_image,
+		x,
+		y,
+		left_image.width  * SCALE,
+		left_image.height * SCALE
+	);
+
+	ctx.restore();
+};
+
+
+
+
+
+/*
 SceneStageTalk.prototype._showLeftChara = function () {
 	var ctx = this.core.ctx;
 	ctx.save();
@@ -113,6 +145,7 @@ SceneStageTalk.prototype._showLeftChara = function () {
 
 	ctx.restore();
 };
+*/
 
 SceneStageTalk.prototype._showMessageWindow = function(){
 	var ctx = this.core.ctx;
