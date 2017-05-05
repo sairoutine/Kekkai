@@ -58,7 +58,7 @@ SceneStageResultBase.prototype.draw = function(){
 	// トランジション表示
 	if(this.isInTransition()) {
 		ctx.save();
-		var alpha = 1.0 ;
+		var alpha = 1.0;
 		if(this.transitionStartFrame + RESULT_TRANSITION_COUNT >= this.frame_count) {
 			alpha = (this.frame_count - this.transitionStartFrame) / RESULT_TRANSITION_COUNT;
 		}
@@ -78,7 +78,7 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 
 	ctx.save();
 
-	var alpha = 1.0 ;
+	var alpha = 1.0;
 	if(this.frame_count < RESULT_TRANSITION_COUNT) {
 		alpha = this.frame_count / RESULT_TRANSITION_COUNT;
 	}
@@ -86,19 +86,19 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 		alpha = 1.0;
 	}
 
-	ctx.fillStyle = 'rgb(119, 66, 244)' ;
-	ctx.globalAlpha = alpha * 1.0; // タイトル背景黒は半透明
+	ctx.fillStyle = 'rgb(0, 0, 0)' ;
+	ctx.globalAlpha = alpha * 0.5; // タイトル背景黒は半透明
 	ctx.fillRect( this.parent.width/2 - 100, this.parent.height/2 - 140, 100*2, 140);
 
 	ctx.globalAlpha = alpha; // 文字を表示するので戻す
 
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.font = "18px 'Migu'" ;
 	ctx.fillText(this.resultName(), this.parent.width/2, 180);
 
 
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.fillStyle = 'white';
 	ctx.textAlign = 'left';
 	ctx.font = "16px 'Migu'" ;
 	// N秒ごとにメッセージを点滅
