@@ -3323,7 +3323,7 @@ SceneLoading.prototype.draw = function(){
 
 
 SceneLoading.prototype.progress = function(){
-	return(this.core.audio_loader.progress() + this.core.image_loader.progress() + this.core.font_loader.progress()) / 3;
+	return((this.core.audio_loader.progress() + this.core.image_loader.progress() + this.core.font_loader.progress()) / 3);
 };
 
 module.exports = SceneLoading;
