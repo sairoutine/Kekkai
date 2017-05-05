@@ -76,6 +76,7 @@ SceneLoading.prototype.draw = function(){
 	ctx.restore();
 
 
+	// プログレスバー
 	ctx.save();
 	ctx.fillStyle = 'rgb(119, 66, 244)';
 	ctx.fillRect(0, this.core.height - 20, this.core.width * this.progressPercentage()/100, 50);
