@@ -17,5 +17,7 @@ var Serif= [
 	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"Xボタンで私と霊夢の位置を入れかえることができるわ"},
 	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私は霊夢と反対の位置にいるから"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"Xボタンね"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"入れ替えられる回数には上限があるから"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私の上にある数字をよく見ていてね"},
 ];
 module.exports = Serif;
