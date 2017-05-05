@@ -109,6 +109,8 @@ var CONSTANT = {
 	STATE_DYING:     3,
 	STATE_EXCHANGE:  4,
 	STATE_FALLDOWN:  5,
+	STATE_MOVELEFT:  6,
+	STATE_MOVERIGHT: 7,
 };
 
 // レンダリングの順番
@@ -137,7 +139,7 @@ module.exports = CONSTANT;
 },{"./debug_constant":3}],3:[function(require,module,exports){
 'use strict';
 var DEBUG = {
-	ON: false,
+	ON: true,
 	SOUND_OFF: true,
 };
 
@@ -189,7 +191,7 @@ Game.prototype.stopBGM = function () {
 
 module.exports = Game;
 
-},{"./constant":2,"./hakurei":5,"./scene/loading":49,"./scene/prerelease_end":55,"./scene/stage":56,"./scene/title":62}],5:[function(require,module,exports){
+},{"./constant":2,"./hakurei":5,"./scene/loading":52,"./scene/prerelease_end":58,"./scene/stage":59,"./scene/title":65}],5:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -2395,6 +2397,8 @@ var util = require('../../hakurei').util;
 
 // プレイヤーの状態一覧
 var StateNormal    = require('./player/state_normal');
+var StateMoveLeft  = require('./player/state_moveleft');
+var StateMoveRight = require('./player/state_moveright');
 var StateClimbDown = require('./player/state_climbdown');
 var StateDying     = require('./player/state_dying');
 var StateExchange  = require('./player/state_exchange');
@@ -2407,6 +2411,8 @@ var Player = function (scene) {
 	this.state = null;
 	this.states = {};
 	this.states[ CONSTANT.STATE_NORMAL ]    = new StateNormal(scene, this);
+	this.states[ CONSTANT.STATE_MOVELEFT ]  = new StateMoveLeft(scene, this);
+	this.states[ CONSTANT.STATE_MOVERIGHT ] = new StateMoveRight(scene, this);
 	this.states[ CONSTANT.STATE_CLIMBDOWN ] = new StateClimbDown(scene, this);
 	this.states[ CONSTANT.STATE_DYING ]     = new StateDying(scene, this);
 	this.states[ CONSTANT.STATE_EXCHANGE ]  = new StateExchange(scene, this);
@@ -2457,6 +2463,14 @@ Player.prototype.beforeDraw = function(){
 };
 
 Player.prototype.update = function(){
+	// 移動
+	if (this.currentState() instanceof StateMoveLeft) {
+		this.moveLeft();
+	}
+	else if(this.currentState() instanceof StateMoveRight) {
+		this.moveRight();
+	}
+
 	// 落下判定
 	if(this.currentState().isFallDown()) {
 		if(!this.checkCollisionWithBlocks()) {
@@ -2746,6 +2760,10 @@ Player.prototype.checkCollisionWithFallBlock = function() {
 Player.prototype.changeState = function(state) {
 	this.state = state;
 	this.currentState().init();
+
+	if (CONSTANT.DEBUG.ON) {
+		console.log(this.state);
+	}
 };
 Player.prototype.currentState = function() {
 	return this.states[this.state];
@@ -2753,8 +2771,6 @@ Player.prototype.currentState = function() {
 
 // 左右移動
 Player.prototype.moveLeft = function() {
-	if(!this.currentState().isEnableToPlayMove()) return;
-
 	// 自機の移動
 	this.x -= MOVE_SPEED;
 	this.is_reflect = true;
@@ -2768,8 +2784,6 @@ Player.prototype.moveLeft = function() {
 	}
 };
 Player.prototype.moveRight = function() {
-	if(!this.currentState().isEnableToPlayMove()) return;
-
 	// 自機の移動
 	this.x += MOVE_SPEED;
 	this.is_reflect = false;
@@ -2783,8 +2797,7 @@ Player.prototype.moveRight = function() {
 	}
 
 };
-
-// はしご上下移動
+// はしご上移動
 Player.prototype.climbUp = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
@@ -2799,7 +2812,7 @@ Player.prototype.climbUp = function() {
 	}
 
 };
-// はしご上下移動
+// はしご下移動
 Player.prototype.climbDown = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
@@ -2813,6 +2826,43 @@ Player.prototype.climbDown = function() {
 		this.alterego.y += LADDER_SPEED;
 	}
 };
+
+
+
+
+
+
+
+Player.prototype.notifyMoveRight = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_MOVERIGHT);
+};
+Player.prototype.notifyMoveLeft = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_MOVELEFT);
+};
+Player.prototype.notifyMoveUp = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_MOVEUP);
+};
+Player.prototype.notifyMoveDown = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_MOVEDOWN);
+};
+
+Player.prototype.notifyNotMove = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_NORMAL);
+};
+
+
+
+
 // はしご移動中かどうか
 Player.prototype.isClimbDown = function() {
 	return this.currentState() instanceof StateClimbDown;
@@ -2973,7 +3023,7 @@ Player.prototype.collisionHeight = function() {
 
 module.exports = Player;
 
-},{"../../constant":2,"../../hakurei":5,"../alterego":24,"../exchange_anim":26,"./block_base":29,"./player/state_climbdown":44,"./player/state_dying":45,"./player/state_exchange":46,"./player/state_falldown":47,"./player/state_normal":48}],43:[function(require,module,exports){
+},{"../../constant":2,"../../hakurei":5,"../alterego":24,"../exchange_anim":26,"./block_base":29,"./player/state_climbdown":44,"./player/state_dying":45,"./player/state_exchange":46,"./player/state_falldown":47,"./player/state_moveleft":49,"./player/state_moveright":50,"./player/state_normal":51}],43:[function(require,module,exports){
 'use strict';
 var base_object = require('../../../hakurei').object.base;
 var util = require('../../../hakurei').util;
@@ -3130,6 +3180,40 @@ module.exports = StateNormal;
 },{"../../../constant":2,"../../../hakurei":5,"./state_base":43}],48:[function(require,module,exports){
 'use strict';
 
+// 移動状態の基底クラス
+
+var CONSTANT = require('../../../constant');
+var base_object = require('./state_base');
+var util = require('../../../hakurei').util;
+
+var StateMoveBase = function (scene) {
+	base_object.apply(this, arguments);
+};
+util.inherit(StateMoveBase, base_object);
+
+module.exports = StateMoveBase;
+
+},{"../../../constant":2,"../../../hakurei":5,"./state_base":43}],49:[function(require,module,exports){
+'use strict';
+
+// 左への移動状態
+
+var CONSTANT = require('../../../constant');
+var base_object = require('./state_move_base');
+var util = require('../../../hakurei').util;
+
+var StateMoveLeft = function (scene) {
+	base_object.apply(this, arguments);
+};
+util.inherit(StateMoveLeft, base_object);
+
+module.exports = StateMoveLeft;
+
+},{"../../../constant":2,"../../../hakurei":5,"./state_move_base":48}],50:[function(require,module,exports){
+arguments[4][49][0].apply(exports,arguments)
+},{"../../../constant":2,"../../../hakurei":5,"./state_move_base":48,"dup":49}],51:[function(require,module,exports){
+'use strict';
+
 // 通常の状態
 
 var CONSTANT = require('../../../constant');
@@ -3143,7 +3227,7 @@ util.inherit(StateNormal, base_object);
 
 module.exports = StateNormal;
 
-},{"../../../constant":2,"../../../hakurei":5,"./state_base":43}],49:[function(require,module,exports){
+},{"../../../constant":2,"../../../hakurei":5,"./state_base":43}],52:[function(require,module,exports){
 'use strict';
 
 // scene to load image and sound
@@ -3201,7 +3285,7 @@ SceneLoading.prototype.draw = function(){
 
 module.exports = SceneLoading;
 
-},{"../assets_config":1,"../hakurei":5}],50:[function(require,module,exports){
+},{"../assets_config":1,"../hakurei":5}],53:[function(require,module,exports){
 'use strict';
 var N = -1;
 var D = 10;
@@ -3253,119 +3337,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],51:[function(require,module,exports){
-'use strict';
-var N = -1;
-var D = 10;
-var A = 11;
-var B = 12;
-var C = 13;
-var I = 9;
-var E = 8;
-var P = 7;
-var L = 6;
-	// 横:30, 縦20
-	// N: 何もなし
-	// 0: 背景
-	// 1: 緑ブロック
-	// 2: 青ブロック
-	// 3: 赤ブロック
-	// 4: 紫ブロック
-	// 5: 茶ブロック
-	// 6: はしご
-	// 7: プレイヤー
-	// 8: 敵
-	// 9: アイテム
-	// D: 死亡ゾーン
-	// A: 石ブロック
-	// B: 石ブロック
-	// C: 石ブロック
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,I,0,0,0],
-	[0,0,A,C,L,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,I,0,E,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0],
-	[0,0,0,E,L,0,0,0,I,0,0,0,0,0,I,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],	
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],52:[function(require,module,exports){
-'use strict';
-var N = -1;
-var D = 10;
-var A = 11;
-var B = 12;
-var C = 13;
-var E = 8;
-var L = 6;
-var P = 7;
-var I = 9;
-	// 横:30, 縦20
-	// N: 何もなし
-	// 0: 背景
-	// 1: 緑ブロック
-	// 2: 青ブロック
-	// 3: 赤ブロック
-	// 4: 紫ブロック
-	// 5: 茶ブロック
-	// 6: はしご
-	// 7: プレイヤー
-	// 8: 敵
-	// 9: アイテム
-	// D: 死亡ゾーン
-	// A: 石ブロック
-	// B: 石ブロック
-	// C: 石ブロック
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,I,0,I,0,I,0,I,0,0,0,0,0,0,0,0,0,E,0,0],
-	[0,A,C,L,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,A,B,C,0],
-	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,C,0,0],
-	[0,0,0,A,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,A,B,L,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,E,0,0,0,0,0,0,0,0,I,0,I,0,I,0,I,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,A,B,C,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,A,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 0, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 var N = -1;
 var D = 10;
@@ -3421,7 +3393,119 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
+'use strict';
+var N = -1;
+var D = 10;
+var A = 11;
+var B = 12;
+var C = 13;
+var E = 8;
+var L = 6;
+var P = 7;
+var I = 9;
+	// 横:30, 縦20
+	// N: 何もなし
+	// 0: 背景
+	// 1: 緑ブロック
+	// 2: 青ブロック
+	// 3: 赤ブロック
+	// 4: 紫ブロック
+	// 5: 茶ブロック
+	// 6: はしご
+	// 7: プレイヤー
+	// 8: 敵
+	// 9: アイテム
+	// D: 死亡ゾーン
+	// A: 石ブロック
+	// B: 石ブロック
+	// C: 石ブロック
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,I,0,I,0,I,0,I,0,0,0,0,0,0,0,0,0,E,0,0],
+	[0,A,C,L,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,A,B,C,0],
+	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,C,0,0],
+	[0,0,0,A,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,A,B,L,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,E,0,0,0,0,0,0,0,0,I,0,I,0,I,0,I,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,A,B,C,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,A,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],56:[function(require,module,exports){
+'use strict';
+var N = -1;
+var D = 10;
+var A = 11;
+var B = 12;
+var C = 13;
+var I = 9;
+var E = 8;
+var P = 7;
+var L = 6;
+	// 横:30, 縦20
+	// N: 何もなし
+	// 0: 背景
+	// 1: 緑ブロック
+	// 2: 青ブロック
+	// 3: 赤ブロック
+	// 4: 紫ブロック
+	// 5: 茶ブロック
+	// 6: はしご
+	// 7: プレイヤー
+	// 8: 敵
+	// 9: アイテム
+	// D: 死亡ゾーン
+	// A: 石ブロック
+	// B: 石ブロック
+	// C: 石ブロック
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,I,0,0,0],
+	[0,0,A,C,L,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,I,0,E,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,E,L,0,0,0,I,0,0,0,0,0,I,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],	
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],57:[function(require,module,exports){
 'use strict';
 var N = -1;
 var D = 10;
@@ -3476,7 +3560,7 @@ module.exports = {
 	is_vertical: true, // 交代が垂直かどうか
 };
 
-},{}],55:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../hakurei').scene.base;
@@ -3566,7 +3650,7 @@ SceneTitle.prototype.draw = function(){
 
 module.exports = SceneTitle;
 
-},{"../hakurei":5}],56:[function(require,module,exports){
+},{"../hakurei":5}],59:[function(require,module,exports){
 'use strict';
 
 	var offset_x = 25;
@@ -3961,7 +4045,7 @@ SceneStage.prototype.calcItemNum = function() {
 
 module.exports = SceneStage;
 
-},{"../constant":2,"../hakurei":5,"../logic/serif/stage1/before":18,"../logic/serif/stage2/before":19,"../logic/serif/stage3/before":20,"../logic/serif/stage4/before":21,"../logic/serif/stage5/before":22,"../object/background_eye":25,"../object/stage_frame1":27,"../object/stage_frame2":28,"../object/tile/block_blue":30,"../object/tile/block_brown":31,"../object/tile/block_green":32,"../object/tile/block_purple":33,"../object/tile/block_red":34,"../object/tile/block_stone1":35,"../object/tile/block_stone2":36,"../object/tile/block_stone3":37,"../object/tile/death":38,"../object/tile/enemy":39,"../object/tile/item":40,"../object/tile/ladder":41,"../object/tile/player":42,"./map/stage1":50,"./map/stage2":51,"./map/stage3":52,"./map/stage4":53,"./map/stage5":54,"./stage/play":57,"./stage/result_clear":59,"./stage/result_gameover":60,"./stage/talk":61}],57:[function(require,module,exports){
+},{"../constant":2,"../hakurei":5,"../logic/serif/stage1/before":18,"../logic/serif/stage2/before":19,"../logic/serif/stage3/before":20,"../logic/serif/stage4/before":21,"../logic/serif/stage5/before":22,"../object/background_eye":25,"../object/stage_frame1":27,"../object/stage_frame2":28,"../object/tile/block_blue":30,"../object/tile/block_brown":31,"../object/tile/block_green":32,"../object/tile/block_purple":33,"../object/tile/block_red":34,"../object/tile/block_stone1":35,"../object/tile/block_stone2":36,"../object/tile/block_stone3":37,"../object/tile/death":38,"../object/tile/enemy":39,"../object/tile/item":40,"../object/tile/ladder":41,"../object/tile/player":42,"./map/stage1":53,"./map/stage2":54,"./map/stage3":55,"./map/stage4":56,"./map/stage5":57,"./stage/play":60,"./stage/result_clear":62,"./stage/result_gameover":63,"./stage/talk":64}],60:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../../hakurei').scene.base;
@@ -3981,29 +4065,33 @@ SceneStagePlay.prototype.init = function(){
 SceneStagePlay.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	this.parent.player().update();
-
 	if(this.core.isKeyDown(CONSTANT.BUTTON_LEFT)) {
-		this.parent.player().moveLeft();
+		this.parent.player().notifyMoveLeft();
 	}
-
-	if(this.core.isKeyDown(CONSTANT.BUTTON_RIGHT)) {
-		this.parent.player().moveRight();
+	else if(this.core.isKeyDown(CONSTANT.BUTTON_RIGHT)) {
+		this.parent.player().notifyMoveRight();
+	}
+	else {
+		this.parent.player().notifyNotMove();
 	}
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_X)) {
 		if(this.parent.player().startExchange()) {
+			// 位置交換成功
 			this.core.playSound("boss_powerup");
 		}
 		else {
+			// 位置交換失敗
 			this.core.playSound("forbidden");
 		}
 	}
+
+	this.parent.player().update();
 };
 
 module.exports = SceneStagePlay;
 
-},{"../../hakurei":5}],58:[function(require,module,exports){
+},{"../../hakurei":5}],61:[function(require,module,exports){
 'use strict';
 
 // メッセージを表示する間隔
@@ -4134,7 +4222,7 @@ SceneStageResultBase.prototype.notifyResultEnd = function(){
 module.exports = SceneStageResultBase;
 
 
-},{"../../hakurei":5}],59:[function(require,module,exports){
+},{"../../hakurei":5}],62:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -4161,7 +4249,7 @@ SceneStageResultClear.prototype.resultMessage = function(){
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":5,"./result_base":58}],60:[function(require,module,exports){
+},{"../../hakurei":5,"./result_base":61}],63:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -4188,7 +4276,7 @@ SceneStageResultClear.prototype.resultMessage = function(){
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":5,"./result_base":58}],61:[function(require,module,exports){
+},{"../../hakurei":5,"./result_base":61}],64:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
@@ -4394,7 +4482,7 @@ SceneStageTalk.prototype._showMessage = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":5}],62:[function(require,module,exports){
+},{"../../hakurei":5}],65:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../hakurei').scene.base;
