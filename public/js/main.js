@@ -363,6 +363,10 @@ AudioLoader.prototype._createSourceNode = function(name) {
 	return source;
 };
 
+AudioLoader.prototype.progress = function() {
+	return this.loading_audio_num / this.loaded_audio_num;
+};
+
 
 module.exports = AudioLoader;
 
@@ -382,6 +386,13 @@ FontLoader.prototype.isAllLoaded = function() {
 FontLoader.prototype.notifyLoadingDone = function() {
 	this.is_done = true;
 };
+
+FontLoader.prototype.progress = function() {
+	return this.is_done ? 1 : 0;
+};
+
+
+
 
 module.exports = FontLoader;
 
@@ -429,6 +440,13 @@ ImageLoader.prototype.isAllLoaded = function() {
 ImageLoader.prototype.getImage = function(name) {
 	return this.images[name];
 };
+
+ImageLoader.prototype.progress = function() {
+	return this.loading_image_num / this.loaded_image_num;
+};
+
+
+
 
 module.exports = ImageLoader;
 
@@ -1441,6 +1459,8 @@ var Serif= [
 	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"Xボタンで私と霊夢の位置を入れかえることができるわ"},
 	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私は霊夢と反対の位置にいるから"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"Xボタンね"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"入れ替えられる回数には上限があるから"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私の上にある数字をよく見ていてね"},
 ];
 module.exports = Serif;
 
@@ -2974,17 +2994,6 @@ Player.prototype.remainExchangeNum = function() {
 
 
 
-Player.prototype.isShow = function() {
-	if(this.isDying()) { // 死亡中は点滅する
-		return this.frame_count % 40 > 20;
-	}
-	else {
-		return true;
-	}
-};
-
-
-
 Player.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
@@ -3230,7 +3239,7 @@ module.exports = StateNormal;
 },{"../../../constant":2,"../../../hakurei":5,"./state_base":43}],52:[function(require,module,exports){
 'use strict';
 
-// scene to load image and sound
+// ローディングシーン
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
@@ -3260,27 +3269,61 @@ SceneLoading.prototype.init = function() {
 		var conf3 = AssetsConfig.bgms[key3];
 		this.core.audio_loader.loadBGM(key3, conf3.path, 1.0, conf3.loopStart, conf3.loopEnd);
 	}
-
 };
 
 SceneLoading.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	if (this.core.image_loader.isAllLoaded() && this.core.audio_loader.isAllLoaded()) {
+	if (this.core.image_loader.isAllLoaded() && this.core.audio_loader.isAllLoaded() && this.core.font_loader.isAllLoaded()) {
 		this.core.changeScene("title");
 	}
 };
 SceneLoading.prototype.draw = function(){
 	base_scene.prototype.draw.apply(this, arguments);
-
-	// TODO: update loading message
 	var ctx = this.core.ctx;
+
+	// 背景
+	ctx.save();
+	ctx.fillStyle = 'white';
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+	ctx.restore();
+
+	// メッセージ
+	var per_frame = this.frame_count % 60;
+	var DOT_SPAN = 15;
+
+	var dot = "";
+	if (DOT_SPAN > per_frame && per_frame >= 0) {
+		dot = "";
+	}
+	else if (DOT_SPAN*2 > per_frame && per_frame >= DOT_SPAN*1) {
+		dot = ".";
+	}
+	else if (DOT_SPAN*3 > per_frame && per_frame >= DOT_SPAN*2) {
+		dot = "..";
+	}
+	else {
+		dot = "...";
+	}
+
 	ctx.save();
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.textAlign = 'right';
+	ctx.textAlign = 'left';
 	ctx.font = "30px 'Migu'";
-	ctx.fillText('Now Loading...', 400, 225);
+	ctx.fillText('Now Loading' + dot, this.core.width - 250, this.core.height - 50);
 	ctx.restore();
+
+
+	// プログレスバー
+	ctx.save();
+	ctx.fillStyle = 'rgb(119, 66, 244)';
+	ctx.fillRect(0, this.core.height - 20, this.core.width * this.progress(), 50);
+	ctx.restore();
+};
+
+
+SceneLoading.prototype.progress = function(){
+	return(this.core.audio_loader.progress() + this.core.image_loader.progress() + this.core.font_loader.progress()) / 3;
 };
 
 module.exports = SceneLoading;
@@ -4152,7 +4195,7 @@ SceneStageResultBase.prototype.draw = function(){
 	// トランジション表示
 	if(this.isInTransition()) {
 		ctx.save();
-		var alpha = 1.0 ;
+		var alpha = 1.0;
 		if(this.transitionStartFrame + RESULT_TRANSITION_COUNT >= this.frame_count) {
 			alpha = (this.frame_count - this.transitionStartFrame) / RESULT_TRANSITION_COUNT;
 		}
@@ -4172,7 +4215,7 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 
 	ctx.save();
 
-	var alpha = 1.0 ;
+	var alpha = 1.0;
 	if(this.frame_count < RESULT_TRANSITION_COUNT) {
 		alpha = this.frame_count / RESULT_TRANSITION_COUNT;
 	}
@@ -4180,19 +4223,19 @@ SceneStageResultBase.prototype._showScoreWindow = function(){
 		alpha = 1.0;
 	}
 
-	ctx.fillStyle = 'rgb(119, 66, 244)' ;
-	ctx.globalAlpha = alpha * 1.0; // タイトル背景黒は半透明
+	ctx.fillStyle = 'rgb(0, 0, 0)' ;
+	ctx.globalAlpha = alpha * 0.5; // タイトル背景黒は半透明
 	ctx.fillRect( this.parent.width/2 - 100, this.parent.height/2 - 140, 100*2, 140);
 
 	ctx.globalAlpha = alpha; // 文字を表示するので戻す
 
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.fillStyle = 'white';
 	ctx.textAlign = 'center';
 	ctx.font = "18px 'Migu'" ;
 	ctx.fillText(this.resultName(), this.parent.width/2, 180);
 
 
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.fillStyle = 'white';
 	ctx.textAlign = 'left';
 	ctx.font = "16px 'Migu'" ;
 	// N秒ごとにメッセージを点滅
