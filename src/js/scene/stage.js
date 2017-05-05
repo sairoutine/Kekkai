@@ -226,9 +226,9 @@ SceneStage.prototype.draw = function() {
 	// ステージNo.
 	ctx.save();
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.textAlign = 'left';
-	ctx.font = "18px 'PixelMplus'";
-	ctx.fillText("ステージ: " + this.stage_no, 0, 40);
+	ctx.textAlign = 'right';
+	ctx.font = "24px 'PixelMplus'";
+	ctx.fillText("ステージ: " + this.stage_no, this.core.width - 30, 30);
 	ctx.restore();
 
 	ctx.save();
