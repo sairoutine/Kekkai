@@ -20,6 +20,7 @@ BlockGreen.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.start_fall_frame = 0;
 	this.is_show = true;
+	this.is_collision = true;
 };
 
 BlockGreen.prototype.spriteIndices = function(){
