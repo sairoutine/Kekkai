@@ -1,6 +1,6 @@
 'use strict';
 
-// scene to load image and sound
+// ローディングシーン
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
@@ -45,9 +45,34 @@ SceneLoading.prototype.draw = function(){
 
 	// TODO: update loading message
 	var ctx = this.core.ctx;
+
+	// 背景
+	ctx.save();
+	ctx.fillStyle = 'white';
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+	ctx.restore();
+
+	// メッセージ
+	var per_frame = this.frame_count % 60;
+	var DOT_SPAN = 15;
+
+	var dot = "";
+	if (DOT_SPAN > per_frame && per_frame >= 0) {
+		dot = "";
+	}
+	else if (DOT_SPAN*2 > per_frame && per_frame >= DOT_SPAN*1) {
+		dot = ".";
+	}
+	else if (DOT_SPAN*3 > per_frame && per_frame >= DOT_SPAN*2) {
+		dot = "..";
+	}
+	else {
+		dot = "...";
+	}
+
 	ctx.save();
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.textAlign = 'right';
+	ctx.textAlign = 'left';
 	ctx.font = "30px 'Migu'";
 	ctx.fillText('Now Loading...', 400, 225);
 	ctx.restore();
