@@ -125,7 +125,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	this.createBackGroundEyes();
 
 	// マップデータが正しいかチェック
-	if (CONSTANT.DEBUG) {
+	if (CONSTANT.DEBUG.ON) {
 		this.checkValidMap(MAPS[this.stage_no].map);
 	}
 	// マップデータからオブジェクト生成

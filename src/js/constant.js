@@ -1,8 +1,8 @@
 'use strict';
+var DEBUG = require("./debug_constant");
 
 var CONSTANT = {
-	DEBUG: true,
-	SOUND_OFF: false,
+	DEBUG: {},
 
 	TILE_SIZE:  24,
 
@@ -46,5 +46,7 @@ CONSTANT.RENDER_SORT = [
 	CONSTANT.ITEM,
 ];
 
-
+if (DEBUG.ON) {
+	CONSTANT.DEBUG = DEBUG;
+}
 module.exports = CONSTANT;
