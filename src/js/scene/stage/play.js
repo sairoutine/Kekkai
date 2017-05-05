@@ -17,24 +17,28 @@ SceneStagePlay.prototype.init = function(){
 SceneStagePlay.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	this.parent.player().update();
-
 	if(this.core.isKeyDown(CONSTANT.BUTTON_LEFT)) {
-		this.parent.player().moveLeft();
+		this.parent.player().notifyMoveLeft();
 	}
-
-	if(this.core.isKeyDown(CONSTANT.BUTTON_RIGHT)) {
-		this.parent.player().moveRight();
+	else if(this.core.isKeyDown(CONSTANT.BUTTON_RIGHT)) {
+		this.parent.player().notifyMoveRight();
+	}
+	else {
+		this.parent.player().notifyNotMove();
 	}
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_X)) {
 		if(this.parent.player().startExchange()) {
+			// 位置交換成功
 			this.core.playSound("boss_powerup");
 		}
 		else {
+			// 位置交換失敗
 			this.core.playSound("forbidden");
 		}
 	}
+
+	this.parent.player().update();
 };
 
 module.exports = SceneStagePlay;

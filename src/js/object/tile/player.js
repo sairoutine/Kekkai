@@ -116,6 +116,14 @@ Player.prototype.beforeDraw = function(){
 };
 
 Player.prototype.update = function(){
+	// 移動
+	if (this.currentState() instanceof StateMoveLeft) {
+		this.moveLeft();
+	}
+	else if(this.currentState() instanceof StateMoveRight) {
+		this.moveRight();
+	}
+
 	// 落下判定
 	if(this.currentState().isFallDown()) {
 		if(!this.checkCollisionWithBlocks()) {
@@ -412,8 +420,6 @@ Player.prototype.currentState = function() {
 
 // 左右移動
 Player.prototype.moveLeft = function() {
-	if(!this.currentState().isEnableToPlayMove()) return;
-
 	// 自機の移動
 	this.x -= MOVE_SPEED;
 	this.is_reflect = true;
@@ -427,8 +433,6 @@ Player.prototype.moveLeft = function() {
 	}
 };
 Player.prototype.moveRight = function() {
-	if(!this.currentState().isEnableToPlayMove()) return;
-
 	// 自機の移動
 	this.x += MOVE_SPEED;
 	this.is_reflect = false;
@@ -472,6 +476,43 @@ Player.prototype.climbDown = function() {
 		this.alterego.y += LADDER_SPEED;
 	}
 };
+
+
+
+
+
+
+
+Player.prototype.notifyMoveRight = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_MOVERIGHT);
+};
+Player.prototype.notifyMoveLeft = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_MOVELEFT);
+};
+Player.prototype.notifyMoveUp = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_MOVEUP);
+};
+Player.prototype.notifyMoveDown = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_MOVEDOWN);
+};
+
+Player.prototype.notifyNotMove = function() {
+	if(!this.currentState().isEnableToPlayMove()) return;
+
+	this.changeState(CONSTANT.STATE_NORMAL);
+};
+
+
+
+
 // はしご移動中かどうか
 Player.prototype.isClimbDown = function() {
 	return this.currentState() instanceof StateClimbDown;
