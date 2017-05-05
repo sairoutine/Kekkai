@@ -50,6 +50,8 @@ var util = require('../../hakurei').util;
 
 // プレイヤーの状態一覧
 var StateNormal    = require('./player/state_normal');
+var StateMoveLeft  = require('./player/state_moveleft');
+var StateMoveRight = require('./player/state_moveright');
 var StateClimbDown = require('./player/state_climbdown');
 var StateDying     = require('./player/state_dying');
 var StateExchange  = require('./player/state_exchange');
@@ -62,6 +64,8 @@ var Player = function (scene) {
 	this.state = null;
 	this.states = {};
 	this.states[ CONSTANT.STATE_NORMAL ]    = new StateNormal(scene, this);
+	this.states[ CONSTANT.STATE_MOVELEFT ]  = new StateMoveLeft(scene, this);
+	this.states[ CONSTANT.STATE_MOVERIGHT ] = new StateMoveRight(scene, this);
 	this.states[ CONSTANT.STATE_CLIMBDOWN ] = new StateClimbDown(scene, this);
 	this.states[ CONSTANT.STATE_DYING ]     = new StateDying(scene, this);
 	this.states[ CONSTANT.STATE_EXCHANGE ]  = new StateExchange(scene, this);

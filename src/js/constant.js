@@ -26,6 +26,8 @@ var CONSTANT = {
 	STATE_DYING:     3,
 	STATE_EXCHANGE:  4,
 	STATE_FALLDOWN:  5,
+	STATE_MOVELEFT:  6,
+	STATE_MOVERIGHT: 7,
 };
 
 // レンダリングの順番
