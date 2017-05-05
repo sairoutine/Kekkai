@@ -1586,6 +1586,21 @@ AlterEgo.prototype.beforeDraw = function(){
 
 };
 
+AlterEgo.prototype.draw = function(){
+	base_object.prototype.draw.apply(this, arguments);
+
+	var ctx = this.core.ctx;
+	// 交換可能回数
+	ctx.save();
+	var num = this.scene.player().remainExchangeNum();
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.textAlign = 'center';
+	ctx.font = "12px 'PixelMplus'";
+	ctx.fillText(num, this.x, this.y - this.height()/2 - 10);
+	ctx.restore();
+};
+
+
 AlterEgo.prototype.collisionWidth = function(){
 	return 24;
 };
@@ -3777,15 +3792,12 @@ SceneStage.prototype.draw = function() {
 	);
 	ctx.restore();
 
-	// show exchange num
+	// ステージNo.
 	ctx.save();
-	var player = this.player();
-	var num = this.player().remainExchangeNum();
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.textAlign = 'left';
-	ctx.font = "18px 'PixelMplus'";
-	ctx.fillText("交換可能数: " + num, 0, 20);
-	ctx.fillText("ステージ: " + this.stage_no, 0, 40);
+	ctx.textAlign = 'right';
+	ctx.font = "24px 'PixelMplus'";
+	ctx.fillText("ステージ: " + this.stage_no, this.core.width - 30, 30);
 	ctx.restore();
 
 	ctx.save();
