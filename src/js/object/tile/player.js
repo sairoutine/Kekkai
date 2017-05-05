@@ -446,8 +446,7 @@ Player.prototype.moveRight = function() {
 	}
 
 };
-
-// はしご上下移動
+// はしご上移動
 Player.prototype.climbUp = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
@@ -462,7 +461,7 @@ Player.prototype.climbUp = function() {
 	}
 
 };
-// はしご上下移動
+// はしご下移動
 Player.prototype.climbDown = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
