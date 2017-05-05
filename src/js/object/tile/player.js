@@ -413,6 +413,10 @@ Player.prototype.checkCollisionWithFallBlock = function() {
 Player.prototype.changeState = function(state) {
 	this.state = state;
 	this.currentState().init();
+
+	if (CONSTANT.DEBUG.ON) {
+		console.log(this.state);
+	}
 };
 Player.prototype.currentState = function() {
 	return this.states[this.state];
