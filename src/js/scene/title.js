@@ -76,7 +76,7 @@ SceneTitle.prototype.draw = function(){
 
 
 	// show press z
-	ctx.font = "38px 'Comic Sans MS'";
+	ctx.font = "38px 'Migu'";
 	ctx.textAlign = 'center';
 
 	if(this.frame_count % 80 > 40) {

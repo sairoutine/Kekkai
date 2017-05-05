@@ -38,7 +38,7 @@ SceneTitle.prototype.draw = function(){
 	var text = '体験版 終了';
 	ctx.textAlign = 'center';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.font = "60px 'ＭＳ ゴシック'";
+	ctx.font = "60px 'Migu'";
 	ctx.fillText(text, this.core.width/2, 100);
 
 	// メッセージ
@@ -57,7 +57,7 @@ SceneTitle.prototype.draw = function(){
 	];
 
 	for (var i = 0; i < texts.length; i++) {
-		ctx.font = "24px 'ＭＳ ゴシック'";
+		ctx.font = "24px 'Migu'";
 		ctx.textAlign = 'left';
 		ctx.fillStyle = 'rgb( 255, 255, 255 )';
 		ctx.fillText(texts[i], 100, 180 + i*30);
@@ -66,7 +66,7 @@ SceneTitle.prototype.draw = function(){
 
 
 	// show press z
-	ctx.font = "38px 'ＭＳ ゴシック'";
+	ctx.font = "38px 'Migu'";
 	ctx.textAlign = 'center';
 
 	if(this.frame_count % 80 > 40) {

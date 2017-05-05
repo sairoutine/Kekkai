@@ -47,7 +47,7 @@ SceneLoading.prototype.draw = function(){
 	ctx.save();
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.textAlign = 'right';
-	ctx.font = "30px 'ＭＳ ゴシック'";
+	ctx.font = "30px 'Migu'";
 	ctx.fillText('Now Loading...', 400, 225);
 	ctx.restore();
 };
