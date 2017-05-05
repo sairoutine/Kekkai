@@ -50,7 +50,7 @@ AlterEgo.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 AlterEgo.prototype.spriteAnimationSpan = function(){
-	return 20;
+	return 30;
 };
 AlterEgo.prototype.spriteIndices = function(){
 	return [{x: 5, y: 0}, {x: 6, y: 0}];

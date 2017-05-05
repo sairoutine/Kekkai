@@ -444,13 +444,13 @@ Player.prototype.climbUp = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
 	// 自機の移動
-	this.y -= FALL_SPEED;
+	this.y -= LADDER_SPEED;
 	// 分身の移動
 	if (this.scene.isVertical()) {
-		this.alterego.y += FALL_SPEED;
+		this.alterego.y += LADDER_SPEED;
 	}
 	else {
-		this.alterego.y -= FALL_SPEED;
+		this.alterego.y -= LADDER_SPEED;
 	}
 
 };
@@ -602,7 +602,7 @@ Player.prototype.spriteIndices = function(){
 	}
 };
 Player.prototype.spriteAnimationSpan = function(){
-	return 20;
+	return 10;
 };
 
 Player.prototype.spriteWidth = function(){
