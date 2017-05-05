@@ -627,17 +627,6 @@ Player.prototype.remainExchangeNum = function() {
 
 
 
-Player.prototype.isShow = function() {
-	if(this.isDying()) { // 死亡中は点滅する
-		return this.frame_count % 40 > 20;
-	}
-	else {
-		return true;
-	}
-};
-
-
-
 Player.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
