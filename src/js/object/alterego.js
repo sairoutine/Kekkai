@@ -41,9 +41,9 @@ AlterEgo.prototype.draw = function(){
 	ctx.save();
 	var num = this.scene.player().remainExchangeNum();
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.textAlign = 'left';
-	ctx.font = "18px 'PixelMplus'";
-	ctx.fillText("交換可能数: " + num, 0, 20);
+	ctx.textAlign = 'center';
+	ctx.font = "12px 'PixelMplus'";
+	ctx.fillText(num, this.x, this.y - this.height()/2 - 10);
 	ctx.restore();
 };
 
