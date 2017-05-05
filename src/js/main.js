@@ -13,6 +13,16 @@ window.onload = function() {
 	game = new Game(mainCanvas);
 	// 初期化
 	game.init();
+
+	// フォントの読み込みが完了
+	if(document.fonts) {
+		document.fonts.addEventListener('loadingdone', function() { game.fontLoadingDone(); });
+	}
+	else {
+		// フォントロードに対応してなければ無視
+		game.fontLoadingDone();
+	}
+
 	// キーバインド
 	window.onkeydown = function(e) { game.handleKeyDown(e); };
 	window.onkeyup   = function(e) { game.handleKeyUp(e); };
