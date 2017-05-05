@@ -41,11 +41,26 @@ AssetsConfig.images = {
 };
 
 AssetsConfig.sounds = {
-	forbidden:    "./sound/forbidden.wav",
-	select:       "./sound/select.wav",
-	boss_powerup: "./sound/boss_powerup.wav",
-	dead:         "./sound/dead.wav",
-	powerup:      "./sound/powerup.wav",
+	forbidden:    {
+		path: "./sound/forbidden.wav",
+		volume: 0.8,
+	},
+	select:    {
+		path: "./sound/select.wav",
+		volume: 0.8,
+	},
+	boss_powerup:    {
+		path: "./sound/boss_powerup.wav",
+		volume: 0.8,
+	},
+	dead:    {
+		path: "./sound/dead.wav",
+		volume: 0.5,
+	},
+	powerup:    {
+		path: "./sound/powerup.wav",
+		volume: 0.8,
+	},
 };
 
 AssetsConfig.bgms = {
