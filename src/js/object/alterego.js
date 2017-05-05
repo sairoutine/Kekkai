@@ -33,6 +33,21 @@ AlterEgo.prototype.beforeDraw = function(){
 
 };
 
+AlterEgo.prototype.draw = function(){
+	base_object.prototype.draw.apply(this, arguments);
+
+	var ctx = this.core.ctx;
+	// 交換可能回数
+	ctx.save();
+	var num = this.scene.player().remainExchangeNum();
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.textAlign = 'left';
+	ctx.font = "18px 'PixelMplus'";
+	ctx.fillText("交換可能数: " + num, 0, 20);
+	ctx.restore();
+};
+
+
 AlterEgo.prototype.collisionWidth = function(){
 	return 24;
 };
