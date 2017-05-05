@@ -117,19 +117,20 @@ SceneStageTalk.prototype._showLeftChara = function () {
 SceneStageTalk.prototype._showMessageWindow = function(){
 	var ctx = this.core.ctx;
 	// show message window
-
 	ctx.save();
+
 	var message_height = 100;
 
-	var fukidashi = this.core.image_loader.getImage("serif_window");
-	ctx.drawImage(fukidashi,
+	ctx.globalAlpha = 0.5;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.fillRect(
 		MESSAGE_WINDOW_OUTLINE_MARGIN,
 		this.core.height - message_height - MESSAGE_WINDOW_OUTLINE_MARGIN,
 		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
 		message_height
 	);
-	ctx.restore();
 
+	ctx.restore();
 };
 
 // セリフ表示
@@ -137,10 +138,9 @@ SceneStageTalk.prototype._showMessage = function() {
 	var ctx = this.core.ctx;
 	ctx.save();
 
-	ctx.font = "18px 'Comic Sans MS'";
+	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
-	ctx.fillStyle = 'blue';
 
 	var x, y;
 	// セリフ表示
@@ -151,6 +151,11 @@ SceneStageTalk.prototype._showMessage = function() {
 		y = this.core.height - message_height + MESSAGE_WINDOW_OUTLINE_MARGIN;
 
 		for(var i = 0, len = lines.length; i < len; i++) {
+			ctx.fillStyle = 'rgb( 0, 0, 0 )';
+			ctx.lineWidth = 4.0;
+			ctx.strokeText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
+
+			ctx.fillStyle = 'white';
 			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
 
 			y+= 30;
