@@ -30,14 +30,13 @@ SceneLoading.prototype.init = function() {
 		var conf3 = AssetsConfig.bgms[key3];
 		this.core.audio_loader.loadBGM(key3, conf3.path, 1.0, conf3.loopStart, conf3.loopEnd);
 	}
-
 };
 
 SceneLoading.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
 	if (this.core.image_loader.isAllLoaded() && this.core.audio_loader.isAllLoaded() && this.core.font_loader.isAllLoaded()) {
-		//this.core.changeScene("title");
+		this.core.changeScene("title");
 	}
 };
 SceneLoading.prototype.draw = function(){
@@ -79,13 +78,13 @@ SceneLoading.prototype.draw = function(){
 	// プログレスバー
 	ctx.save();
 	ctx.fillStyle = 'rgb(119, 66, 244)';
-	ctx.fillRect(0, this.core.height - 20, this.core.width * this.progressPercentage()/100, 50);
+	ctx.fillRect(0, this.core.height - 20, this.core.width * this.progress(), 50);
 	ctx.restore();
 };
 
 
-SceneLoading.prototype.progressPercentage = function(){
-	return (this.frame_count/2) > 100 ? 100 : this.frame_count/2;
+SceneLoading.prototype.progress = function(){
+	return(this.core.audio_loader.progress() + this.core.image_loader.progress() + this.core.font_loader.progress()) / 3;
 };
 
 module.exports = SceneLoading;
