@@ -1409,21 +1409,21 @@ module.exports = Util;
 
 // セリフ
 var Serif= [
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"いたた..."},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"あらあら"},
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"あ、ゆかり"},
-	{"pos":"left","exp":"angry","chara":"reimu","fukidashi":"normal","serif":"またアンタのしわざね"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"暇そうにしてたから♪"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"それよりほら、見て"},
-	{"pos":"left","exp":"angry","chara":"reimu","fukidashi":"normal","serif":"なによ"},
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"御札が落ちてるわ"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"あれを全部拾うと帰れるわよ"},
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"どういう理屈よ"},
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"わたしじゃ取れない場所にあるじゃない"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"手伝ってあげるわよ"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"Xボタンで私と霊夢の位置を入れかえることができるわ"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私は霊夢と反対の位置にいるから"},
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"Xボタンね"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"いたた..."},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"あらあら"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あ、ゆかり"},
+	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"またアンタのしわざね"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"暇そうにしてたから♪"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"それよりほら、見て"},
+	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"なによ"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"御札が落ちてるわ"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"あれを全部拾うと帰れるわよ"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"どういう理屈よ"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"わたしじゃ取れない場所にあるじゃない"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"手伝ってあげるわよ"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"Xボタンで私と霊夢の位置を入れかえることができるわ"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私は霊夢と反対の位置にいるから"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"Xボタンね"},
 ];
 module.exports = Serif;
 
@@ -1432,11 +1432,11 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"..."},
-	{"pos":"left","exp":"angry","chara":"reimu","fukidashi":"normal","serif":"帰れてないじゃない！"},
-	{"pos":"right","exp":"normal","chara":"yukari","fukidashi":"normal","serif":"まだ先があるみたいね"},
-	{"pos":"right","exp":"normal","chara":"yukari","fukidashi":"normal","serif":"敵みたいなのがいるから気をつけて"},
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"はいはい"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"..."},
+	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"帰れてないじゃない！"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"まだ先があるみたいね"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"敵みたいなのがいるから気をつけて"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"はいはい"},
 ];
 module.exports = Serif;
 
@@ -1445,9 +1445,9 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"なんか茶色いブロックがあるわ"},
-	{"pos":"right","exp":"normal","chara":"yukari","fukidashi":"normal","serif":"一度乗ると消えちゃうみたいね"},
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"消えちゃうのね"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"なんか茶色いブロックがあるわ"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"一度乗ると消えちゃうみたいね"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"消えちゃうのね"},
 ];
 module.exports = Serif;
 
@@ -1464,10 +1464,10 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"アンタさっきと違う位置にいない？"},
-	{"pos":"right","exp":"normal","chara":"yukari","fukidashi":"normal","serif":"わたしは霊夢の反対側にいるの"},
-	{"pos":"right","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"このステージでは上下の反対側にいるみたいね"},
-	{"pos":"left","exp":"normal","chara":"reimu","fukidashi":"normal","serif":"ふぅん"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"アンタさっきと違う位置にいない？"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"わたしは霊夢の反対側にいるの"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"このステージでは上下の反対側にいるみたいね"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"ふぅん"},
 ];
 module.exports = Serif;
 
@@ -4159,7 +4159,7 @@ module.exports = SceneStageResultClear;
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
 var TALKER_MOVE_PX = 5;
-var SCALE = 0.5;
+var SCALE = 1;
 
 var base_scene = require('../../hakurei').scene.base;
 var CONSTANT = require('../../hakurei').constant;
@@ -4222,10 +4222,10 @@ SceneStageTalk.prototype._showRightChara = function(){
 	ctx.save();
 
 	var x = 400;
-	var y = 50;
+	var y = 65;
 
 	if(!this.serif.is_right_talking()) {
-		ctx.globalAlpha = 0.5;
+		ctx.globalAlpha = 0.75;
 	}
 	else {
 		x -= TALKER_MOVE_PX;
@@ -4244,6 +4244,38 @@ SceneStageTalk.prototype._showRightChara = function(){
 	ctx.restore();
 };
 
+SceneStageTalk.prototype._showLeftChara = function(){
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var x = -50;
+	var y = 25;
+
+	if(!this.serif.is_left_talking()) {
+		ctx.globalAlpha = 0.75;
+	}
+	else {
+		x += TALKER_MOVE_PX;
+		y -= TALKER_MOVE_PX;
+	}
+
+	var left_image = this.core.image_loader.getImage(this.serif.left_image());
+
+	ctx.drawImage(left_image,
+		x,
+		y,
+		left_image.width  * SCALE,
+		left_image.height * SCALE
+	);
+
+	ctx.restore();
+};
+
+
+
+
+
+/*
 SceneStageTalk.prototype._showLeftChara = function () {
 	var ctx = this.core.ctx;
 	ctx.save();
@@ -4270,6 +4302,7 @@ SceneStageTalk.prototype._showLeftChara = function () {
 
 	ctx.restore();
 };
+*/
 
 SceneStageTalk.prototype._showMessageWindow = function(){
 	var ctx = this.core.ctx;
