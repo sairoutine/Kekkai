@@ -364,7 +364,7 @@ AudioLoader.prototype._createSourceNode = function(name) {
 };
 
 AudioLoader.prototype.progress = function() {
-	return this.loading_audio_num / this.loaded_audio_num;
+	return this.loaded_audio_num / this.loading_audio_num;
 };
 
 
@@ -442,7 +442,7 @@ ImageLoader.prototype.getImage = function(name) {
 };
 
 ImageLoader.prototype.progress = function() {
-	return this.loading_image_num / this.loaded_image_num;
+	return this.loaded_image_num / this.loading_image_num;
 };
 
 
@@ -3368,7 +3368,8 @@ SceneLoading.prototype.draw = function(){
 
 
 SceneLoading.prototype.progress = function(){
-	return((this.core.audio_loader.progress() + this.core.image_loader.progress() + this.core.font_loader.progress()) / 3);
+	var progress = (this.core.audio_loader.progress() + this.core.image_loader.progress() + this.core.font_loader.progress()) / 3;
+	return progress;
 };
 
 module.exports = SceneLoading;
