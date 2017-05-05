@@ -37,13 +37,11 @@ SceneLoading.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
 	if (this.core.image_loader.isAllLoaded() && this.core.audio_loader.isAllLoaded() && this.core.font_loader.isAllLoaded()) {
-		this.core.changeScene("title");
+		//this.core.changeScene("title");
 	}
 };
 SceneLoading.prototype.draw = function(){
 	base_scene.prototype.draw.apply(this, arguments);
-
-	// TODO: update loading message
 	var ctx = this.core.ctx;
 
 	// 背景
@@ -74,8 +72,19 @@ SceneLoading.prototype.draw = function(){
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.textAlign = 'left';
 	ctx.font = "30px 'Migu'";
-	ctx.fillText('Now Loading...', 400, 225);
+	ctx.fillText('Now Loading' + dot, this.core.width - 250, this.core.height - 50);
 	ctx.restore();
+
+
+	ctx.save();
+	ctx.fillStyle = 'rgb(119, 66, 244)';
+	ctx.fillRect(0, this.core.height - 20, this.core.width * this.progressPercentage()/100, 50);
+	ctx.restore();
+};
+
+
+SceneLoading.prototype.progressPercentage = function(){
+	return (this.frame_count/2) > 100 ? 100 : this.frame_count/2;
 };
 
 module.exports = SceneLoading;
