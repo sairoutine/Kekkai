@@ -92,7 +92,7 @@ SceneStageTalk.prototype._showLeftChara = function(){
 	ctx.save();
 
 	var x = -50;
-	var y = 30;
+	var y = 25;
 
 	if(!this.serif.is_left_talking()) {
 		ctx.globalAlpha = 0.75;
