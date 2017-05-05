@@ -42,11 +42,26 @@ AssetsConfig.images = {
 };
 
 AssetsConfig.sounds = {
-	forbidden:    "./sound/forbidden.wav",
-	select:       "./sound/select.wav",
-	boss_powerup: "./sound/boss_powerup.wav",
-	dead:         "./sound/dead.wav",
-	powerup:      "./sound/powerup.wav",
+	forbidden:    {
+		path: "./sound/forbidden.wav",
+		volume: 0.8,
+	},
+	select:    {
+		path: "./sound/select.wav",
+		volume: 0.8,
+	},
+	boss_powerup:    {
+		path: "./sound/boss_powerup.wav",
+		volume: 0.8,
+	},
+	dead:    {
+		path: "./sound/dead.wav",
+		volume: 0.5,
+	},
+	powerup:    {
+		path: "./sound/powerup.wav",
+		volume: 0.8,
+	},
 };
 
 AssetsConfig.bgms = {
@@ -122,7 +137,7 @@ module.exports = CONSTANT;
 },{"./debug_constant":3}],3:[function(require,module,exports){
 'use strict';
 var DEBUG = {
-	ON: true,
+	ON: false,
 	SOUND_OFF: true,
 };
 
@@ -1437,6 +1452,10 @@ var Serif= [
 	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"まだ先があるみたいね"},
 	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"敵みたいなのがいるから気をつけて"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"はいはい"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"わたしは敵に触れても大丈夫なのよ"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"はいはい"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"霊夢はあのオバケみたいなのに触れちゃだめよ"},
+	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"アンタだけずるくない？！"},
 ];
 module.exports = Serif;
 
@@ -3133,13 +3152,14 @@ SceneLoading.prototype.init = function() {
 
 	// ゲームで使用するSE一覧
 	for (var key2 in AssetsConfig.sounds) {
-		this.core.audio_loader.loadSound(key2, AssetsConfig.sounds[key2]);
+		var conf2 = AssetsConfig.sounds[key2];
+		this.core.audio_loader.loadSound(key2, conf2.path, conf2.volume);
 	}
 
 	// ゲームで使用するBGM一覧
 	for (var key3 in AssetsConfig.bgms) {
-		var conf = AssetsConfig.bgms[key3];
-		this.core.audio_loader.loadBGM(key3, conf.path, 1.0, conf.loopStart, conf.loopEnd);
+		var conf3 = AssetsConfig.bgms[key3];
+		this.core.audio_loader.loadBGM(key3, conf3.path, 1.0, conf3.loopStart, conf3.loopEnd);
 	}
 
 };
