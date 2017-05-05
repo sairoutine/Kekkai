@@ -49,6 +49,6 @@ var map = [
 
 module.exports = {
 	map: map, // マップ
-	exchange_num: 0, // 位置移動上限回数
+	exchange_num: 1, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
 };
