@@ -2,7 +2,8 @@
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
-var CONSTANT = require('../hakurei').constant;
+var H_CONSTANT = require('../hakurei').constant;
+var CONSTANT = require('../constant');
 
 // transition time ready to show canvas
 var SHOW_TRANSITION_COUNT = 100;
@@ -32,9 +33,16 @@ SceneTitle.prototype.beforeDraw = function(){
 		this.core.playBGM("title");
 	}
 
-	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
+		var stage_no;
+		if (CONSTANT.DEBUG.START_STAGE_NO) {
+			stage_no = CONSTANT.DEBUG.START_STAGE_NO;
+		}
+		else {
+			stage_no = 1;
+		}
 		this.core.playSound('select');
-		this.core.changeScene("stage", 1, "talk", true); // stage_no = 1
+		this.core.changeScene("stage", stage_no, "talk", true);
 	}
 };
 
