@@ -6,7 +6,7 @@ var H_CONSTANT = require('../../hakurei').constant;
 // 移動速度
 var MOVE_SPEED = 2;
 // 落下速度
-var FALL_SPEED = 3;
+var FALL_SPEED = 2; // TODO: なぜか3にすると、ハシゴを登りきった後に左右に移動できない
 // はしごを上るスピード
 var LADDER_SPEED = 2;
 
@@ -140,26 +140,34 @@ Player.prototype.update = function(){
 		}
 	}
 
-	// はしごを降りているか判定
+	// はしごに触れていて、かつ移動可能で、かつまだハシゴ移動状態でなくて、かつ上下キーを押していたら、はしご移動状態に移行
 	var collision_ladder = this.checkCollisionWithLadder();
-	if(collision_ladder && this.currentState().isEnableToPlayMove()) {
-		if(!this.isClimbDown() || !this.checkCollisionWithBlocks2()) {
-			if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+	if(collision_ladder && this.currentState().isEnableToPlayMove() && !this.isClimbDown()) {
+			if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN) || this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
 				this.changeState(CONSTANT.STATE_CLIMBDOWN);
-				this._x = collision_ladder.x();
-				this.climbDown();
 			}
-			else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
-				this.changeState(CONSTANT.STATE_CLIMBDOWN);
-				this._x = collision_ladder.x();
-				this.climbUp();
-			}
-		}
 	}
 
-	// はしごを降りるのが終了したかどうか判定
-	if(!collision_ladder && this.isClimbDown()) {
-		this.changeState(CONSTANT.STATE_NORMAL);
+	if (this.isClimbDown()) {
+		// はしごを降りるのが終了したかどうか判定
+		if(!collision_ladder) {
+			this.changeState(CONSTANT.STATE_NORMAL);
+		}
+
+		// 上下キーが入力されていれば上下移動
+		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+			this._x = collision_ladder.x();
+			this.climbDown();
+		}
+		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+			this.changeState(CONSTANT.STATE_CLIMBDOWN);
+			this._x = collision_ladder.x();
+			this.climbUp();
+		}
+		// 下の地面に設地したら、強制的にハシゴ状態を解除
+		if(this.checkCollisionWithBlocks2()) {
+			this.changeState(CONSTANT.STATE_NORMAL);
+		}
 	}
 
 	// 死亡判定
