@@ -24,8 +24,12 @@ AlterEgo.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 AlterEgo.prototype.spriteIndices = function(){
-	var y = this.is_yukari ? 1 : 3;
-	return [{x: 0, y: y}, {x: 1, y: y},{x: 2, y:y}, {x:3, y:y}, {x:3, y:y}, {x:4, y:y}, {x:5, y:y}];
+	if (this.is_yukari) {
+		return [{x: 0, y: 1}, {x: 1, y: 1},{x: 2, y: 1}, {x:3, y: 1}, {x:3, y: 1}, {x:4, y: 1}, {x:5, y: 1}, {x: 6, y:1}];
+	}
+	else {
+		return [{x: 0, y: 3}, {x: 1, y: 3},{x: 2, y:3}, {x:3, y:3}, {x:3, y:3}, {x:4, y: 3}, {x:5, y: 3}, {x: 6, y:3}];
+	}
 };
 AlterEgo.prototype.spriteWidth = function(){
 	return 32;
