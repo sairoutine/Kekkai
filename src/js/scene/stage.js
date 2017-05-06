@@ -122,7 +122,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	this.objects_by_tile_type = this.initializeObjectsByTileType();
 
 	// 背景の目玉を作成
-	this.createBackGroundEyes();
+	//this.createBackGroundEyes();
 
 	// マップデータが正しいかチェック
 	if (CONSTANT.DEBUG.ON) {
