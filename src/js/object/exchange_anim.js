@@ -9,8 +9,8 @@ util.inherit(AlterEgo, base_object);
 
 AlterEgo.prototype.init = function(x, y, anim_span, is_yukari) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 	this.is_yukari = is_yukari ? true : false;
 
 	this.anim_span = anim_span;

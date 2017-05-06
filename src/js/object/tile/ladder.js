@@ -10,8 +10,8 @@ util.inherit(Ladder, base_object);
 
 Ladder.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 };
 
 Ladder.prototype.isCollision = function() {
@@ -32,7 +32,7 @@ Ladder.prototype.draw = function() {
 		0, 0,
 		// sprite size to get
 		32, 16,
-		this.x, this.y,
+		this.x(), this.y(),
 		// sprite size to show
 		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
 	);

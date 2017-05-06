@@ -10,8 +10,8 @@ util.inherit(AlterEgo, base_object);
 
 AlterEgo.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 
 	this.span = 0;
 	this.exchange_animation_start_count = 0;
@@ -43,7 +43,7 @@ AlterEgo.prototype.draw = function(){
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 	ctx.textAlign = 'center';
 	ctx.font = "12px 'PixelMplus'";
-	ctx.fillText(num, this.x, this.y - this.height()/2 - 10);
+	ctx.fillText(num, this.x(), this.y() - this.height()/2 - 10);
 	ctx.restore();
 };
 
@@ -82,7 +82,7 @@ AlterEgo.prototype.startExchange = function(span) {
 	this.span = span;
 
 	var is_yukari = true;
-	this.exchange_anim.init(this.x, this.y, span, is_yukari);
+	this.exchange_anim.init(this.x(), this.y(), span, is_yukari);
 	this.addSubObject(this.exchange_anim);
 };
 module.exports = AlterEgo;

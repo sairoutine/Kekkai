@@ -10,8 +10,8 @@ util.inherit(Item, base_object);
 
 Item.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 	this.is_show = true;
 	this.is_collision = true;
 
@@ -41,7 +41,7 @@ Item.prototype.beforeDraw = function(){
 	if (this.start_got_animation_frame_count) {
 		var count = this.frame_count - this.start_got_animation_frame_count;
 		if (10 > count && count >= 0) {
-			this.y -= 5;
+			this._y -= 5;
 		}
 		else if (15 > count && count >= 10) {
 

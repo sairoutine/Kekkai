@@ -11,8 +11,8 @@ util.inherit(BackGroundEye, base_object);
 
 BackGroundEye.prototype.init = function(x, y, is_vertical) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 	this.is_vertical = is_vertical;
 };
 

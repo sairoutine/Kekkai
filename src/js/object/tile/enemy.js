@@ -13,8 +13,8 @@ util.inherit(Enemy, base_object);
 
 Enemy.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 
 	this.is_left = false;
 };
@@ -22,17 +22,17 @@ Enemy.prototype.init = function(x, y) {
 Enemy.prototype.beforeDraw = function() {
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
-	var before_x = this.x;
+	var before_x = this.x();
 	if (this.is_left) {
-		this.x -= SPEED;
+		this._x -= SPEED;
 	}
 	else {
-		this.x += SPEED;
+		this._x += SPEED;
 	}
 
 	if(!this.checkCollisionWithBlocks()) {
 		// ステージから落ちるなら戻って反転
-		this.x = before_x;
+		this._x = before_x;
 		this.is_left = !this.is_left;
 	}
 };
@@ -70,7 +70,7 @@ Enemy.prototype.checkCollisionWithBlocks = function() {
 			var obj = tile_objects[j];
 
 			// 落下判定なので、自機より上のブロックは無視する
-			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+			if(self.y()-self.collisionHeight()/2 > obj.y()-obj.collisionHeight()/2) continue;
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				is_collision = true;
 				break;
