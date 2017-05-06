@@ -118,6 +118,14 @@ Player.prototype.update = function(){
 		this.moveRight();
 	}
 
+	// 移動によって左右の壁にめり込んだら押し返す
+	var repulse_x = this.checkCollisionWithLeftRightBlocks();
+	if(repulse_x) {
+		repulse_x = repulse_x > 0 ? MOVE_SPEED : -MOVE_SPEED;
+		// 自機の調整
+		this._x += repulse_x;
+	}
+
 	// 落下判定をしてもいい状態ならば
 	if(this.currentState().isEnableToFallDown()) {
 		// 落下判定
@@ -184,14 +192,6 @@ Player.prototype.update = function(){
 	// 落下
 	if (this.isFallingDown()) {
 		this.fallDown();
-	}
-
-	// 壁との接触判定
-	var repulse_x = this.checkCollisionWithLeftRightBlocks();
-	if(repulse_x) {
-		repulse_x = repulse_x > 0 ? MOVE_SPEED : -MOVE_SPEED;
-		// 自機の調整
-		this._x += repulse_x;
 	}
 
 	// アイテムとの接触判定
@@ -314,8 +314,8 @@ Player.prototype.checkCollisionWithLeftRightBlocks = function() {
 			var obj = tile_objects[j];
 
 			// 壁の衝突判定なので自機より上あるいは下のブロックは無視する
-			if(self.getCollisionUpY() > obj.getCollisionUpY()) continue; // 自機より下
-			if(self.getCollisionDownY() < obj.getCollisionDownY()) continue; // 自機より上
+			if(self.getCollisionDownY() -1 <= obj.getCollisionUpY()) continue; // 自機より下(-1 は地面とのめり込み分)
+			if(self.getCollisionUpY() > obj.getCollisionDownY()) continue; // 自機より上
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				repulse_x = self.x() - obj.x();
 				break;
