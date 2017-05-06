@@ -92,13 +92,7 @@ Player.prototype.init = function(x, y) {
 
 	// 分身
 	this.alterego = new AlterEgo(this.scene, this);
-
-	if (this.scene.isVertical()) {
-		this.alterego.init(this.x(), this.scene.height - this.y()); // 垂直
-	}
-	else {
-		this.alterego.init(this.scene.width - this.x(), this.y()); // 水平
-	}
+	this.alterego.init();
 	this.addSubObject(this.alterego);
 
 	// 位置交換アニメーション
@@ -194,13 +188,6 @@ Player.prototype.update = function(){
 		repulse_x = repulse_x > 0 ? MOVE_SPEED : -MOVE_SPEED;
 		// 自機の調整
 		this._x += repulse_x;
-		// 分身の調整
-		if (this.scene.isVertical()) {
-			this.alterego._x += repulse_x;
-		}
-		else {
-			this.alterego._x -= repulse_x;
-		}
 	}
 
 	// アイテムとの接触判定
@@ -235,12 +222,6 @@ Player.prototype.update = function(){
 	if(this.isNormal() && collision_block) {
 		var before_y = this.y();
 		this._y = collision_block.getCollisionUpY() - this.collisionHeight()/2 + 1;
-		if (this.scene.isVertical()) {
-			this.alterego._y += before_y - this.y();
-		}
-		else {
-			this.alterego._y = this.y();
-		}
 	}
 };
 
@@ -427,27 +408,11 @@ Player.prototype.moveLeft = function() {
 	// 自機の移動
 	this._x -= MOVE_SPEED;
 	this.is_reflect = true;
-
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego._x -= MOVE_SPEED;
-	}
-	else {
-		this.alterego._x += MOVE_SPEED;
-	}
 };
 Player.prototype.moveRight = function() {
 	// 自機の移動
 	this._x += MOVE_SPEED;
 	this.is_reflect = false;
-
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego._x += MOVE_SPEED;
-	}
-	else {
-		this.alterego._x -= MOVE_SPEED;
-	}
 
 };
 // はしご上移動
@@ -456,14 +421,6 @@ Player.prototype.climbUp = function() {
 
 	// 自機の移動
 	this._y -= LADDER_SPEED;
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego._y += LADDER_SPEED;
-	}
-	else {
-		this.alterego._y -= LADDER_SPEED;
-	}
-
 };
 // はしご下移動
 Player.prototype.climbDown = function() {
@@ -471,13 +428,6 @@ Player.prototype.climbDown = function() {
 
 	// 自機の移動
 	this._y += LADDER_SPEED;
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego._y -= LADDER_SPEED;
-	}
-	else {
-		this.alterego._y += LADDER_SPEED;
-	}
 };
 
 
@@ -524,14 +474,6 @@ Player.prototype.isClimbDown = function() {
 Player.prototype.fallDown = function() {
 	// 自機の移動
 	this._y += FALL_SPEED;
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego._y -= FALL_SPEED;
-	}
-	else {
-		this.alterego._y += FALL_SPEED;
-	}
-
 };
 Player.prototype.isFallingDown = function() {
 	return this.currentState() instanceof StateFallDown;
@@ -594,16 +536,12 @@ Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
 
 // 自機と分身の位置入れ替え
 Player.prototype.exchangePosition = function() {
-	var player_x = this.x();
-	var player_y = this.y();
 	var alterego_x = this.alterego.x();
 	var alterego_y = this.alterego.y();
 
-	this._x = alterego_x;
-	this._y = alterego_y;
+	this.x(alterego_x);
+	this.y(alterego_y);
 
-	this.alterego._x = player_x;
-	this.alterego._y = player_y;
 };
 
 // 死亡開始
