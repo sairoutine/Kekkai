@@ -125,8 +125,10 @@ Player.prototype.update = function(){
 			this.changeState(CONSTANT.STATE_FALLDOWN);
 		}
 		else {
-			// TODO: ここのstate normal にするのを止めたい
-			this.changeState(CONSTANT.STATE_NORMAL);
+			// 落下中状態だったならば、普通の状態に戻す
+			if (this.isFallingDown()) {
+				this.changeState(CONSTANT.STATE_NORMAL);
+			}
 		}
 	}
 
