@@ -91,7 +91,7 @@ Player.prototype.init = function(x, y) {
 	this.fall_blocks = {}; //着地している落下ブロック
 
 	// 分身
-	this.alterego = new AlterEgo(this.scene);
+	this.alterego = new AlterEgo(this.scene, this);
 
 	if (this.scene.isVertical()) {
 		this.alterego.init(this.x(), this.scene.height - this.y()); // 垂直
