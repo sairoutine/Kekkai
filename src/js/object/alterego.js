@@ -8,14 +8,30 @@ var AlterEgo = function (scene) {
 };
 util.inherit(AlterEgo, base_object);
 
-AlterEgo.prototype.init = function(x, y) {
+AlterEgo.prototype.init = function() {
 	base_object.prototype.init.apply(this, arguments);
-	this.x(x);
-	this.y(y);
 
 	this.span = 0;
 	this.exchange_animation_start_count = 0;
 	this.exchange_anim = new ExchangeAnim(this.scene);
+};
+
+AlterEgo.prototype.x = function(){
+	if (this.scene.isVertical()) {
+		return this.parent.x();
+	}
+	else {
+		return this.scene.width - this.parent.x();
+	}
+};
+
+AlterEgo.prototype.y = function(){
+	if (this.scene.isVertical()) {
+		return this.scene.height - this.parent.y(); // 垂直
+	}
+	else {
+		return this.parent.y();
+	}
 };
 
 AlterEgo.prototype.beforeDraw = function(){
