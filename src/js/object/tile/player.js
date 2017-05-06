@@ -164,9 +164,12 @@ Player.prototype.update = function(){
 			this._x = collision_ladder.x();
 			this.climbUp();
 		}
-		// 下の地面に設地したら、強制的にハシゴ状態を解除
-		if(this.checkCollisionWithBlocks2()) {
-			this.changeState(CONSTANT.STATE_NORMAL);
+		// 上あるいは下のブロックにめり込んだら、めり込み解除
+		var repulse_y = this.checkCollisionWithBlocks2();
+		if(repulse_y) {
+			repulse_y = repulse_y > 0 ? LADDER_SPEED : -LADDER_SPEED;
+			// 自機の調整
+			this._y += repulse_y;
 		}
 	}
 
@@ -274,7 +277,7 @@ Player.prototype.checkCollisionWithBlocks2 = function() {
 			// 落下判定なので、自機より上のブロックは無視する
 			//if(self.y()-self.collisionHeight()/2 > obj.y()-obj.collisionHeight()/2) continue;
 			if(obj.isCollision() && self.checkCollision(obj)) {
-				is_collision = true;
+				is_collision = self.y() - obj.y();
 				break;
 			}
 		}
