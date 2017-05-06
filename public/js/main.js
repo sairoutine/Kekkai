@@ -722,8 +722,8 @@ var ObjectBase = function(scene, object) {
 
 	this.frame_count = 0;
 
-	this.x = 0; // local center x
-	this.y = 0; // local center y
+	this._x = 0; // local center x
+	this._y = 0; // local center y
 
 	// manage flags that disappears in frame elapsed
 	this.auto_disable_times_map = {};
@@ -738,8 +738,8 @@ var ObjectBase = function(scene, object) {
 ObjectBase.prototype.init = function(){
 	this.frame_count = 0;
 
-	this.x = 0;
-	this.y = 0;
+	this._x = 0;
+	this._y = 0;
 
 	this.auto_disable_times_map = {};
 
@@ -803,8 +803,8 @@ ObjectBase.prototype.move = function() {
 	var x = util.calcMoveXByVelocity(this.velocity);
 	var y = util.calcMoveYByVelocity(this.velocity);
 
-	this.x += x;
-	this.y += y;
+	this._x += x;
+	this._y += y;
 };
 ObjectBase.prototype.onCollision = function(){
 };
@@ -816,22 +816,22 @@ ObjectBase.prototype.height = function() {
 	return 0;
 };
 ObjectBase.prototype.globalCenterX = function() {
-	return this.scene.x + this.x;
+	return this.scene.x() + this.x();
 };
 ObjectBase.prototype.globalCenterY = function() {
-	return this.scene.y + this.y;
+	return this.scene.y() + this.y();
 };
 ObjectBase.prototype.globalLeftX = function() {
-	return this.scene.x + this.x - this.width()/2;
+	return this.scene.x() + this.x() - this.width()/2;
 };
 ObjectBase.prototype.globalRightX = function() {
-	return this.scene.x + this.x + this.width()/2;
+	return this.scene.x() + this.x() + this.width()/2;
 };
 ObjectBase.prototype.globalUpY = function() {
-	return this.scene.x + this.y - this.height()/2;
+	return this.scene.x() + this.y() - this.height()/2;
 };
 ObjectBase.prototype.globalDownY = function() {
-	return this.scene.x + this.y + this.height()/2;
+	return this.scene.x() + this.y() + this.height()/2;
 };
 
 ObjectBase.prototype.collisionWidth = function() {
@@ -862,8 +862,8 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 
 
 ObjectBase.prototype.checkCollision = function(obj) {
-	if(Math.abs(this.x - obj.x) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
-		Math.abs(this.y - obj.y) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
+	if(Math.abs(this.x() - obj.x()) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
+		Math.abs(this.y() - obj.y()) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
 		return true;
 	}
 
@@ -871,16 +871,16 @@ ObjectBase.prototype.checkCollision = function(obj) {
 };
 
 ObjectBase.prototype.getCollisionLeftX = function() {
-	return this.x - this.collisionWidth() / 2;
+	return this.x() - this.collisionWidth() / 2;
 };
 ObjectBase.prototype.getCollisionRightX = function() {
-	return this.x + this.collisionWidth() / 2;
+	return this.x() + this.collisionWidth() / 2;
 };
 ObjectBase.prototype.getCollisionUpY = function() {
-	return this.y - this.collisionHeight() / 2;
+	return this.y() - this.collisionHeight() / 2;
 };
 ObjectBase.prototype.getCollisionDownY = function() {
-	return this.y + this.collisionHeight() / 2;
+	return this.y() + this.collisionHeight() / 2;
 };
 
 
@@ -913,8 +913,14 @@ ObjectBase.prototype.checkAutoDisableFlags = function() {
 	}
 };
 
-
-
+ObjectBase.prototype.x = function(val) {
+	if (typeof val !== 'undefined') { this._x = val; }
+	return this._x;
+};
+ObjectBase.prototype.y = function(val) {
+	if (typeof val !== 'undefined') { this._y = val; }
+	return this._y;
+};
 
 ObjectBase.prototype.setVelocity = function(velocity) {
 	this.velocity = velocity;
@@ -1156,8 +1162,8 @@ var SceneBase = function(core, scene) {
 	this.width = this.core.width; // default
 	this.height = this.core.height; // default
 
-	this.x = 0;
-	this.y = 0;
+	this._x = 0;
+	this._y = 0;
 
 	this.frame_count = 0;
 
@@ -1174,8 +1180,8 @@ SceneBase.prototype.init = function(){
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
 
-	this.x = 0;
-	this.y = 0;
+	this._x = 0;
+	this._y = 0;
 
 	this.frame_count = 0;
 
@@ -1242,7 +1248,14 @@ SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 
 };
 
-
+SceneBase.prototype.x = function(val) {
+	if (typeof val !== 'undefined') { this._x = val; }
+	return this._x;
+};
+SceneBase.prototype.y = function(val) {
+	if (typeof val !== 'undefined') { this._y = val; }
+	return this._y;
+};
 
 module.exports = SceneBase;
 
@@ -1583,14 +1596,30 @@ var AlterEgo = function (scene) {
 };
 util.inherit(AlterEgo, base_object);
 
-AlterEgo.prototype.init = function(x, y) {
+AlterEgo.prototype.init = function() {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
 
 	this.span = 0;
 	this.exchange_animation_start_count = 0;
 	this.exchange_anim = new ExchangeAnim(this.scene);
+};
+
+AlterEgo.prototype.x = function(){
+	if (this.scene.isVertical()) {
+		return this.parent.x();
+	}
+	else {
+		return this.scene.width - this.parent.x();
+	}
+};
+
+AlterEgo.prototype.y = function(){
+	if (this.scene.isVertical()) {
+		return this.scene.height - this.parent.y(); // 垂直
+	}
+	else {
+		return this.parent.y();
+	}
 };
 
 AlterEgo.prototype.beforeDraw = function(){
@@ -1618,7 +1647,7 @@ AlterEgo.prototype.draw = function(){
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 	ctx.textAlign = 'center';
 	ctx.font = "12px 'PixelMplus'";
-	ctx.fillText(num, this.x, this.y - this.height()/2 - 10);
+	ctx.fillText(num, this.x(), this.y() - this.height()/2 - 10);
 	ctx.restore();
 };
 
@@ -1657,7 +1686,7 @@ AlterEgo.prototype.startExchange = function(span) {
 	this.span = span;
 
 	var is_yukari = true;
-	this.exchange_anim.init(this.x, this.y, span, is_yukari);
+	this.exchange_anim.init(this.x(), this.y(), span, is_yukari);
 	this.addSubObject(this.exchange_anim);
 };
 module.exports = AlterEgo;
@@ -1674,8 +1703,8 @@ util.inherit(BackGroundEye, base_object);
 
 BackGroundEye.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 };
 
 BackGroundEye.prototype.spriteName = function(){
@@ -1704,8 +1733,8 @@ util.inherit(AlterEgo, base_object);
 
 AlterEgo.prototype.init = function(x, y, anim_span, is_yukari) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 	this.is_yukari = is_yukari ? true : false;
 
 	this.anim_span = anim_span;
@@ -1749,8 +1778,8 @@ util.inherit(BackGroundEye, base_object);
 
 BackGroundEye.prototype.init = function(x, y, is_vertical) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 	this.is_vertical = is_vertical;
 };
 
@@ -1793,8 +1822,8 @@ util.inherit(BackGroundEye, base_object);
 
 BackGroundEye.prototype.init = function(x, y, rotate) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 	this.rotate = rotate || 0;
 };
 
@@ -1835,8 +1864,8 @@ util.inherit(BlockBase, base_object);
 
 BlockBase.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 
 	this.is_collision = true;
 };
@@ -2093,8 +2122,8 @@ util.inherit(Death, base_object);
 
 Death.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 	this.is_show = true;
 };
 
@@ -2134,8 +2163,8 @@ util.inherit(Enemy, base_object);
 
 Enemy.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 
 	this.is_left = false;
 };
@@ -2143,17 +2172,17 @@ Enemy.prototype.init = function(x, y) {
 Enemy.prototype.beforeDraw = function() {
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
-	var before_x = this.x;
+	var before_x = this.x();
 	if (this.is_left) {
-		this.x -= SPEED;
+		this._x -= SPEED;
 	}
 	else {
-		this.x += SPEED;
+		this._x += SPEED;
 	}
 
 	if(!this.checkCollisionWithBlocks()) {
 		// ステージから落ちるなら戻って反転
-		this.x = before_x;
+		this._x = before_x;
 		this.is_left = !this.is_left;
 	}
 };
@@ -2191,7 +2220,7 @@ Enemy.prototype.checkCollisionWithBlocks = function() {
 			var obj = tile_objects[j];
 
 			// 落下判定なので、自機より上のブロックは無視する
-			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+			if(self.y()-self.collisionHeight()/2 > obj.y()-obj.collisionHeight()/2) continue;
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				is_collision = true;
 				break;
@@ -2260,8 +2289,8 @@ util.inherit(Item, base_object);
 
 Item.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 	this.is_show = true;
 	this.is_collision = true;
 
@@ -2291,7 +2320,7 @@ Item.prototype.beforeDraw = function(){
 	if (this.start_got_animation_frame_count) {
 		var count = this.frame_count - this.start_got_animation_frame_count;
 		if (10 > count && count >= 0) {
-			this.y -= 5;
+			this._y -= 5;
 		}
 		else if (15 > count && count >= 10) {
 
@@ -2340,8 +2369,8 @@ util.inherit(Ladder, base_object);
 
 Ladder.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 };
 
 Ladder.prototype.isCollision = function() {
@@ -2362,7 +2391,7 @@ Ladder.prototype.draw = function() {
 		0, 0,
 		// sprite size to get
 		32, 16,
-		this.x, this.y,
+		this.x(), this.y(),
 		// sprite size to show
 		CONSTANT.TILE_SIZE, CONSTANT.TILE_SIZE
 	);
@@ -2487,13 +2516,13 @@ util.inherit(Player, base_object);
 
 Player.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
-	this.x = x;
-	this.y = y;
+	this.x(x);
+	this.y(y);
 
 	this.exchange_num = 0; //位置移動した回数
 
 	// 右を向いているか左を向いているか
-	if (this.scene.width/2 < this.x) {
+	if (this.scene.width/2 < this.x()) {
 		this.is_reflect = true;
 	}
 	else {
@@ -2503,14 +2532,8 @@ Player.prototype.init = function(x, y) {
 	this.fall_blocks = {}; //着地している落下ブロック
 
 	// 分身
-	this.alterego = new AlterEgo(this.scene);
-
-	if (this.scene.isVertical()) {
-		this.alterego.init(this.x, this.scene.height - this.y); // 垂直
-	}
-	else {
-		this.alterego.init(this.scene.width - this.x, this.y); // 水平
-	}
+	this.alterego = new AlterEgo(this.scene, this);
+	this.alterego.init();
 	this.addSubObject(this.alterego);
 
 	// 位置交換アニメーション
@@ -2552,12 +2575,12 @@ Player.prototype.update = function(){
 		if(!this.isClimbDown() || !this.checkCollisionWithBlocks2()) {
 			if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
 				this.changeState(CONSTANT.STATE_CLIMBDOWN);
-				this.x = collision_ladder.x;
+				this._x = collision_ladder.x();
 				this.climbDown();
 			}
 			else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
 				this.changeState(CONSTANT.STATE_CLIMBDOWN);
-				this.x = collision_ladder.x;
+				this._x = collision_ladder.x();
 				this.climbUp();
 			}
 		}
@@ -2605,14 +2628,7 @@ Player.prototype.update = function(){
 	if(repulse_x) {
 		repulse_x = repulse_x > 0 ? MOVE_SPEED : -MOVE_SPEED;
 		// 自機の調整
-		this.x += repulse_x;
-		// 分身の調整
-		if (this.scene.isVertical()) {
-			this.alterego.x += repulse_x;
-		}
-		else {
-			this.alterego.x -= repulse_x;
-		}
+		this._x += repulse_x;
 	}
 
 	// アイテムとの接触判定
@@ -2645,14 +2661,8 @@ Player.prototype.update = function(){
 	// 踏んでいるブロックにめり込んでいるなら修正
 	var collision_block = this.checkCollisionWithBlocks3();
 	if(this.isNormal() && collision_block) {
-		var before_y = this.y;
-		this.y = collision_block.getCollisionUpY() - this.collisionHeight()/2 + 1;
-		if (this.scene.isVertical()) {
-			this.alterego.y += before_y - this.y;
-		}
-		else {
-			this.alterego.y = this.y;
-		}
+		var before_y = this.y();
+		this._y = collision_block.getCollisionUpY() - this.collisionHeight()/2 + 1;
 	}
 };
 
@@ -2669,7 +2679,7 @@ Player.prototype.checkCollisionWithBlocks = function() {
 			var obj = tile_objects[j];
 
 			// 落下判定なので、自機より上のブロックは無視する
-			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+			if(self.y()-self.collisionHeight()/2 > obj.y()-obj.collisionHeight()/2) continue;
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				is_collision = obj;
 				break;
@@ -2692,7 +2702,7 @@ Player.prototype.checkCollisionWithBlocks2 = function() {
 			var obj = tile_objects[j];
 
 			// 落下判定なので、自機より上のブロックは無視する
-			//if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+			//if(self.y()-self.collisionHeight()/2 > obj.y()-obj.collisionHeight()/2) continue;
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				is_collision = true;
 				break;
@@ -2715,7 +2725,7 @@ Player.prototype.checkCollisionWithBlocks3 = function() {
 			var obj = tile_objects[j];
 
 			// 落下判定なので、自機より上のブロックは無視する
-			if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+			if(self.y()-self.collisionHeight()/2 > obj.y()-obj.collisionHeight()/2) continue;
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				is_collision = obj;
 				break;
@@ -2745,7 +2755,7 @@ Player.prototype.checkCollisionWithLeftRightBlocks = function() {
 			if(self.getCollisionUpY() > obj.getCollisionUpY()) continue; // 自機より下
 			if(self.getCollisionDownY() < obj.getCollisionDownY()) continue; // 自機より上
 			if(obj.isCollision() && self.checkCollision(obj)) {
-				repulse_x = self.x - obj.x;
+				repulse_x = self.x() - obj.x();
 				break;
 			}
 		}
@@ -2812,7 +2822,7 @@ Player.prototype.checkCollisionWithFallBlock = function() {
 		var obj = tile_objects[j];
 
 		// 落下判定なので、自機より上のブロックは無視する
-		if(self.y-self.collisionHeight()/2 > obj.y-obj.collisionHeight()/2) continue;
+		if(self.y()-self.collisionHeight()/2 > obj.y()-obj.collisionHeight()/2) continue;
 		if(obj.isCollision() && self.checkCollision(obj)) {
 			is_collision = obj;
 			break;
@@ -2837,29 +2847,13 @@ Player.prototype.currentState = function() {
 // 左右移動
 Player.prototype.moveLeft = function() {
 	// 自機の移動
-	this.x -= MOVE_SPEED;
+	this._x -= MOVE_SPEED;
 	this.is_reflect = true;
-
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego.x -= MOVE_SPEED;
-	}
-	else {
-		this.alterego.x += MOVE_SPEED;
-	}
 };
 Player.prototype.moveRight = function() {
 	// 自機の移動
-	this.x += MOVE_SPEED;
+	this._x += MOVE_SPEED;
 	this.is_reflect = false;
-
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego.x += MOVE_SPEED;
-	}
-	else {
-		this.alterego.x -= MOVE_SPEED;
-	}
 
 };
 // はしご上移動
@@ -2867,29 +2861,14 @@ Player.prototype.climbUp = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
 	// 自機の移動
-	this.y -= LADDER_SPEED;
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego.y += LADDER_SPEED;
-	}
-	else {
-		this.alterego.y -= LADDER_SPEED;
-	}
-
+	this._y -= LADDER_SPEED;
 };
 // はしご下移動
 Player.prototype.climbDown = function() {
 	if(!this.currentState().isEnableToPlayMove()) return;
 
 	// 自機の移動
-	this.y += LADDER_SPEED;
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego.y -= LADDER_SPEED;
-	}
-	else {
-		this.alterego.y += LADDER_SPEED;
-	}
+	this._y += LADDER_SPEED;
 };
 
 
@@ -2935,15 +2914,7 @@ Player.prototype.isClimbDown = function() {
 // 落下
 Player.prototype.fallDown = function() {
 	// 自機の移動
-	this.y += FALL_SPEED;
-	// 分身の移動
-	if (this.scene.isVertical()) {
-		this.alterego.y -= FALL_SPEED;
-	}
-	else {
-		this.alterego.y += FALL_SPEED;
-	}
-
+	this._y += FALL_SPEED;
 };
 Player.prototype.isFallingDown = function() {
 	return this.currentState() instanceof StateFallDown;
@@ -2962,7 +2933,7 @@ Player.prototype.startExchange = function() {
 	this.changeState(CONSTANT.STATE_EXCHANGE);
 
 	// 位置移動アニメーション
-	this.exchange_anim.init(this.x, this.y, EXCHANGE_ANIM_SPAN);
+	this.exchange_anim.init(this.x(), this.y(), EXCHANGE_ANIM_SPAN);
 	this.addSubObject(this.exchange_anim);
 
 	// 分身もアニメーション
@@ -3006,16 +2977,12 @@ Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
 
 // 自機と分身の位置入れ替え
 Player.prototype.exchangePosition = function() {
-	var player_x = this.x;
-	var player_y = this.y;
-	var alterego_x = this.alterego.x;
-	var alterego_y = this.alterego.y;
+	var alterego_x = this.alterego.x();
+	var alterego_y = this.alterego.y();
 
-	this.x = alterego_x;
-	this.y = alterego_y;
+	this.x(alterego_x);
+	this.y(alterego_y);
 
-	this.alterego.x = player_x;
-	this.alterego.y = player_y;
 };
 
 // 死亡開始
@@ -3864,7 +3831,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	this.objects_by_tile_type = this.initializeObjectsByTileType();
 
 	// 背景の目玉を作成
-	this.createBackGroundEyes();
+	//this.createBackGroundEyes();
 
 	// マップデータが正しいかチェック
 	if (CONSTANT.DEBUG.ON) {
