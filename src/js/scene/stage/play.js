@@ -41,4 +41,18 @@ SceneStagePlay.prototype.beforeDraw = function(){
 	this.parent.player().update();
 };
 
+SceneStagePlay.prototype.draw = function() {
+	var ctx = this.core.ctx;
+
+	// 操作説明
+	ctx.save();
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.font = "18px 'PixelMplus'";
+	ctx.textAlign = 'left';
+	ctx.fillText("矢印キー: 移動, Xキー: スキマ移動", 30, this.core.height - 15);
+	ctx.restore();
+};
+
+
+
 module.exports = SceneStagePlay;

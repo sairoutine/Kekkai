@@ -226,8 +226,8 @@ SceneStage.prototype.draw = function() {
 	// ステージNo.
 	ctx.save();
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.textAlign = 'right';
 	ctx.font = "24px 'PixelMplus'";
+	ctx.textAlign = 'right';
 	ctx.fillText("ステージ: " + this.stage_no, this.core.width - 30, 30);
 	ctx.restore();
 
