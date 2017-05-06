@@ -141,6 +141,7 @@ module.exports = CONSTANT;
 var DEBUG = {
 	ON: false,
 	SOUND_OFF: true,
+	START_STAGE_NO: 1,
 };
 
 module.exports = DEBUG;
@@ -1457,23 +1458,23 @@ module.exports = Util;
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"いたた..."},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"あらあら"},
+	{"pos":"right","exp":"confused","chara":"reimu","fukidashi":"normal","serif":"いたた..."},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"あらあら"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あ、ゆかり"},
-	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"またアンタのしわざね"},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"暇そうにしてたから♪"},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"それよりほら、見て"},
-	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"なによ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"御札が落ちてるわ"},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"あれを全部拾うと帰れるわよ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"どういう理屈よ"},
+	{"pos":"right","exp":"angry2","chara":"reimu","fukidashi":"normal","serif":"またアンタのしわざね"},
+	{"pos":"left","exp":"smile","chara":"yukari","fukidashi":"normal","serif":"暇そうにしてたから♪"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"ほら、見て"},
+	{"pos":"right","exp":"angry2","chara":"reimu","fukidashi":"normal","serif":"なによ"},
+	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"御札が落ちてるわ"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"御札を全部拾うと帰れるわよ"},
+	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"どういう理屈よ"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"わたしじゃ取れない場所にあるじゃない"},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"手伝ってあげるわよ"},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"Xボタンで私と霊夢の位置を入れかえることができるわ"},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私は霊夢と反対の位置にいるから"},
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"Xボタンね"},
+	{"pos":"left","exp":"normal2","chara":"yukari","fukidashi":"normal","serif":"手伝ってあげるわよ"},
+	{"pos":"left","exp":"normal2","chara":"yukari","fukidashi":"normal","serif":"X キーで私と霊夢の位置を入れかえることができるわ"},
+	{"pos":"left","exp":"smile","chara":"yukari","fukidashi":"normal","serif":"私は霊夢といつも反対の位置にいるから"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"X キーね"},
 	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"入れ替えられる回数には上限があるから"},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"私の上にある数字をよく見ていてね"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"私の上にある数字はよく見ていてね"},
 ];
 module.exports = Serif;
 
@@ -1482,15 +1483,16 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"..."},
-	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"帰れてないじゃない！"},
-	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"まだ先があるみたいね"},
-	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"敵みたいなのがいるから気をつけて"},
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"はいはい"},
-	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"わたしは敵に触れても大丈夫なのよ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"はいはい"},
-	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"霊夢はあのオバケみたいなのに触れちゃだめよ"},
-	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"アンタだけずるくない？！"},
+	{"pos":"left","exp":"ecstasy2","chara":"yukari","fukidashi":"normal","serif": "きゃー、れいむー！"},
+	{"pos":"left","exp":"ecstasy2","chara":"yukari","fukidashi":"normal","serif": "オバケ、こわーい！"},
+	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"(ベシッ)"},
+	{"pos":"left","exp":"yarare","chara":"yukari","fukidashi":"normal","serif": "いたいっ！"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あれ、なによ"},
+	{"pos":"left","exp":"normal4","chara":"yukari","fukidashi":"normal","serif":"オバケみたいね"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"触れちゃダメよ"},
+	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"はいはい"},
+	{"pos":"left","exp":"smile","chara":"yukari","fukidashi":"normal","serif":"わたしはオバケに触れても大丈夫だから"},
+	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"アンタだけずるくない！？"},
 ];
 module.exports = Serif;
 
@@ -1499,8 +1501,9 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"なんか茶色いブロックがあるわ"},
-	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"一度乗ると消えちゃうみたいね"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":null},
+	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"茶色のブロックがあるわ"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"一度乗ったら消えちゃうみたいね"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"消えちゃうのね"},
 ];
 module.exports = Serif;
@@ -1518,9 +1521,10 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"アンタさっきと違う位置にいない？"},
-	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"わたしは霊夢の反対側にいるの"},
-	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"このステージでは上下の反対側にいるみたいね"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あれ、ゆかりー？どこー？"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"なーに、れいむ？"},
+	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"アンタさっきと違う位置にいない？"},
+	{"pos":"left","exp":"normal4","chara":"yukari","fukidashi":"normal","serif":"このステージでは上下の反対側にいるみたいね"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"ふぅん"},
 ];
 module.exports = Serif;
@@ -1748,8 +1752,18 @@ AlterEgo.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 AlterEgo.prototype.spriteIndices = function(){
-	var y = this.is_yukari ? 1 : 3;
-	return [{x: 0, y: y}, {x: 1, y: y},{x: 2, y:y}, {x:3, y:y}, {x:3, y:y}, {x:4, y:y}, {x:5, y:y}];
+	if (this.is_yukari) {
+		return [
+			{x: 0, y: 1}, {x: 1, y: 1},{x: 2, y: 1}, {x:3, y: 1}, {x:3, y: 1}, {x:4, y: 1}, {x:5, y: 1}, {x: 6, y:1},
+			{x: 6, y: 3}, {x: 5, y: 3},{x: 4, y:3}, {x:3, y:3}, {x:3, y:3}, {x:2, y: 3}, {x:1, y: 3}, {x: 0, y:3},
+		];
+	}
+	else {
+		return [
+			{x: 0, y: 3}, {x: 1, y: 3},{x: 2, y:3}, {x:3, y:3}, {x:3, y:3}, {x:4, y: 3}, {x:5, y: 3}, {x: 6, y:3},
+			{x: 6, y: 1}, {x: 5, y: 1},{x: 4, y: 1}, {x:3, y: 1}, {x:3, y: 1}, {x:2, y: 1}, {x:1, y: 1}, {x: 0, y:1},
+		];
+	}
 };
 AlterEgo.prototype.spriteWidth = function(){
 	return 32;
@@ -1758,7 +1772,7 @@ AlterEgo.prototype.spriteHeight = function(){
 	return 32;
 };
 AlterEgo.prototype.spriteAnimationSpan = function(){
-	return 5;
+	return 3;
 };
 
 
@@ -2447,12 +2461,12 @@ var H_CONSTANT = require('../../hakurei').constant;
 // 移動速度
 var MOVE_SPEED = 2;
 // 落下速度
-var FALL_SPEED = 3;
+var FALL_SPEED = 2; // TODO: なぜか3にすると、ハシゴを登りきった後に左右に移動できない
 // はしごを上るスピード
 var LADDER_SPEED = 2;
 
 // 交代アニメーション時間
-var EXCHANGE_ANIM_SPAN = 5 * 6.9; //anim span * 7
+var EXCHANGE_ANIM_SPAN = 3 * 15.9; //anim span * 7
 // 死亡アニメーション時間
 var DIE_ANIM_SPAN = 90;
 
@@ -2559,36 +2573,59 @@ Player.prototype.update = function(){
 		this.moveRight();
 	}
 
-	// 落下判定
-	if(this.currentState().isFallDown()) {
+	// 移動によって左右の壁にめり込んだら押し返す
+	var repulse_x = this.checkCollisionWithLeftRightBlocks();
+	if(repulse_x) {
+		repulse_x = repulse_x > 0 ? MOVE_SPEED : -MOVE_SPEED;
+		// 自機の調整
+		this._x += repulse_x;
+	}
+
+	// 落下判定をしてもいい状態ならば
+	if(this.currentState().isEnableToFallDown()) {
+		// 落下判定
 		if(!this.checkCollisionWithBlocks()) {
 			this.changeState(CONSTANT.STATE_FALLDOWN);
 		}
 		else {
+			// 落下中状態だったならば、普通の状態に戻す
+			if (this.isFallingDown()) {
+				this.changeState(CONSTANT.STATE_NORMAL);
+			}
+		}
+	}
+
+	// はしごに触れていて、かつ移動可能で、かつまだハシゴ移動状態でなくて、かつ上下キーを押していたら、はしご移動状態に移行
+	var collision_ladder = this.checkCollisionWithLadder();
+	if(collision_ladder && this.currentState().isEnableToPlayMove() && !this.isClimbDown()) {
+			if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN) || this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+				this.changeState(CONSTANT.STATE_CLIMBDOWN);
+			}
+	}
+
+	if (this.isClimbDown()) {
+		// はしごを降りるのが終了したかどうか判定
+		if(!collision_ladder) {
 			this.changeState(CONSTANT.STATE_NORMAL);
 		}
-	}
 
-	// はしごを降りているか判定
-	var collision_ladder = this.checkCollisionWithLadder();
-	if(collision_ladder && this.currentState().isEnableToPlayMove()) {
-		if(!this.isClimbDown() || !this.checkCollisionWithBlocks2()) {
-			if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
-				this.changeState(CONSTANT.STATE_CLIMBDOWN);
-				this._x = collision_ladder.x();
-				this.climbDown();
-			}
-			else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
-				this.changeState(CONSTANT.STATE_CLIMBDOWN);
-				this._x = collision_ladder.x();
-				this.climbUp();
-			}
+		// 上下キーが入力されていれば上下移動
+		if(this.core.isKeyDown(H_CONSTANT.BUTTON_DOWN)) {
+			this._x = collision_ladder.x();
+			this.climbDown();
 		}
-	}
-
-	// はしごを降りるのが終了したかどうか判定
-	if(!collision_ladder && this.isClimbDown()) {
-		this.changeState(CONSTANT.STATE_NORMAL);
+		else if(this.core.isKeyDown(H_CONSTANT.BUTTON_UP)) {
+			this.changeState(CONSTANT.STATE_CLIMBDOWN);
+			this._x = collision_ladder.x();
+			this.climbUp();
+		}
+		// 上あるいは下のブロックにめり込んだら、めり込み解除
+		var repulse_y = this.checkCollisionWithBlocks2();
+		if(repulse_y) {
+			repulse_y = repulse_y > 0 ? LADDER_SPEED : -LADDER_SPEED;
+			// 自機の調整
+			this._y += repulse_y;
+		}
 	}
 
 	// 死亡判定
@@ -2623,14 +2660,6 @@ Player.prototype.update = function(){
 		this.fallDown();
 	}
 
-	// 壁との接触判定
-	var repulse_x = this.checkCollisionWithLeftRightBlocks();
-	if(repulse_x) {
-		repulse_x = repulse_x > 0 ? MOVE_SPEED : -MOVE_SPEED;
-		// 自機の調整
-		this._x += repulse_x;
-	}
-
 	// アイテムとの接触判定
 	var item = this.checkCollisionWithItems();
 	if(item) {
@@ -2661,7 +2690,6 @@ Player.prototype.update = function(){
 	// 踏んでいるブロックにめり込んでいるなら修正
 	var collision_block = this.checkCollisionWithBlocks3();
 	if(this.isNormal() && collision_block) {
-		var before_y = this.y();
 		this._y = collision_block.getCollisionUpY() - this.collisionHeight()/2 + 1;
 	}
 };
@@ -2704,7 +2732,7 @@ Player.prototype.checkCollisionWithBlocks2 = function() {
 			// 落下判定なので、自機より上のブロックは無視する
 			//if(self.y()-self.collisionHeight()/2 > obj.y()-obj.collisionHeight()/2) continue;
 			if(obj.isCollision() && self.checkCollision(obj)) {
-				is_collision = true;
+				is_collision = self.y() - obj.y();
 				break;
 			}
 		}
@@ -2752,8 +2780,8 @@ Player.prototype.checkCollisionWithLeftRightBlocks = function() {
 			var obj = tile_objects[j];
 
 			// 壁の衝突判定なので自機より上あるいは下のブロックは無視する
-			if(self.getCollisionUpY() > obj.getCollisionUpY()) continue; // 自機より下
-			if(self.getCollisionDownY() < obj.getCollisionDownY()) continue; // 自機より上
+			if(self.getCollisionDownY() -1 <= obj.getCollisionUpY()) continue; // 自機より下(-1 は地面とのめり込み分)
+			if(self.getCollisionUpY() > obj.getCollisionDownY()) continue; // 自機より上
 			if(obj.isCollision() && self.checkCollision(obj)) {
 				repulse_x = self.x() - obj.x();
 				break;
@@ -3064,7 +3092,7 @@ StateBase.prototype.isEnableToPlayExchange = function () {
 };
 
 // 落下するかどうか
-StateBase.prototype.isFallDown = function () {
+StateBase.prototype.isEnableToFallDown = function () {
 	return true;
 };
 
@@ -3093,7 +3121,7 @@ var StateNormal = function (scene) {
 util.inherit(StateNormal, base_object);
 
 // 落下するかどうか
-StateNormal.prototype.isFallDown = function () {
+StateNormal.prototype.isEnableToFallDown = function () {
 	return false;
 };
 
@@ -3124,7 +3152,7 @@ StateNormal.prototype.isEnableToPlayExchange = function () {
 	return false;
 };
 // 落下するかどうか
-StateNormal.prototype.isFallDown = function () {
+StateNormal.prototype.isEnableToFallDown = function () {
 	return false;
 };
 
@@ -3163,7 +3191,7 @@ StateNormal.prototype.isEnableToPlayExchange = function () {
 	return false;
 };
 // 落下するかどうか
-StateNormal.prototype.isFallDown = function () {
+StateNormal.prototype.isEnableToFallDown = function () {
 	return false;
 };
 // 敵と接触するなどして死ねるかどうか
@@ -3595,9 +3623,9 @@ var map = [
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,I,I,I,0,0,E,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
 	[0,A,B,B,B,B,B,B,B,B,5,5,5,5,5,5,5,5,5,5,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,P,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,N,0,I,I,I,0,0,0,0,0,0,0,0,B,B,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
@@ -3935,8 +3963,8 @@ SceneStage.prototype.draw = function() {
 	// ステージNo.
 	ctx.save();
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.textAlign = 'right';
 	ctx.font = "24px 'PixelMplus'";
+	ctx.textAlign = 'right';
 	ctx.fillText("ステージ: " + this.stage_no, this.core.width - 30, 30);
 	ctx.restore();
 
@@ -4144,6 +4172,20 @@ SceneStagePlay.prototype.beforeDraw = function(){
 
 	this.parent.player().update();
 };
+
+SceneStagePlay.prototype.draw = function() {
+	var ctx = this.core.ctx;
+
+	// 操作説明
+	ctx.save();
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.font = "18px 'PixelMplus'";
+	ctx.textAlign = 'left';
+	ctx.fillText("矢印キー: 移動, Xキー: スキマ移動", 30, this.core.height - 15);
+	ctx.restore();
+};
+
+
 
 module.exports = SceneStagePlay;
 
@@ -4543,7 +4585,8 @@ module.exports = SceneStageTalk;
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
-var CONSTANT = require('../hakurei').constant;
+var H_CONSTANT = require('../hakurei').constant;
+var CONSTANT = require('../constant');
 
 // transition time ready to show canvas
 var SHOW_TRANSITION_COUNT = 100;
@@ -4573,9 +4616,16 @@ SceneTitle.prototype.beforeDraw = function(){
 		this.core.playBGM("title");
 	}
 
-	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
+		var stage_no;
+		if (CONSTANT.DEBUG.START_STAGE_NO) {
+			stage_no = CONSTANT.DEBUG.START_STAGE_NO;
+		}
+		else {
+			stage_no = 1;
+		}
 		this.core.playSound('select');
-		this.core.changeScene("stage", 1, "talk", true); // stage_no = 1
+		this.core.changeScene("stage", stage_no, "talk", true);
 	}
 };
 
@@ -4638,4 +4688,4 @@ SceneTitle.prototype.draw = function(){
 
 module.exports = SceneTitle;
 
-},{"../hakurei":5}]},{},[23]);
+},{"../constant":2,"../hakurei":5}]},{},[23]);
