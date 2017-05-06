@@ -118,12 +118,14 @@ Player.prototype.update = function(){
 		this.moveRight();
 	}
 
-	// 落下判定
+	// 落下判定をしてもいい状態ならば
 	if(this.currentState().isEnableToFallDown()) {
+		// 落下判定
 		if(!this.checkCollisionWithBlocks()) {
 			this.changeState(CONSTANT.STATE_FALLDOWN);
 		}
 		else {
+			// TODO: ここのstate normal にするのを止めたい
 			this.changeState(CONSTANT.STATE_NORMAL);
 		}
 	}
@@ -220,7 +222,6 @@ Player.prototype.update = function(){
 	// 踏んでいるブロックにめり込んでいるなら修正
 	var collision_block = this.checkCollisionWithBlocks3();
 	if(this.isNormal() && collision_block) {
-		var before_y = this.y();
 		this._y = collision_block.getCollisionUpY() - this.collisionHeight()/2 + 1;
 	}
 };
