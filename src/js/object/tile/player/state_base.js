@@ -17,7 +17,7 @@ StateBase.prototype.isEnableToPlayExchange = function () {
 };
 
 // 落下するかどうか
-StateBase.prototype.isFallDown = function () {
+StateBase.prototype.isEnableToFallDown = function () {
 	return true;
 };
 

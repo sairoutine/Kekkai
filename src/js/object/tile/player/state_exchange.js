@@ -20,7 +20,7 @@ StateNormal.prototype.isEnableToPlayExchange = function () {
 	return false;
 };
 // 落下するかどうか
-StateNormal.prototype.isFallDown = function () {
+StateNormal.prototype.isEnableToFallDown = function () {
 	return false;
 };
 // 敵と接触するなどして死ねるかどうか

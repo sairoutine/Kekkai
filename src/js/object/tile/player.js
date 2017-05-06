@@ -119,7 +119,7 @@ Player.prototype.update = function(){
 	}
 
 	// 落下判定
-	if(this.currentState().isFallDown()) {
+	if(this.currentState().isEnableToFallDown()) {
 		if(!this.checkCollisionWithBlocks()) {
 			this.changeState(CONSTANT.STATE_FALLDOWN);
 		}

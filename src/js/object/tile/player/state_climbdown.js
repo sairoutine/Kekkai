@@ -12,7 +12,7 @@ var StateNormal = function (scene) {
 util.inherit(StateNormal, base_object);
 
 // 落下するかどうか
-StateNormal.prototype.isFallDown = function () {
+StateNormal.prototype.isEnableToFallDown = function () {
 	return false;
 };
 
