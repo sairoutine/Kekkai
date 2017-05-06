@@ -11,7 +11,7 @@ var FALL_SPEED = 3;
 var LADDER_SPEED = 2;
 
 // 交代アニメーション時間
-var EXCHANGE_ANIM_SPAN = 5 * 7.9; //anim span * 7
+var EXCHANGE_ANIM_SPAN = 5 * 15.9; //anim span * 7
 // 死亡アニメーション時間
 var DIE_ANIM_SPAN = 90;
 
