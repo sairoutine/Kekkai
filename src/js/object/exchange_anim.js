@@ -44,7 +44,7 @@ AlterEgo.prototype.spriteHeight = function(){
 	return 32;
 };
 AlterEgo.prototype.spriteAnimationSpan = function(){
-	return 5;
+	return 3;
 };
 
 
