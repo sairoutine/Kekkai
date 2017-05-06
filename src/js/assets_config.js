@@ -51,7 +51,7 @@ AssetsConfig.sounds = {
 	},
 	boss_powerup:    {
 		path: "./sound/boss_powerup.wav",
-		volume: 0.8,
+		volume: 0.5,
 	},
 	dead:    {
 		path: "./sound/dead.wav",
