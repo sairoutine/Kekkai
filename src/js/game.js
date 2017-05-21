@@ -5,6 +5,7 @@ var CONSTANT = require('./constant');
 
 var SceneLoading = require('./scene/loading');
 var SceneTitle = require('./scene/title');
+var ScenePrologue = require('./scene/prologue');
 var SceneStage = require('./scene/stage');
 var PreReleaseEnd = require('./scene/prerelease_end');
 
@@ -20,10 +21,11 @@ Game.prototype.init = function () {
 	this.addScene("title", new SceneTitle(this)); // タイトル画面
 
 	/*
-	this.addScene("epigraph", new SceneEpiGraph(this)); // エピグラフ画面(詩の一節)
+	this.addScene("epigraph", new SceneEpigraph(this)); // エピグラフ画面(詩の一節)
 	this.addScene("reminiscence", new SceneReminiscence(this)); // 回想画面
-	this.addScene("prologue", new ScenePrologue(this)); // プロローグ
 	*/
+
+	this.addScene("prologue", new ScenePrologue(this)); // プロローグ
 
 	this.addScene("stage", new SceneStage(this));
 	/*

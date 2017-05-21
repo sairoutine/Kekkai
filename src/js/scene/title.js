@@ -34,15 +34,8 @@ SceneTitle.prototype.beforeDraw = function(){
 	}
 
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		var stage_no;
-		if (CONSTANT.DEBUG.START_STAGE_NO) {
-			stage_no = CONSTANT.DEBUG.START_STAGE_NO;
-		}
-		else {
-			stage_no = 1;
-		}
 		this.core.playSound('select');
-		this.core.changeScene("stage", stage_no, "talk", true);
+		this.core.changeScene("prologue");
 	}
 };
 
