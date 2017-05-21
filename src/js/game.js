@@ -7,6 +7,7 @@ var SceneLoading = require('./scene/loading');
 var SceneTitle = require('./scene/title');
 var ScenePrologue = require('./scene/prologue');
 var SceneStage = require('./scene/stage');
+var SceneStageEnd = require('./scene/stage_end');
 var PreReleaseEnd = require('./scene/prerelease_end');
 
 var Game = function(canvas) {
@@ -21,22 +22,24 @@ Game.prototype.init = function () {
 	this.addScene("title", new SceneTitle(this)); // タイトル画面
 
 	/*
-	this.addScene("epigraph", new SceneEpigraph(this)); // エピグラフ画面(詩の一節)
 	this.addScene("reminiscence", new SceneReminiscence(this)); // 回想画面
 	*/
 
 	this.addScene("prologue", new ScenePrologue(this)); // プロローグ
 
 	this.addScene("stage", new SceneStage(this));
+	this.addScene("stage_end", new SceneStageEnd(this)); // ノーマルステージ目終了後の画面
+
 	/*
 	// Exプロローグ
 	// もし、この幻想郷が全てを受け入れるというのであれば
 	// この結末を受け入れない私もまた、受け入れる筈よ！
+	this.addScene("epigraph", new SceneEpigraph(this)); // エピグラフ画面(詩の一節)
 	this.addScene("ex_prologue", new SceneExPrologue(this));
 	*/
 
 	/*
-	this.addScene("stage_end", new SceneStageEnd(this));
+	this.addScene("ex_stage_end", new SceneExStageEnd(this));
 	this.addScene("staff_roll", new SceneStaffRoll(this));
 	this.addScene("epilogue", new SceneEpilogue(this));
 	*/

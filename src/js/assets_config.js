@@ -9,6 +9,7 @@ AssetsConfig.images = {
 
 	// プロローグ背景
 	shrine_noon:   "./image/shrine_noon.jpg",
+
 	// ステージ画面背景
 	stage_bg:      "./image/stage_bg.png",
 	// ステージ画面ステージ背景
@@ -17,6 +18,9 @@ AssetsConfig.images = {
 	stage_tile_32: "./image/stage_tile_32.png",
 	block:         "./image/block.png",
 	hashigo:       "./image/hashigo.png",
+
+	// ノーマルステージクリア後背景
+	shrine_night:   "./image/shrine_night.jpg",
 
 	reimu_angry1:   "./image/reimu/angry1.png",
 	reimu_angry2:   "./image/reimu/angry2.png",
