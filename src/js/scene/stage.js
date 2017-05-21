@@ -160,12 +160,17 @@ SceneStage.prototype.notifyStageClear = function(){
 
 // ステージクリア
 SceneStage.prototype.notifyClearEnd = function() {
-	if (this.hasNextStage()) {
-		this.core.changeScene("stage", this.stage_no + 1);
+	// ノーマルステージクリア後
+	if (this.isLastNormalStory()) {
+		this.core.changeScene("stage_end"); // 体験版終了
 	}
+	// Exステージクリア後
+	else if (this.isLastExStory()) {
+		this.core.changeScene("ex_stage_end");
+	}
+	// 次のステージへ
 	else {
-		// ステージを全てクリア後
-		this.core.changeScene("prerelease_end"); // 体験版終了
+		this.core.changeScene("stage", this.stage_no + 1);
 	}
 };
 // ゲームオーバー後
@@ -173,9 +178,13 @@ SceneStage.prototype.notifyGameOverEnd = function() {
 	// 当該ステージの最初から
 	this.core.changeScene("stage", this.stage_no, "play");
 };
-
-SceneStage.prototype.hasNextStage = function() {
-	return MAPS[this.stage_no + 1] ? true : false;
+// ノーマルステージの最終ステージかどうか
+SceneStage.prototype.isLastNormalStory = function() {
+	return this.stage_no === 5 ? true : false;
+};
+// Exステージの最終ステージかどうか
+SceneStage.prototype.isLastExStory = function() {
+	return MAPS[this.stage_no + 1] ? false : true;
 };
 
 // プレイヤー(1ステージにプレイヤーは1人の想定)
