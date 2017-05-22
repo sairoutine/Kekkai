@@ -2,6 +2,7 @@
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
+var StorageSave = require('../save');
 var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
 
@@ -21,6 +22,13 @@ util.inherit(SceneTitle, base_scene);
 
 SceneTitle.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
+
+	// Exステージ解放されているかどうか */
+	var save_data = StorageSave.load();
+	if(!save_data) {
+		save_data = new StorageSave();
+	}
+	this.is_normal_stage_cleared = save_data.getIsNormalStageCleared();
 
 	this.core.stopBGM();
 };
@@ -81,7 +89,14 @@ SceneTitle.prototype.draw = function(){
 	ctx.textAlign = 'center';
 
 	if(this.frame_count % 80 > 40) {
-		var text = "Press Z to Start";
+		var text;
+		if(this.is_normal_stage_cleared) {
+			text = "Press Z to Start EX"; //Exステージ解放後
+		}
+		else {
+			text = "Press Z to Start"; // Exステージ開放前
+		}
+
 		ctx.fillStyle = 'rgb( 0, 0, 0 )';
 		ctx.lineWidth = 4.0;
 		ctx.strokeText(text, this.core.width/2, 420);

@@ -25,6 +25,7 @@ var serif_script = require("../logic/serif/stage_end");
 
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
+var StorageSave = require('../save');
 var base_scene = require('./serif_base');
 
 var ScenePrologue = function(game) {
@@ -35,7 +36,15 @@ util.inherit(ScenePrologue, base_scene);
 
 // 立ち絵＆セリフ終了後
 ScenePrologue.prototype.notifySerifEnd = function() {
-	// TODO: Exステージ解放 */
+	// Exステージ解放 */
+	var save_data = StorageSave.load();
+	if(!save_data) {
+		save_data = new StorageSave();
+	}
+	save_data.setIsNormalStageCleared(true);
+	save_data.save();
+
+	// タイトル画面へ
 	this.core.changeScene("title");
 };
 
