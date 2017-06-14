@@ -160,13 +160,13 @@ SceneStage.prototype.notifyStageClear = function(){
 
 // ステージクリア
 SceneStage.prototype.notifyClearEnd = function() {
-	// ノーマルステージクリア後
+	// 通常ストーリークリア後
 	if (this.isLastNormalStory()) {
-		this.core.changeScene("stage_end"); // 体験版終了
+		this.core.changeScene("after_normal");
 	}
 	// Exステージクリア後
 	else if (this.isLastExStory()) {
-		this.core.changeScene("ex_stage_end");
+		this.core.changeScene("after_ex");
 	}
 	// 次のステージへ
 	else {
