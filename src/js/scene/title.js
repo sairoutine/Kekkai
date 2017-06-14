@@ -43,7 +43,16 @@ SceneTitle.prototype.beforeDraw = function(){
 
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
-		this.core.changeScene("reminiscence");
+
+		if(this.is_normal_stage_cleared) {
+			// Exストーリー
+			this.core.changeScene("ex_epigraph");
+		}
+		else {
+			// 通常ストーリー
+			this.core.changeScene("reminiscence");
+		}
+
 	}
 };
 
