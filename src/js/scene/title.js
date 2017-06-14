@@ -43,7 +43,7 @@ SceneTitle.prototype.beforeDraw = function(){
 
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
-		this.core.changeScene("prologue");
+		this.core.changeScene("reminiscence");
 	}
 };
 

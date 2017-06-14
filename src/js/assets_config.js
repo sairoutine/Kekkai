@@ -7,6 +7,9 @@ AssetsConfig.images = {
 	// タイトル背景
 	title_bg:      "./image/title_bg.png",
 
+	// 回想シーン背景
+	reminiscence:   "./image/reminiscence.jpg",
+
 	// プロローグ背景
 	shrine_noon:   "./image/shrine_noon.jpg",
 
