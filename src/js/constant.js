@@ -4,6 +4,7 @@ var DEBUG = require("./debug_constant");
 var CONSTANT = {
 	DEBUG: {},
 
+	EX_STORY_START_STAGE_NO:  31,
 	TILE_SIZE:  24,
 
 	BLOCK_GREEN:  1,
