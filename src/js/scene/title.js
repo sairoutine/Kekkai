@@ -44,11 +44,7 @@ SceneTitle.prototype.beforeDraw = function(){
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
 
-		if (CONSTANT.DEBUG.START_SCENE) {
-			// デバッグ
-			this.core.changeScene(CONSTANT.DEBUG.START_SCENE);
-		}
-		else if(this.is_normal_stage_cleared) {
+		if(this.is_normal_stage_cleared) {
 			// Exストーリー
 			this.core.changeScene("ex_epigraph");
 		}
