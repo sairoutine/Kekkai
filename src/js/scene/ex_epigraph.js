@@ -3,7 +3,7 @@
 /* Ex エピグラフ画面 */
 
 // メッセージ表示の遷移時間
-var RESULT_TRANSITION_COUNT = 240;
+var TRANSITION_COUNT = 240;
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
@@ -35,14 +35,14 @@ SceneExEpigraph.prototype.draw = function(){
 
 	// 文字の透過度
 	var alpha = 0.0;
-	if(this.frame_count < RESULT_TRANSITION_COUNT/3) {
-		alpha = this.frame_count / (RESULT_TRANSITION_COUNT/3);
+	if(this.frame_count < TRANSITION_COUNT/3) {
+		alpha = this.frame_count / (TRANSITION_COUNT/3);
 	}
-	else if (RESULT_TRANSITION_COUNT/3 <= this.frame_count && this.frame_count < RESULT_TRANSITION_COUNT*2/3) {
+	else if (TRANSITION_COUNT/3 <= this.frame_count && this.frame_count < TRANSITION_COUNT*2/3) {
 		alpha = 1.0;
 	}
-	else if (RESULT_TRANSITION_COUNT*2/3 <= this.frame_count && this.frame_count < RESULT_TRANSITION_COUNT) {
-		alpha = (RESULT_TRANSITION_COUNT - this.frame_count) / (RESULT_TRANSITION_COUNT/3);
+	else if (TRANSITION_COUNT*2/3 <= this.frame_count && this.frame_count < TRANSITION_COUNT) {
+		alpha = (TRANSITION_COUNT - this.frame_count) / (TRANSITION_COUNT/3);
 	}
 
 	// 文字
@@ -63,7 +63,7 @@ SceneExEpigraph.prototype.draw = function(){
 };
 
 SceneExEpigraph.prototype.isTransitionEnd = function(){
-	return RESULT_TRANSITION_COUNT < this.frame_count;
+	return TRANSITION_COUNT < this.frame_count;
 };
 
 module.exports = SceneExEpigraph;
