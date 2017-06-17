@@ -41,7 +41,7 @@ SceneStaffroll.prototype.beforeDraw = function() {
 		this.frame_count = 0;
 
 		if (this.is_ending) {
-				this.core.changeScene("title");
+				this.core.changeScene("epilogue");
 		}
 		else {
 			// メッセージを全て表示し終わったなら

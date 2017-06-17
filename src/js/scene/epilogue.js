@@ -18,16 +18,7 @@ util.inherit(ScenePrologue, base_scene);
 
 // 立ち絵＆セリフ終了後
 ScenePrologue.prototype.notifySerifEnd = function() {
-	// Exステージクリア */
-	var save_data = StorageSave.load();
-	if(!save_data) {
-		save_data = new StorageSave();
-	}
-	save_data.setIsExStageCleared(true);
-	save_data.save();
-
-	// タイトル画面へ
-	this.core.changeScene("title");
+	this.core.changeScene("after_ex");
 };
 
 // セリフスクリプト
