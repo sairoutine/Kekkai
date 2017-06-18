@@ -34,18 +34,37 @@ SceneSerifBase.prototype.beforeDraw = function(){
 
 	if (this.isInTransition()) {
 		this.transition_count--;
+
+		// トランジションが終わればセリフ送り再開
+		if (this.transition_count === 0) {
+			this.serif.startPrintMessage();
+		}
 	}
+
 
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		if(this.serif.is_end()) {
 			this.notifySerifEnd();
 		}
 		else {
-			// セリフを送る
-			this.serif.next();
+			// トランジション中でなければ
+			if (!this.isInTransition()) {
+				// セリフを送る
+				this.serif.next();
 
-			if (this.serif.is_background_changed()) {
-				this.transition_count = TRANSITION_COUNT;
+				if (this.serif.is_background_changed()) {
+					// トランジション開始
+					this.transition_count = TRANSITION_COUNT;
+
+					// トランジション中はセリフ送り中断
+					this.serif.cancelPrintMessage();
+				}
+			}
+			else {
+				// トランジション終了
+				this.transition_count = 0;
+				// トランジションが終わればセリフ送り再開
+				this.serif.startPrintMessage();
 			}
 		}
 	}
