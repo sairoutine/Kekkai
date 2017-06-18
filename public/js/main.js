@@ -563,7 +563,7 @@ module.exports = CONSTANT;
 var DEBUG = {
 	ON: true,
 	SOUND_OFF: true,
-	START_STAGE_NO: 2,
+	START_STAGE_NO: 13,
 	START_SCENE: "stage",
 };
 
@@ -639,7 +639,7 @@ Game.prototype.stopBGM = function () {
 
 module.exports = Game;
 
-},{"./constant":5,"./hakurei":8,"./scene/after_ex":84,"./scene/after_normal":85,"./scene/epilogue":86,"./scene/ex_epigraph":87,"./scene/ex_prologue":88,"./scene/loading":89,"./scene/prologue":95,"./scene/reminiscence":96,"./scene/staffroll":98,"./scene/stage":99,"./scene/title":105}],8:[function(require,module,exports){
+},{"./constant":5,"./hakurei":8,"./scene/after_ex":119,"./scene/after_normal":120,"./scene/epilogue":121,"./scene/ex_epigraph":122,"./scene/ex_prologue":123,"./scene/loading":124,"./scene/prologue":138,"./scene/reminiscence":139,"./scene/staffroll":141,"./scene/stage":142,"./scene/title":148}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -10787,6 +10787,76 @@ var Serif= [
 module.exports = Serif;
 
 },{}],52:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],53:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],54:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],55:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],56:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],57:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],58:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],59:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],60:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],61:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],62:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],63:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],64:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],65:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],66:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],67:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],68:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],69:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],70:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],71:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],72:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],73:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],74:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],75:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],76:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],77:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],78:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],79:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],80:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],81:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],82:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],83:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],84:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],85:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],86:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"dup":50}],87:[function(require,module,exports){
 'use strict';
 var Game = require('./game');
 
@@ -10846,7 +10916,7 @@ window.changeFullScreen = function () {
 	game.fullscreen();
 };
 
-},{"./game":7}],53:[function(require,module,exports){
+},{"./game":7}],88:[function(require,module,exports){
 'use strict';
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
@@ -10978,7 +11048,7 @@ AlterEgo.prototype.startExchange = function(span) {
 };
 module.exports = AlterEgo;
 
-},{"../constant":5,"../hakurei":8,"./exchange_anim":55}],54:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"./exchange_anim":90}],89:[function(require,module,exports){
 'use strict';
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
@@ -11008,7 +11078,7 @@ BackGroundEye.prototype.spriteHeight = function(){
 };
 module.exports = BackGroundEye;
 
-},{"../hakurei":8}],55:[function(require,module,exports){
+},{"../hakurei":8}],90:[function(require,module,exports){
 'use strict';
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
@@ -11061,7 +11131,7 @@ AlterEgo.prototype.spriteAnimationSpan = function(){
 
 module.exports = AlterEgo;
 
-},{"../hakurei":8}],56:[function(require,module,exports){
+},{"../hakurei":8}],91:[function(require,module,exports){
 'use strict';
 
 /* スタッフロール用霊夢 */
@@ -11112,7 +11182,7 @@ Reimu.prototype.scaleHeight = function(){
 
 module.exports = Reimu;
 
-},{"../constant":5,"../hakurei":8}],57:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8}],92:[function(require,module,exports){
 'use strict';
 /* ステージ枠(縦横) */
 
@@ -11156,7 +11226,7 @@ BackGroundEye.prototype.rotateAdjust = function(){
 
 module.exports = BackGroundEye;
 
-},{"../hakurei":8}],58:[function(require,module,exports){
+},{"../hakurei":8}],93:[function(require,module,exports){
 'use strict';
 /* ステージ枠(角) */
 
@@ -11200,7 +11270,7 @@ BackGroundEye.prototype.rotateAdjust = function(){
 
 module.exports = BackGroundEye;
 
-},{"../hakurei":8}],59:[function(require,module,exports){
+},{"../hakurei":8}],94:[function(require,module,exports){
 'use strict';
 var base_object = require('../../hakurei').object.sprite;
 var util = require('../../hakurei').util;
@@ -11256,7 +11326,7 @@ BlockBase.prototype.scaleHeight = function(){
 
 module.exports = BlockBase;
 
-},{"../../hakurei":8}],60:[function(require,module,exports){
+},{"../../hakurei":8}],95:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -11274,7 +11344,7 @@ BlockGreen.prototype.spriteIndices = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":5,"../../hakurei":8,"./block_base":59}],61:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"./block_base":94}],96:[function(require,module,exports){
 'use strict';
 
 /* 乗ると消えるブロック */
@@ -11354,7 +11424,7 @@ BlockGreen.prototype.scaleHeight = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":5,"../../hakurei":8,"./block_base":59}],62:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"./block_base":94}],97:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -11371,7 +11441,7 @@ BlockGreen.prototype.spriteIndices = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":5,"../../hakurei":8,"./block_base":59}],63:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"./block_base":94}],98:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -11388,7 +11458,7 @@ BlockGreen.prototype.spriteIndices = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":5,"../../hakurei":8,"./block_base":59}],64:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"./block_base":94}],99:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -11406,7 +11476,7 @@ BlockGreen.prototype.spriteIndices = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":5,"../../hakurei":8,"./block_base":59}],65:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"./block_base":94}],100:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -11423,7 +11493,7 @@ BlockStone1.prototype.spriteIndices = function(){
 
 module.exports = BlockStone1;
 
-},{"../../constant":5,"../../hakurei":8,"./block_base":59}],66:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"./block_base":94}],101:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -11440,7 +11510,7 @@ BlockStone2.prototype.spriteIndices = function(){
 
 module.exports = BlockStone2;
 
-},{"../../constant":5,"../../hakurei":8,"./block_base":59}],67:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"./block_base":94}],102:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -11457,7 +11527,7 @@ BlockStone3.prototype.spriteIndices = function(){
 
 module.exports = BlockStone3;
 
-},{"../../constant":5,"../../hakurei":8,"./block_base":59}],68:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"./block_base":94}],103:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -11495,7 +11565,7 @@ Death.prototype.spriteHeight = function(){
 };
 module.exports = Death;
 
-},{"../../constant":5,"../../hakurei":8}],69:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8}],104:[function(require,module,exports){
 'use strict';
 
 var SPEED = 2;
@@ -11624,7 +11694,7 @@ Enemy.prototype.scaleHeight = function(){
 
 module.exports = Enemy;
 
-},{"../../constant":5,"../../hakurei":8}],70:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8}],105:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -11704,7 +11774,7 @@ Item.prototype.spriteHeight = function(){
 };
 module.exports = Item;
 
-},{"../../constant":5,"../../hakurei":8}],71:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8}],106:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -11784,7 +11854,7 @@ Item.prototype.spriteHeight = function(){
 };
 module.exports = Item;
 
-},{"../../constant":5,"../../hakurei":8}],72:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8}],107:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -11866,7 +11936,7 @@ Ladder.prototype.collisionHeight = function() {
 
 module.exports = Ladder;
 
-},{"../../constant":5,"../../hakurei":8}],73:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8}],108:[function(require,module,exports){
 'use strict';
 
 var CONSTANT = require('../../constant');
@@ -12482,7 +12552,7 @@ Player.prototype.collisionHeight = function() {
 
 module.exports = Player;
 
-},{"../../constant":5,"../../hakurei":8,"../alterego":53,"../exchange_anim":55,"./block_base":59,"./player/state_climbdown":75,"./player/state_dying":76,"./player/state_exchange":77,"./player/state_falldown":78,"./player/state_moveleft":80,"./player/state_moveright":81,"./player/state_normal":82}],74:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"../alterego":88,"../exchange_anim":90,"./block_base":94,"./player/state_climbdown":110,"./player/state_dying":111,"./player/state_exchange":112,"./player/state_falldown":113,"./player/state_moveleft":115,"./player/state_moveright":116,"./player/state_normal":117}],109:[function(require,module,exports){
 'use strict';
 var base_object = require('../../../hakurei').object.base;
 var util = require('../../../hakurei').util;
@@ -12516,7 +12586,7 @@ StateBase.prototype.isEnableToDie = function () {
 
 module.exports = StateBase;
 
-},{"../../../hakurei":8}],75:[function(require,module,exports){
+},{"../../../hakurei":8}],110:[function(require,module,exports){
 'use strict';
 
 // はしごを降りている状態
@@ -12539,7 +12609,7 @@ StateNormal.prototype.isEnableToFallDown = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":74}],76:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],111:[function(require,module,exports){
 'use strict';
 
 // 死亡中の状態
@@ -12578,7 +12648,7 @@ StateNormal.prototype.isEnableToDie = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":74}],77:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],112:[function(require,module,exports){
 'use strict';
 
 // 場所交代中の状態
@@ -12616,7 +12686,7 @@ StateNormal.prototype.isEnableToDie = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":74}],78:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],113:[function(require,module,exports){
 'use strict';
 
 // 落下中の状態
@@ -12636,7 +12706,7 @@ StateNormal.prototype.isEnableToPlayMove = function () {
 };
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":74}],79:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],114:[function(require,module,exports){
 'use strict';
 
 // 移動状態の基底クラス
@@ -12652,7 +12722,7 @@ util.inherit(StateMoveBase, base_object);
 
 module.exports = StateMoveBase;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":74}],80:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],115:[function(require,module,exports){
 'use strict';
 
 // 左への移動状態
@@ -12668,9 +12738,9 @@ util.inherit(StateMoveLeft, base_object);
 
 module.exports = StateMoveLeft;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_move_base":79}],81:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"../../../constant":5,"../../../hakurei":8,"./state_move_base":79,"dup":80}],82:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_move_base":114}],116:[function(require,module,exports){
+arguments[4][115][0].apply(exports,arguments)
+},{"../../../constant":5,"../../../hakurei":8,"./state_move_base":114,"dup":115}],117:[function(require,module,exports){
 'use strict';
 
 // 通常の状態
@@ -12686,7 +12756,7 @@ util.inherit(StateNormal, base_object);
 
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":74}],83:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],118:[function(require,module,exports){
 'use strict';
 var base_class = require('./hakurei').storage.save;
 var util = require('./hakurei').util;
@@ -12716,7 +12786,7 @@ StorageSave.prototype.getIsNormalStageCleared = function(){
 
 module.exports = StorageSave;
 
-},{"./hakurei":8}],84:[function(require,module,exports){
+},{"./hakurei":8}],119:[function(require,module,exports){
 'use strict';
 
 /* Exストーリー クリア後画面 */
@@ -12773,7 +12843,7 @@ SceneAfterEx.prototype.background = function() {
 };
 module.exports = SceneAfterEx;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/after_ex":41,"../save":83,"./serif_base":97}],85:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/after_ex":41,"../save":118,"./serif_base":140}],120:[function(require,module,exports){
 'use strict';
 
 /* 通常ストーリー クリア後画面 */
@@ -12817,7 +12887,7 @@ SceneAfterNormal.prototype.background = function() {
 };
 module.exports = SceneAfterNormal;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/after_normal":42,"../save":83,"./serif_base":97}],86:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/after_normal":42,"../save":118,"./serif_base":140}],121:[function(require,module,exports){
 'use strict';
 
 /* エピローグ画面 */
@@ -12853,7 +12923,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/epilogue":43,"../save":83,"./serif_base":97}],87:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/epilogue":43,"../save":118,"./serif_base":140}],122:[function(require,module,exports){
 'use strict';
 
 /* Ex エピグラフ画面 */
@@ -12924,7 +12994,7 @@ SceneExEpigraph.prototype.isTransitionEnd = function(){
 
 module.exports = SceneExEpigraph;
 
-},{"../hakurei":8}],88:[function(require,module,exports){
+},{"../hakurei":8}],123:[function(require,module,exports){
 'use strict';
 
 /* Ex プロローグ画面 */
@@ -12960,7 +13030,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/ex_prologue":44,"./serif_base":97}],89:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/ex_prologue":44,"./serif_base":140}],124:[function(require,module,exports){
 'use strict';
 
 // ローディングシーン
@@ -13062,7 +13132,7 @@ SceneLoading.prototype.progress = function(){
 
 module.exports = SceneLoading;
 
-},{"../assets_config":4,"../constant":5,"../hakurei":8}],90:[function(require,module,exports){
+},{"../assets_config":4,"../constant":5,"../hakurei":8}],125:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13105,7 +13175,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],91:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13148,7 +13218,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],92:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13191,7 +13261,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],93:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13234,7 +13304,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],94:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13277,7 +13347,351 @@ module.exports = {
 	is_vertical: true, // 交代が垂直かどうか
 };
 
-},{}],95:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,E,0,0,E,0,0,E,0,0,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,Y,Y,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,I,I,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,I,I,I,I,0,0,0,L,0,0,0,0,0,0,0,0,Y,Y,0,E,0,0,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],131:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,C,0,A,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,C,0,A,B,C,0,0],
+	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
+	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
+	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
+	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,E,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
+	[0,0,0,B,0,0,0,B,B,0,A,B,B,B,B,B,B,B,C,L,0,B,B,0,0,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,P,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,0,B,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],132:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,E,0,0,0,I,I,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,I,I,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,C,0,B,L,A,B,B,C,L,B,0,A,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,Y,Y,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],133:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,Y,Y,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,E,0,0,0,0,0,0,0,L,0,0,0,0,0,0,Y,Y,Y,Y,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,L,B,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,Y,0,0,0,0,A,B,B,B,C,L,0,0,0,0,E,0,0,0,P,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,A,B,B,B,B,B,C,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],134:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,I,I,I,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,B,L,K,K,K,K,K,K,K,K,K,K,L,B,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,B,L,0,0,0,0,0,0,0,0,0,0,L,B,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,E,I,B,L,0,0,0,0,I,I,0,0,E,0,L,B,I,E,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],135:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,E,0,0,0,0,I,0,I,0,0,I,0,I,0,0,0,0,E,0,0,0,0,0,0],
+	[0,0,0,A,L,A,B,B,B,B,L,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,L,0,I,0,0,0,0,I,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,L,I,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0,I,0,I,0,0,0],
+	[0,0,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,L,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,K,K,C,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,E,0,0,0,0,0,I,0,I,I,0,I,0,0,0,0,0,E,0,L,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],136:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,Y,0,I,0,0,Y,0,I,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,L,C,0,0,A,L,C,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,I,I,I,I,0,E,L,0,0,0,0,L,E,0,I,I,I,I,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,K,K,B,B,B,B,B,B,B,C,L,A,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,I,0,0,0,0,0,0,0,E,I,0,0,0,0,I,E,0,0,0,0,0,L,0,I,0,0,0],
+	[0,0,A,B,B,B,B,L,B,B,B,B,B,B,K,K,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[B,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,B],
+	[B,0,0,0,0,0,0,L,0,0,0,0,0,0,I,I,I,I,0,0,0,0,0,0,0,0,0,0,0,B],
+	[B,K,K,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,K,K,B],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],137:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0],
+	[0,0,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0],
+	[0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,A,L,C,0,0,0,A,L,A,B,B,B,B,C,L,C,0,0,0,A,L,C,0,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,E,E,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0],
+	[0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],138:[function(require,module,exports){
 'use strict';
 
 /* プロローグ画面 */
@@ -13313,7 +13727,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/prologue":45,"./serif_base":97}],96:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/prologue":45,"./serif_base":140}],139:[function(require,module,exports){
 'use strict';
 
 /* 回想シーン画面 */
@@ -13348,7 +13762,7 @@ SceneReminiscence.prototype.background = function() {
 
 module.exports = SceneReminiscence;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/reminiscence":46,"./serif_base":97}],97:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/reminiscence":46,"./serif_base":140}],140:[function(require,module,exports){
 'use strict';
 
 /* 立ち絵＆セリフ */
@@ -13599,7 +14013,7 @@ SceneSerifBase.prototype.isInTransition = function() {
 
 module.exports = SceneSerifBase;
 
-},{"../constant":5,"../hakurei":8}],98:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8}],141:[function(require,module,exports){
 'use strict';
 
 /* スタッフロール画面 */
@@ -13707,7 +14121,7 @@ SceneStaffroll.prototype.draw = function(){
 
 module.exports = SceneStaffroll;
 
-},{"../hakurei":8,"../object/reimu_for_staffroll":56}],99:[function(require,module,exports){
+},{"../hakurei":8,"../object/reimu_for_staffroll":91}],142:[function(require,module,exports){
 'use strict';
 
 	var offset_x = 25;
@@ -13765,19 +14179,89 @@ var SceneStageResultGameOver = require("./stage/result_gameover");
 
 var MAPS = [
 	null,
-	require("./map/stage1"),
-	require("./map/stage2"),
-	require("./map/stage3"),
-	require("./map/stage4"),
-	require("./map/stage5"),
+	require("./map/stage01"),
+	require("./map/stage02"),
+	require("./map/stage03"),
+	require("./map/stage04"),
+	require("./map/stage05"),
+	require("./map/stage06"),
+	require("./map/stage07"),
+	require("./map/stage08"),
+	require("./map/stage09"),
+	require("./map/stage10"),
+	require("./map/stage11"),
+	require("./map/stage12"),
+	require("./map/stage13"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
+	require("./map/stage07"),
 ];
 var SERIF_BEFORES = [
 	null,
-	require("../logic/serif/stage1/before"),
-	require("../logic/serif/stage2/before"),
-	require("../logic/serif/stage3/before"),
-	require("../logic/serif/stage4/before"),
-	require("../logic/serif/stage5/before"),
+	require("../logic/serif/stage01/before"),
+	require("../logic/serif/stage02/before"),
+	require("../logic/serif/stage03/before"),
+	require("../logic/serif/stage04/before"),
+	require("../logic/serif/stage05/before"),
+	require("../logic/serif/stage06/before"),
+	require("../logic/serif/stage07/before"),
+	require("../logic/serif/stage08/before"),
+	require("../logic/serif/stage09/before"),
+	require("../logic/serif/stage10/before"),
+	require("../logic/serif/stage11/before"),
+	require("../logic/serif/stage12/before"),
+	require("../logic/serif/stage13/before"),
+	require("../logic/serif/stage14/before"),
+	require("../logic/serif/stage15/before"),
+	require("../logic/serif/stage16/before"),
+	require("../logic/serif/stage17/before"),
+	require("../logic/serif/stage18/before"),
+	require("../logic/serif/stage19/before"),
+	require("../logic/serif/stage20/before"),
+	require("../logic/serif/stage21/before"),
+	require("../logic/serif/stage22/before"),
+	require("../logic/serif/stage23/before"),
+	require("../logic/serif/stage24/before"),
+	require("../logic/serif/stage25/before"),
+	require("../logic/serif/stage26/before"),
+	require("../logic/serif/stage27/before"),
+	require("../logic/serif/stage28/before"),
+	require("../logic/serif/stage29/before"),
+	require("../logic/serif/stage30/before"),
+	require("../logic/serif/stage31/before"),
+	require("../logic/serif/stage32/before"),
+	require("../logic/serif/stage33/before"),
+	require("../logic/serif/stage34/before"),
+	require("../logic/serif/stage35/before"),
+	require("../logic/serif/stage36/before"),
+	require("../logic/serif/stage37/before"),
+	require("../logic/serif/stage38/before"),
+	require("../logic/serif/stage39/before"),
+	require("../logic/serif/stage40/before"),
 ];
 
 var EYES_NUM = [
@@ -13786,6 +14270,41 @@ var EYES_NUM = [
 	1,
 	3,
 	4,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
 	6,
 ];
 
@@ -14121,7 +14640,7 @@ SceneStage.prototype.calcItemNum = function() {
 
 module.exports = SceneStage;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/stage1/before":47,"../logic/serif/stage2/before":48,"../logic/serif/stage3/before":49,"../logic/serif/stage4/before":50,"../logic/serif/stage5/before":51,"../object/background_eye":54,"../object/stage_frame1":57,"../object/stage_frame2":58,"../object/tile/block_blue":60,"../object/tile/block_brown":61,"../object/tile/block_green":62,"../object/tile/block_purple":63,"../object/tile/block_red":64,"../object/tile/block_stone1":65,"../object/tile/block_stone2":66,"../object/tile/block_stone3":67,"../object/tile/death":68,"../object/tile/enemy":69,"../object/tile/item_for_reimu":70,"../object/tile/item_for_yukari":71,"../object/tile/ladder":72,"../object/tile/player":73,"./map/stage1":90,"./map/stage2":91,"./map/stage3":92,"./map/stage4":93,"./map/stage5":94,"./stage/play":100,"./stage/result_clear":102,"./stage/result_gameover":103,"./stage/talk":104}],100:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/stage01/before":47,"../logic/serif/stage02/before":48,"../logic/serif/stage03/before":49,"../logic/serif/stage04/before":50,"../logic/serif/stage05/before":51,"../logic/serif/stage06/before":52,"../logic/serif/stage07/before":53,"../logic/serif/stage08/before":54,"../logic/serif/stage09/before":55,"../logic/serif/stage10/before":56,"../logic/serif/stage11/before":57,"../logic/serif/stage12/before":58,"../logic/serif/stage13/before":59,"../logic/serif/stage14/before":60,"../logic/serif/stage15/before":61,"../logic/serif/stage16/before":62,"../logic/serif/stage17/before":63,"../logic/serif/stage18/before":64,"../logic/serif/stage19/before":65,"../logic/serif/stage20/before":66,"../logic/serif/stage21/before":67,"../logic/serif/stage22/before":68,"../logic/serif/stage23/before":69,"../logic/serif/stage24/before":70,"../logic/serif/stage25/before":71,"../logic/serif/stage26/before":72,"../logic/serif/stage27/before":73,"../logic/serif/stage28/before":74,"../logic/serif/stage29/before":75,"../logic/serif/stage30/before":76,"../logic/serif/stage31/before":77,"../logic/serif/stage32/before":78,"../logic/serif/stage33/before":79,"../logic/serif/stage34/before":80,"../logic/serif/stage35/before":81,"../logic/serif/stage36/before":82,"../logic/serif/stage37/before":83,"../logic/serif/stage38/before":84,"../logic/serif/stage39/before":85,"../logic/serif/stage40/before":86,"../object/background_eye":89,"../object/stage_frame1":92,"../object/stage_frame2":93,"../object/tile/block_blue":95,"../object/tile/block_brown":96,"../object/tile/block_green":97,"../object/tile/block_purple":98,"../object/tile/block_red":99,"../object/tile/block_stone1":100,"../object/tile/block_stone2":101,"../object/tile/block_stone3":102,"../object/tile/death":103,"../object/tile/enemy":104,"../object/tile/item_for_reimu":105,"../object/tile/item_for_yukari":106,"../object/tile/ladder":107,"../object/tile/player":108,"./map/stage01":125,"./map/stage02":126,"./map/stage03":127,"./map/stage04":128,"./map/stage05":129,"./map/stage06":130,"./map/stage07":131,"./map/stage08":132,"./map/stage09":133,"./map/stage10":134,"./map/stage11":135,"./map/stage12":136,"./map/stage13":137,"./stage/play":143,"./stage/result_clear":145,"./stage/result_gameover":146,"./stage/talk":147}],143:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../../hakurei').scene.base;
@@ -14188,7 +14707,7 @@ SceneStagePlay.prototype.draw = function() {
 
 module.exports = SceneStagePlay;
 
-},{"../../hakurei":8}],101:[function(require,module,exports){
+},{"../../hakurei":8}],144:[function(require,module,exports){
 'use strict';
 
 // メッセージを表示する間隔
@@ -14319,7 +14838,7 @@ SceneStageResultBase.prototype.notifyResultEnd = function(){
 module.exports = SceneStageResultBase;
 
 
-},{"../../hakurei":8}],102:[function(require,module,exports){
+},{"../../hakurei":8}],145:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -14346,7 +14865,7 @@ SceneStageResultClear.prototype.resultMessage = function(){
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":8,"./result_base":101}],103:[function(require,module,exports){
+},{"../../hakurei":8,"./result_base":144}],146:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -14373,7 +14892,7 @@ SceneStageResultClear.prototype.resultMessage = function(){
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":8,"./result_base":101}],104:[function(require,module,exports){
+},{"../../hakurei":8,"./result_base":144}],147:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
@@ -14579,7 +15098,7 @@ SceneStageTalk.prototype._showMessage = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":8}],105:[function(require,module,exports){
+},{"../../hakurei":8}],148:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../hakurei').scene.base;
@@ -14704,4 +15223,4 @@ SceneTitle.prototype.draw = function(){
 
 module.exports = SceneTitle;
 
-},{"../constant":5,"../hakurei":8,"../save":83}]},{},[52]);
+},{"../constant":5,"../hakurei":8,"../save":118}]},{},[87]);
