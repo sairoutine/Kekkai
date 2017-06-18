@@ -2,6 +2,7 @@
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
 var ExchangeAnim = require('./exchange_anim');
+var CONSTANT = require('../constant');
 
 var AlterEgo = function (scene) {
 	base_object.apply(this, arguments);
@@ -47,7 +48,32 @@ AlterEgo.prototype.beforeDraw = function(){
 		}
 	}
 
+	// アイテムとの接触判定
+	var item = this.checkCollisionWithItems();
+	if(item) {
+		item.got(); // 獲得済
+		this.scene.addYukariItemNum();
+	}
 };
+
+AlterEgo.prototype.checkCollisionWithItems = function() {
+	var self = this;
+	// アイテムと分身の衝突判定
+	var collision_item = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI].forEach(function(obj) {
+		if(obj.isCollision() && self.checkCollision(obj)) {
+			collision_item = obj;
+			// TODO: break;
+		}
+	});
+
+	return collision_item;
+};
+
+
+
+
 
 AlterEgo.prototype.draw = function(){
 	base_object.prototype.draw.apply(this, arguments);

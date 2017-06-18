@@ -210,10 +210,6 @@ Player.prototype.update = function(){
 	if(item) {
 		item.got(); // 獲得済
 		this.scene.addReimuItemNum();
-		// ステージクリア
-		if (this.scene.isClear()) {
-			this.scene.notifyStageClear();
-		}
 	}
 
 	// もう既に設地していない落下ブロックは削除

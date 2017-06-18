@@ -114,6 +114,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	}
 
 	this.reimu_item_num = 0;
+	this.yukari_item_num = 0;
 
 	// 背景の眼
 	this.eyes = [];
@@ -199,7 +200,7 @@ SceneStage.prototype.player = function () {
 };
 // ステージをクリアしたかどうか
 SceneStage.prototype.isClear = function () {
-	return this.reimu_item_num >= this.max_item_num ? true : false;
+	return(this.reimu_item_num + this.yukari_item_num >= this.max_item_num ? true : false);
 };
 
 // 位置移動が垂直かどうか
@@ -282,7 +283,10 @@ SceneStage.prototype.initializeObjectsByTileType = function () {
 SceneStage.prototype.addReimuItemNum = function () {
 	this.reimu_item_num += 1;
 };
-
+// 紫用アイテム獲得
+SceneStage.prototype.addYukariItemNum = function () {
+	this.yukari_item_num += 1;
+};
 
 // マップデータが正しいか確認する
 SceneStage.prototype.checkValidMap = function(map) {

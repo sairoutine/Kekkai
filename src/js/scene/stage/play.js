@@ -17,6 +17,7 @@ SceneStagePlay.prototype.init = function(){
 SceneStagePlay.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
+	// キー入力
 	if(this.core.isKeyDown(CONSTANT.BUTTON_LEFT)) {
 		this.parent.player().notifyMoveLeft();
 	}
@@ -38,7 +39,13 @@ SceneStagePlay.prototype.beforeDraw = function(){
 		}
 	}
 
+	// プレイヤーの更新
 	this.parent.player().update();
+
+	// ステージクリア判定
+	if (this.parent.isClear()) {
+		this.parent.notifyStageClear();
+	}
 };
 
 SceneStagePlay.prototype.draw = function() {
