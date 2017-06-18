@@ -397,6 +397,7 @@ Player.prototype.checkCollisionWithDeathOrEnemy = function() {
 
 	self.scene.objects_by_tile_type[CONSTANT.DEATH]
 		.concat(self.scene.objects_by_tile_type[CONSTANT.ENEMY])
+		.concat(self.scene.objects_by_tile_type[CONSTANT.ENEMY_VERTICAL])
 		.forEach(function(obj) {
 		if(self.checkCollision(obj)) {
 			is_collision = obj;
