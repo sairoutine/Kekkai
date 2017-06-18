@@ -562,7 +562,7 @@ Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
 
 		for (var j = 0; j < tile_objects.length; j++) {
 			var obj = tile_objects[j];
-			if(this.alterego.checkCollision(obj)) {
+			if(obj.isCollision() && this.alterego.checkCollision(obj)) {
 				is_collision = true;
 				break;
 			}
