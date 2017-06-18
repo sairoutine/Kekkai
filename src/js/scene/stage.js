@@ -55,13 +55,13 @@ var SceneStageResultGameOver = require("./stage/result_gameover");
 
 var MAPS = [
 	null,
-	require("./map/stage1"),
-	require("./map/stage2"),
-	require("./map/stage3"),
-	require("./map/stage4"),
-	require("./map/stage5"),
-	require("./map/stage6"),
-	require("./map/stage7"),
+	require("./map/stage01"),
+	require("./map/stage02"),
+	require("./map/stage03"),
+	require("./map/stage04"),
+	require("./map/stage05"),
+	require("./map/stage06"),
+	require("./map/stage07"),
 ];
 var SERIF_BEFORES = [
 	null,
