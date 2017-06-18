@@ -96,6 +96,10 @@ util.inherit(SceneStage, base_scene);
 SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	base_scene.prototype.init.apply(this, arguments);
 
+	if (CONSTANT.DEBUG.START_STAGE_NO) {
+		stage_no = CONSTANT.DEBUG.START_STAGE_NO;
+	}
+
 	// stage no
 	this.stage_no = stage_no || 1;
 
