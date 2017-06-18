@@ -60,6 +60,7 @@ var MAPS = [
 	require("./map/stage3"),
 	require("./map/stage4"),
 	require("./map/stage5"),
+	require("./map/stage6"),
 ];
 var SERIF_BEFORES = [
 	null,
@@ -68,6 +69,7 @@ var SERIF_BEFORES = [
 	require("../logic/serif/stage3/before"),
 	require("../logic/serif/stage4/before"),
 	require("../logic/serif/stage5/before"),
+	require("../logic/serif/stage6/before"),
 ];
 
 var EYES_NUM = [
@@ -76,6 +78,7 @@ var EYES_NUM = [
 	1,
 	3,
 	4,
+	6,
 	6,
 ];
 
