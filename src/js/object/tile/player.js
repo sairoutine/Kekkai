@@ -205,11 +205,18 @@ Player.prototype.update = function(){
 		this.fallDown();
 	}
 
-	// アイテムとの接触判定
+	// 霊夢用アイテムとの接触判定
 	var item = this.checkCollisionWithItems();
 	if(item) {
 		item.got(); // 獲得済
 		this.scene.addReimuItemNum();
+	}
+
+	// 交換アイテムとの接触判定
+	var exchange_item = this.checkCollisionWithExchangeItems();
+	if(exchange_item) {
+		exchange_item.got(); // 獲得済
+		this.scene.exchangeVertical();
 	}
 
 	// もう既に設地していない落下ブロックは削除
@@ -348,6 +355,7 @@ Player.prototype.checkCollisionWithLadder = function() {
 	return collision_ladder;
 };
 
+// 霊夢用アイテムとの衝突判定
 Player.prototype.checkCollisionWithItems = function() {
 	var self = this;
 	// アイテムと自機の衝突判定
@@ -362,6 +370,25 @@ Player.prototype.checkCollisionWithItems = function() {
 
 	return collision_item;
 };
+
+// 交換アイテムとの衝突判定
+Player.prototype.checkCollisionWithExchangeItems = function() {
+	var self = this;
+	// アイテムと自機の衝突判定
+	var collision_item = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.ITEM_OF_EXCHANGE].forEach(function(obj) {
+		if(obj.isCollision() && self.checkCollision(obj)) {
+			collision_item = obj;
+			// TODO: break;
+		}
+	});
+
+	return collision_item;
+};
+
+
+
 
 Player.prototype.checkCollisionWithDeathOrEnemy = function() {
 	var self = this;

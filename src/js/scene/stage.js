@@ -21,6 +21,7 @@ var Player        = require('../object/tile/player');
 var Enemy         = require('../object/tile/enemy');
 var ItemForReimu  = require('../object/tile/item_for_reimu');
 var ItemForYukari = require('../object/tile/item_for_yukari');
+var ItemOfExchange= require('../object/tile/item_of_exchange');
 var Death         = require('../object/tile/death');
 var BlockStone1   = require('../object/tile/block_stone1');
 var BlockStone2   = require('../object/tile/block_stone2');
@@ -39,6 +40,7 @@ TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]          = Player;
 TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]           = Enemy;
 TILE_TYPE_TO_CLASS[CONSTANT.ITEM_FOR_REIMU]  = ItemForReimu;
 TILE_TYPE_TO_CLASS[CONSTANT.ITEM_FOR_YUKARI] = ItemForYukari;
+TILE_TYPE_TO_CLASS[CONSTANT.ITEM_OF_EXCHANGE]= ItemOfExchange;
 TILE_TYPE_TO_CLASS[CONSTANT.DEATH]           = Death;
 TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE1]    = BlockStone1;
 TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE2]    = BlockStone2;
@@ -311,6 +313,11 @@ SceneStage.prototype.isClear = function () {
 // 位置移動が垂直かどうか
 SceneStage.prototype.isVertical = function () {
 	return this._is_vertical;
+};
+
+// 位置移動の垂直<=>水平の変更
+SceneStage.prototype.exchangeVertical = function () {
+	this._is_vertical = !this._is_vertical;
 };
 
 
