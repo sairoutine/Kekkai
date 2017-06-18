@@ -104,7 +104,7 @@ Enemy.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 Enemy.prototype.spriteIndices = function(){
-	return [{x: 0, y: 4}, {x: 1, y: 4}];
+	return [{x: 2, y: 4}, {x: 3, y: 4}];
 };
 
 Enemy.prototype.spriteAnimationSpan = function(){
