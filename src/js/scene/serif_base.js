@@ -36,6 +36,10 @@ SceneSerifBase.prototype.beforeDraw = function(){
 		else {
 			// セリフを送る
 			this.serif.next();
+
+			if (this.serif.is_background_changed()) {
+				// TODO: トランジション
+			}
 		}
 	}
 };
@@ -66,7 +70,8 @@ SceneSerifBase.prototype.draw = function(){
 // 背景画像表示
 SceneSerifBase.prototype._showBackground = function(){
 	var ctx = this.core.ctx;
-	var background = this.core.image_loader.getImage(this.background());
+	var background_name = this.serif.background_image() ? this.serif.background_image() : this.background();
+	var background = this.core.image_loader.getImage(background_name);
 	ctx.save();
 	ctx.drawImage(background,
 					0,
