@@ -11,36 +11,38 @@ var BackGroundEye  = require('../object/background_eye');
 var StageFrame1  = require('../object/stage_frame1');
 var StageFrame2  = require('../object/stage_frame2');
 
-var BlockGreen  = require('../object/tile/block_green');
-var BlockBlue   = require('../object/tile/block_blue');
-var BlockRed    = require('../object/tile/block_red');
-var BlockPurple = require('../object/tile/block_purple');
-var BlockBrown  = require('../object/tile/block_brown');
-var Ladder      = require('../object/tile/ladder');
-var Player      = require('../object/tile/player');
-var Enemy       = require('../object/tile/enemy');
-var Item        = require('../object/tile/item');
-var Death       = require('../object/tile/death');
-var BlockStone1 = require('../object/tile/block_stone1');
-var BlockStone2 = require('../object/tile/block_stone2');
-var BlockStone3 = require('../object/tile/block_stone3');
+var BlockGreen    = require('../object/tile/block_green');
+var BlockBlue     = require('../object/tile/block_blue');
+var BlockRed      = require('../object/tile/block_red');
+var BlockPurple   = require('../object/tile/block_purple');
+var BlockBrown    = require('../object/tile/block_brown');
+var Ladder        = require('../object/tile/ladder');
+var Player        = require('../object/tile/player');
+var Enemy         = require('../object/tile/enemy');
+var ItemForReimu  = require('../object/tile/item_for_reimu');
+var ItemForYukari = require('../object/tile/item_for_yukari');
+var Death         = require('../object/tile/death');
+var BlockStone1   = require('../object/tile/block_stone1');
+var BlockStone2   = require('../object/tile/block_stone2');
+var BlockStone3   = require('../object/tile/block_stone3');
 
 // tile_type => クラス名
 var TILE_TYPE_TO_CLASS = {};
 //TILE_TYPE_TO_CLASS[CONSTANT.BACKGROUND]  = BackGround;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_GREEN]  = BlockGreen;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BLUE]   = BlockBlue;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_RED]    = BlockRed;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_PURPLE] = BlockPurple;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BROWN]  = BlockBrown;
-TILE_TYPE_TO_CLASS[CONSTANT.LADDER]       = Ladder;
-TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]       = Player;
-TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]        = Enemy;
-TILE_TYPE_TO_CLASS[CONSTANT.ITEM]         = Item;
-TILE_TYPE_TO_CLASS[CONSTANT.DEATH]        = Death;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE1]       = BlockStone1;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE2]       = BlockStone2;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE3]       = BlockStone3;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_GREEN]     = BlockGreen;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BLUE]      = BlockBlue;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_RED]       = BlockRed;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_PURPLE]    = BlockPurple;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BROWN]     = BlockBrown;
+TILE_TYPE_TO_CLASS[CONSTANT.LADDER]          = Ladder;
+TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]          = Player;
+TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]           = Enemy;
+TILE_TYPE_TO_CLASS[CONSTANT.ITEM_FOR_REIMU]  = ItemForReimu;
+TILE_TYPE_TO_CLASS[CONSTANT.ITEM_FOR_YUKARI] = ItemForYukari;
+TILE_TYPE_TO_CLASS[CONSTANT.DEATH]           = Death;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE1]    = BlockStone1;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE2]    = BlockStone2;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE3]    = BlockStone3;
 
 
 var base_scene = require('../hakurei').scene.base;
@@ -396,7 +398,7 @@ SceneStage.prototype.createBackGroundEyes = function() {
 
 
 SceneStage.prototype.calcItemNum = function() {
-	return this.objects_by_tile_type[CONSTANT.ITEM].length;
+	return this.objects_by_tile_type[CONSTANT.ITEM_FOR_REIMU].length + this.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI].length;
 };
 
 

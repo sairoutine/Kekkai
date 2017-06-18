@@ -357,7 +357,7 @@ Player.prototype.checkCollisionWithItems = function() {
 	// アイテムと自機の衝突判定
 	var collision_item = false;
 
-	self.scene.objects_by_tile_type[CONSTANT.ITEM].forEach(function(obj) {
+	self.scene.objects_by_tile_type[CONSTANT.ITEM_FOR_REIMU].forEach(function(obj) {
 		if(obj.isCollision() && self.checkCollision(obj)) {
 			collision_item = obj;
 			// TODO: break;
