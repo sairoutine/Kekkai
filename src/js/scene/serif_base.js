@@ -5,6 +5,7 @@ var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
 var TALKER_MOVE_PX = 5;
 var SCALE = 1;
 
+var TRANSITION_COUNT = 100;
 
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
@@ -24,10 +25,16 @@ util.inherit(SceneSerifBase, base_scene);
 SceneSerifBase.prototype.init = function(serif){
 	base_scene.prototype.init.apply(this, arguments);
 	this.serif.init(this.serifScript());
+
+	this.transition_count = 0;
 };
 
 SceneSerifBase.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if (this.isInTransition()) {
+		this.transition_count--;
+	}
 
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		if(this.serif.is_end()) {
@@ -38,7 +45,7 @@ SceneSerifBase.prototype.beforeDraw = function(){
 			this.serif.next();
 
 			if (this.serif.is_background_changed()) {
-				// TODO: トランジション
+				this.transition_count = TRANSITION_COUNT;
 			}
 		}
 	}
@@ -49,22 +56,30 @@ SceneSerifBase.prototype.draw = function(){
 	base_scene.prototype.draw.apply(this, arguments);
 	var ctx = this.core.ctx;
 
-	// 背景表示
-	this._showBackground();
-
-	// キャラ表示
-	if(this.serif.right_image()) {
-		this._showRightChara();
+	if (this.isInTransition()) {
+		// 背景表示
+		ctx.globalAlpha = (TRANSITION_COUNT - this.transition_count) / TRANSITION_COUNT;
+		this._showBackground();
+		ctx.globalAlpha = 1.0;
 	}
-	if(this.serif.left_image()) {
-		this._showLeftChara();
+	else {
+		// 背景表示
+		this._showBackground();
+
+		// キャラ表示
+		if(this.serif.right_image()) {
+			this._showRightChara();
+		}
+		if(this.serif.left_image()) {
+			this._showLeftChara();
+		}
+
+		// メッセージウィンドウ表示
+		this._showMessageWindow();
+
+		// メッセージ表示
+		this._showMessage();
 	}
-
-	// メッセージウィンドウ表示
-	this._showMessageWindow();
-
-	// メッセージ表示
-	this._showMessage();
 };
 
 // 背景画像表示
@@ -72,7 +87,6 @@ SceneSerifBase.prototype._showBackground = function(){
 	var ctx = this.core.ctx;
 	var background_name = this.serif.background_image() ? this.serif.background_image() : this.background();
 	var background = this.core.image_loader.getImage(background_name);
-	ctx.save();
 	ctx.drawImage(background,
 					0,
 					0,
@@ -82,7 +96,6 @@ SceneSerifBase.prototype._showBackground = function(){
 					0,
 					this.core.width,
 					this.core.height);
-	ctx.restore();
 };
 
 SceneSerifBase.prototype._showRightChara = function(){
@@ -206,5 +219,12 @@ SceneSerifBase.prototype.serifScript = function() {
 SceneSerifBase.prototype.background = function() {
 	throw new Error("background method must be defined.");
 };
+
+SceneSerifBase.prototype.isInTransition = function() {
+	return this.transition_count ? true : false;
+};
+
+
+
 
 module.exports = SceneSerifBase;
