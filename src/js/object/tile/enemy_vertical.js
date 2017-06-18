@@ -1,6 +1,6 @@
 'use strict';
 
-var SPEED = 2;
+var SPEED = 1;
 
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
