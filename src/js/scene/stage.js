@@ -97,7 +97,7 @@ var MAPS = [
 	require("./map/stage36"),
 	require("./map/stage37"),
 	require("./map/stage38"),
-	require("./map/stage07"),
+	require("./map/stage39"),
 	require("./map/stage07"),
 ];
 var SERIF_BEFORES = [
