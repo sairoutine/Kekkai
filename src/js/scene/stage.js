@@ -296,7 +296,7 @@ SceneStage.prototype.notifyGameOverEnd = function() {
 };
 // ノーマルステージの最終ステージかどうか
 SceneStage.prototype.isLastNormalStory = function() {
-	return this.stage_no === 5 ? true : false;
+	return this.stage_no === 30 ? true : false;
 };
 // Exステージの最終ステージかどうか
 SceneStage.prototype.isLastExStory = function() {
