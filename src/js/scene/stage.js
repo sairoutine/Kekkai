@@ -86,7 +86,7 @@ var MAPS = [
 	require("./map/stage25"),
 	require("./map/stage26"),
 	require("./map/stage27"),
-	require("./map/stage07"),
+	require("./map/stage28"),
 	require("./map/stage07"),
 	require("./map/stage07"),
 	require("./map/stage07"),
