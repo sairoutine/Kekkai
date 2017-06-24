@@ -523,6 +523,8 @@ var CONSTANT = {
 	BLOCK_STONE2:    12,
 	BLOCK_STONE3:    13,
 	ITEM_FOR_YUKARI: 14,
+	ITEM_OF_EXCHANGE:15,
+	ENEMY_VERTICAL:  16,
 
 
 	STATE_NORMAL:    1,
@@ -548,9 +550,11 @@ CONSTANT.RENDER_SORT = [
 	CONSTANT.DEATH,
 	CONSTANT.LADDER,
 	CONSTANT.ENEMY,
+	CONSTANT.ENEMY_VERTICAL,
 	CONSTANT.PLAYER,
 	CONSTANT.ITEM_FOR_REIMU,
 	CONSTANT.ITEM_FOR_YUKARI,
+	CONSTANT.ITEM_OF_EXCHANGE,
 ];
 
 if (DEBUG.ON) {
@@ -563,7 +567,7 @@ module.exports = CONSTANT;
 var DEBUG = {
 	ON: true,
 	SOUND_OFF: true,
-	START_STAGE_NO: 13,
+	START_STAGE_NO: 40,
 	START_SCENE: "stage",
 };
 
@@ -639,7 +643,7 @@ Game.prototype.stopBGM = function () {
 
 module.exports = Game;
 
-},{"./constant":5,"./hakurei":8,"./scene/after_ex":119,"./scene/after_normal":120,"./scene/epilogue":121,"./scene/ex_epigraph":122,"./scene/ex_prologue":123,"./scene/loading":124,"./scene/prologue":138,"./scene/reminiscence":139,"./scene/staffroll":141,"./scene/stage":142,"./scene/title":148}],8:[function(require,module,exports){
+},{"./constant":5,"./hakurei":8,"./scene/after_ex":121,"./scene/after_normal":122,"./scene/epilogue":123,"./scene/ex_epigraph":124,"./scene/ex_prologue":125,"./scene/loading":126,"./scene/prologue":167,"./scene/reminiscence":168,"./scene/staffroll":170,"./scene/stage":171,"./scene/title":177}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -11672,7 +11676,7 @@ Enemy.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 Enemy.prototype.spriteIndices = function(){
-	return [{x: 0, y: 4}, {x: 1, y: 4}];
+	return [{x: 2, y: 4}, {x: 3, y: 4}];
 };
 
 Enemy.prototype.spriteAnimationSpan = function(){
@@ -11695,6 +11699,140 @@ Enemy.prototype.scaleHeight = function(){
 module.exports = Enemy;
 
 },{"../../constant":5,"../../hakurei":8}],105:[function(require,module,exports){
+'use strict';
+
+var SPEED = 1;
+
+var CONSTANT = require('../../constant');
+var base_object = require('../../hakurei').object.sprite;
+var util = require('../../hakurei').util;
+
+var Enemy = function (scene) {
+	base_object.apply(this, arguments);
+};
+util.inherit(Enemy, base_object);
+
+Enemy.prototype.init = function(x, y) {
+	base_object.prototype.init.apply(this, arguments);
+	this.x(x);
+	this.y(y);
+
+	this.is_down = false;
+};
+
+Enemy.prototype.beforeDraw = function() {
+	base_object.prototype.beforeDraw.apply(this, arguments);
+
+	var before_y = this.y();
+	if (this.is_down) {
+		this._y += SPEED;
+	}
+	else {
+		this._y -= SPEED;
+	}
+
+	// ステージの上限or下限を超えない
+	if (this._y < 50 + 12 || this._y > CONSTANT.TILE_SIZE*20 + 50 - 12) {
+		this.is_down = !this.is_down;
+	}
+
+	if(this.checkCollisionWithBlocks()) {
+		// ブロックと接触するならば戻って反転
+		this._y = before_y;
+		this.is_down = !this.is_down;
+	}
+};
+
+Enemy.prototype.isCollision = function() {
+	return true;
+};
+
+
+
+
+// 地面ブロック一覧
+var BLOCK_TILE_TYPES = [
+	CONSTANT.BLOCK_GREEN,
+	CONSTANT.BLOCK_BLUE,
+	CONSTANT.BLOCK_RED,
+	CONSTANT.BLOCK_PURPLE,
+	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_STONE1,
+	CONSTANT.BLOCK_STONE2,
+	CONSTANT.BLOCK_STONE3,
+];
+
+// ブロックとの接触判定
+Enemy.prototype.checkCollisionWithBlocks = function() {
+	var self = this;
+	// 壁と敵の衝突判定
+	var is_collision = false;
+	for (var i = 0; i < BLOCK_TILE_TYPES.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+
+			// 敵の左右のブロックは無視する
+			if(self.x()-self.collisionWidth()/2 > obj.x()+obj.collisionWidth()/2) continue;
+			if(self.x()+self.collisionWidth()/2 < obj.x()-obj.collisionWidth()/2) continue;
+			if(obj.isCollision() && self.checkCollision(obj)) {
+				is_collision = true;
+				break;
+			}
+		}
+	}
+
+	return is_collision;
+};
+
+
+
+
+
+Enemy.prototype.collisionWidth = function(){
+	return 24;
+};
+Enemy.prototype.collisionHeight = function(){
+	return 24;
+};
+
+Enemy.prototype.isReflect = function(){
+	return !this.is_left;
+};
+
+
+
+// sprite configuration
+
+Enemy.prototype.spriteName = function(){
+	return "stage_tile_32";
+};
+Enemy.prototype.spriteIndices = function(){
+	return [{x: 0, y: 4}, {x: 1, y: 4}];
+};
+
+Enemy.prototype.spriteAnimationSpan = function(){
+	return 10;
+};
+
+Enemy.prototype.spriteWidth = function(){
+	return 32;
+};
+Enemy.prototype.spriteHeight = function(){
+	return 32;
+};
+Enemy.prototype.scaleWidth = function(){
+	return 1;
+};
+Enemy.prototype.scaleHeight = function(){
+	return 1;
+};
+
+module.exports = Enemy;
+
+},{"../../constant":5,"../../hakurei":8}],106:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -11774,7 +11912,7 @@ Item.prototype.spriteHeight = function(){
 };
 module.exports = Item;
 
-},{"../../constant":5,"../../hakurei":8}],106:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8}],107:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -11854,7 +11992,99 @@ Item.prototype.spriteHeight = function(){
 };
 module.exports = Item;
 
-},{"../../constant":5,"../../hakurei":8}],107:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8}],108:[function(require,module,exports){
+'use strict';
+var CONSTANT = require('../../constant');
+var base_object = require('../../hakurei').object.sprite;
+var util = require('../../hakurei').util;
+
+var Item = function (scene) {
+	base_object.apply(this, arguments);
+};
+util.inherit(Item, base_object);
+
+Item.prototype.init = function(x, y) {
+	base_object.prototype.init.apply(this, arguments);
+	this.x(x);
+	this.y(y);
+	this.is_show = true;
+	this.is_collision = true;
+
+	this.start_got_animation_frame_count = 0;
+
+	// blink
+	this.alpha_for_blink = 100;
+};
+
+Item.prototype.got = function() {
+	this.is_collision = false;
+
+	this.core.playSound("powerup");
+
+	// start animation
+	this.start_got_animation_frame_count = this.frame_count;
+};
+
+Item.prototype.isShow = function() {
+	return this.is_show;
+};
+
+Item.prototype.isCollision = function() {
+	return this.is_collision;
+};
+
+Item.prototype.beforeDraw = function(){
+	base_object.prototype.beforeDraw.apply(this, arguments);
+
+	if (this.start_got_animation_frame_count) {
+		var count = this.frame_count - this.start_got_animation_frame_count;
+		if (10 > count && count >= 0) {
+			this._y -= 5;
+		}
+		else if (15 > count && count >= 10) {
+
+		}
+		else {
+			this.is_show = false;
+			this.start_got_animation_frame_count = 0; //reset
+		}
+	}
+
+	this.alpha_for_blink--;
+	if (this.alpha_for_blink === 0) {
+		this.alpha_for_blink = 100;
+	}
+};
+
+Item.prototype.draw = function(){
+	var ctx = this.core.ctx;
+	ctx.globalAlpha = (this.alpha_for_blink)/100;
+	base_object.prototype.draw.apply(this, arguments);
+	ctx.globalAlpha = 1.0;
+};
+
+
+
+
+
+
+// sprite configuration
+
+Item.prototype.spriteName = function(){
+	return "stage_tile_24";
+};
+Item.prototype.spriteIndices = function(){
+	return [{x: 1, y: 2}];
+};
+Item.prototype.spriteWidth = function(){
+	return 24;
+};
+Item.prototype.spriteHeight = function(){
+	return 24;
+};
+module.exports = Item;
+
+},{"../../constant":5,"../../hakurei":8}],109:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('../../hakurei').object.sprite;
@@ -11936,7 +12166,7 @@ Ladder.prototype.collisionHeight = function() {
 
 module.exports = Ladder;
 
-},{"../../constant":5,"../../hakurei":8}],108:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8}],110:[function(require,module,exports){
 'use strict';
 
 var CONSTANT = require('../../constant');
@@ -12144,11 +12374,18 @@ Player.prototype.update = function(){
 		this.fallDown();
 	}
 
-	// アイテムとの接触判定
+	// 霊夢用アイテムとの接触判定
 	var item = this.checkCollisionWithItems();
 	if(item) {
 		item.got(); // 獲得済
 		this.scene.addReimuItemNum();
+	}
+
+	// 交換アイテムとの接触判定
+	var exchange_item = this.checkCollisionWithExchangeItems();
+	if(exchange_item) {
+		exchange_item.got(); // 獲得済
+		this.scene.exchangeVertical();
 	}
 
 	// もう既に設地していない落下ブロックは削除
@@ -12287,6 +12524,7 @@ Player.prototype.checkCollisionWithLadder = function() {
 	return collision_ladder;
 };
 
+// 霊夢用アイテムとの衝突判定
 Player.prototype.checkCollisionWithItems = function() {
 	var self = this;
 	// アイテムと自機の衝突判定
@@ -12302,6 +12540,25 @@ Player.prototype.checkCollisionWithItems = function() {
 	return collision_item;
 };
 
+// 交換アイテムとの衝突判定
+Player.prototype.checkCollisionWithExchangeItems = function() {
+	var self = this;
+	// アイテムと自機の衝突判定
+	var collision_item = false;
+
+	self.scene.objects_by_tile_type[CONSTANT.ITEM_OF_EXCHANGE].forEach(function(obj) {
+		if(obj.isCollision() && self.checkCollision(obj)) {
+			collision_item = obj;
+			// TODO: break;
+		}
+	});
+
+	return collision_item;
+};
+
+
+
+
 Player.prototype.checkCollisionWithDeathOrEnemy = function() {
 	var self = this;
 	// 死亡ゾーン or 敵と自機の衝突判定
@@ -12309,6 +12566,7 @@ Player.prototype.checkCollisionWithDeathOrEnemy = function() {
 
 	self.scene.objects_by_tile_type[CONSTANT.DEATH]
 		.concat(self.scene.objects_by_tile_type[CONSTANT.ENEMY])
+		.concat(self.scene.objects_by_tile_type[CONSTANT.ENEMY_VERTICAL])
 		.forEach(function(obj) {
 		if(self.checkCollision(obj)) {
 			is_collision = obj;
@@ -12473,7 +12731,7 @@ Player.prototype.checkCollisionBetweenAlterEgoAndBlocks = function() {
 
 		for (var j = 0; j < tile_objects.length; j++) {
 			var obj = tile_objects[j];
-			if(this.alterego.checkCollision(obj)) {
+			if(obj.isCollision() && this.alterego.checkCollision(obj)) {
 				is_collision = true;
 				break;
 			}
@@ -12552,7 +12810,7 @@ Player.prototype.collisionHeight = function() {
 
 module.exports = Player;
 
-},{"../../constant":5,"../../hakurei":8,"../alterego":88,"../exchange_anim":90,"./block_base":94,"./player/state_climbdown":110,"./player/state_dying":111,"./player/state_exchange":112,"./player/state_falldown":113,"./player/state_moveleft":115,"./player/state_moveright":116,"./player/state_normal":117}],109:[function(require,module,exports){
+},{"../../constant":5,"../../hakurei":8,"../alterego":88,"../exchange_anim":90,"./block_base":94,"./player/state_climbdown":112,"./player/state_dying":113,"./player/state_exchange":114,"./player/state_falldown":115,"./player/state_moveleft":117,"./player/state_moveright":118,"./player/state_normal":119}],111:[function(require,module,exports){
 'use strict';
 var base_object = require('../../../hakurei').object.base;
 var util = require('../../../hakurei').util;
@@ -12586,7 +12844,7 @@ StateBase.prototype.isEnableToDie = function () {
 
 module.exports = StateBase;
 
-},{"../../../hakurei":8}],110:[function(require,module,exports){
+},{"../../../hakurei":8}],112:[function(require,module,exports){
 'use strict';
 
 // はしごを降りている状態
@@ -12609,7 +12867,7 @@ StateNormal.prototype.isEnableToFallDown = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],111:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":111}],113:[function(require,module,exports){
 'use strict';
 
 // 死亡中の状態
@@ -12648,7 +12906,7 @@ StateNormal.prototype.isEnableToDie = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],112:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":111}],114:[function(require,module,exports){
 'use strict';
 
 // 場所交代中の状態
@@ -12686,7 +12944,7 @@ StateNormal.prototype.isEnableToDie = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],113:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":111}],115:[function(require,module,exports){
 'use strict';
 
 // 落下中の状態
@@ -12706,7 +12964,7 @@ StateNormal.prototype.isEnableToPlayMove = function () {
 };
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],114:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":111}],116:[function(require,module,exports){
 'use strict';
 
 // 移動状態の基底クラス
@@ -12722,7 +12980,7 @@ util.inherit(StateMoveBase, base_object);
 
 module.exports = StateMoveBase;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],115:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":111}],117:[function(require,module,exports){
 'use strict';
 
 // 左への移動状態
@@ -12738,9 +12996,9 @@ util.inherit(StateMoveLeft, base_object);
 
 module.exports = StateMoveLeft;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_move_base":114}],116:[function(require,module,exports){
-arguments[4][115][0].apply(exports,arguments)
-},{"../../../constant":5,"../../../hakurei":8,"./state_move_base":114,"dup":115}],117:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_move_base":116}],118:[function(require,module,exports){
+arguments[4][117][0].apply(exports,arguments)
+},{"../../../constant":5,"../../../hakurei":8,"./state_move_base":116,"dup":117}],119:[function(require,module,exports){
 'use strict';
 
 // 通常の状態
@@ -12756,7 +13014,7 @@ util.inherit(StateNormal, base_object);
 
 module.exports = StateNormal;
 
-},{"../../../constant":5,"../../../hakurei":8,"./state_base":109}],118:[function(require,module,exports){
+},{"../../../constant":5,"../../../hakurei":8,"./state_base":111}],120:[function(require,module,exports){
 'use strict';
 var base_class = require('./hakurei').storage.save;
 var util = require('./hakurei').util;
@@ -12786,7 +13044,7 @@ StorageSave.prototype.getIsNormalStageCleared = function(){
 
 module.exports = StorageSave;
 
-},{"./hakurei":8}],119:[function(require,module,exports){
+},{"./hakurei":8}],121:[function(require,module,exports){
 'use strict';
 
 /* Exストーリー クリア後画面 */
@@ -12843,7 +13101,7 @@ SceneAfterEx.prototype.background = function() {
 };
 module.exports = SceneAfterEx;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/after_ex":41,"../save":118,"./serif_base":140}],120:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/after_ex":41,"../save":120,"./serif_base":169}],122:[function(require,module,exports){
 'use strict';
 
 /* 通常ストーリー クリア後画面 */
@@ -12887,7 +13145,7 @@ SceneAfterNormal.prototype.background = function() {
 };
 module.exports = SceneAfterNormal;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/after_normal":42,"../save":118,"./serif_base":140}],121:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/after_normal":42,"../save":120,"./serif_base":169}],123:[function(require,module,exports){
 'use strict';
 
 /* エピローグ画面 */
@@ -12923,7 +13181,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/epilogue":43,"../save":118,"./serif_base":140}],122:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/epilogue":43,"../save":120,"./serif_base":169}],124:[function(require,module,exports){
 'use strict';
 
 /* Ex エピグラフ画面 */
@@ -12994,7 +13252,7 @@ SceneExEpigraph.prototype.isTransitionEnd = function(){
 
 module.exports = SceneExEpigraph;
 
-},{"../hakurei":8}],123:[function(require,module,exports){
+},{"../hakurei":8}],125:[function(require,module,exports){
 'use strict';
 
 /* Ex プロローグ画面 */
@@ -13030,7 +13288,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/ex_prologue":44,"./serif_base":140}],124:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/ex_prologue":44,"./serif_base":169}],126:[function(require,module,exports){
 'use strict';
 
 // ローディングシーン
@@ -13132,7 +13390,7 @@ SceneLoading.prototype.progress = function(){
 
 module.exports = SceneLoading;
 
-},{"../assets_config":4,"../constant":5,"../hakurei":8}],125:[function(require,module,exports){
+},{"../assets_config":4,"../constant":5,"../hakurei":8}],127:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13175,7 +13433,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],126:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13218,7 +13476,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],127:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13261,7 +13519,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],128:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13304,7 +13562,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],129:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13347,7 +13605,7 @@ module.exports = {
 	is_vertical: true, // 交代が垂直かどうか
 };
 
-},{}],130:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13390,7 +13648,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],131:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13433,7 +13691,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],132:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13476,7 +13734,7 @@ module.exports = {
 	is_vertical: true, // 交代が垂直かどうか
 };
 
-},{}],133:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13519,7 +13777,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],134:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13562,7 +13820,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],135:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13605,7 +13863,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],136:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13648,7 +13906,7 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],137:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 'use strict';
 var A = 11;
 var B = 12;
@@ -13661,6 +13919,7 @@ var N = -1;
 var P = 7;
 var K = 5;
 var Y = 14;
+var X = 15;
 
 var map = [
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -13668,7 +13927,7 @@ var map = [
 	[0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0],
 	[0,0,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0],
 	[0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,X,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,A,L,C,0,0,0,A,L,A,B,B,B,B,C,L,C,0,0,0,A,L,C,0,0,0,0],
 	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
 	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
@@ -13691,7 +13950,1235 @@ module.exports = {
 	is_vertical: false, // 交代が垂直かどうか
 };
 
-},{}],138:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,B,K,K,K,K,K,K,K,B,B,B,B,B,B,K,K,K,L,K,K,K,B,0,0,0,0],
+	[B,0,Y,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,I,0,B],
+	[B,K,K,K,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,K,K,K,B],
+	[B,0,0,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,B],
+	[B,0,0,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,B],
+	[B,0,F,0,B,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,F,0,B],
+	[0,0,0,0,B,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,0],
+	[B,0,0,0,B,K,K,K,L,K,K,K,B,B,B,B,B,B,K,K,K,K,K,K,K,B,0,0,0,B],
+	[B,0,I,0,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,0,Y,0,B],
+	[B,K,K,K,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,K,K,K,B],
+	[B,0,0,0,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,0,0,0,B],
+	[0,0,0,0,B,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,B,0,0,0,0],
+	[0,0,0,0,B,0,0,0,L,0,0,0,E,0,I,I,0,0,0,0,0,0,0,0,0,B,0,0,0,0],
+	[0,0,0,0,A,K,K,K,K,K,K,K,A,B,B,B,B,C,K,K,K,K,K,K,K,C,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],141:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,I,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,L,A,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,I,0,I,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,L,A,B,B,B,B,C,L,C,0],
+	[0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,Y,0,Y,0,0,0,0,Y,0,Y,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,F,0,0,A,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,I,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,A,B,C,0,0,0,0,A,B,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,B,B,C,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],142:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,F,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,F,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,A,K,K,K,K,C,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,C],
+	[A,P,L,A,C,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,A,C,L,0,C],
+	[A,0,L,A,C,0,0,0,0,0,0,0,L,A,B,B,C,L,0,0,0,0,0,0,0,A,C,L,0,C],
+	[A,C,L,A,C,K,K,K,K,K,K,K,A,B,B,B,B,C,K,K,K,K,K,K,K,A,C,L,A,C],
+	[A,0,L,A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,A,C,L,0,C],
+	[A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C],
+	[A,0,L,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,L,0,C],
+	[A,0,L,0,0,0,0,0,B,0,0,0,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0,L,0,C],
+	[A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C],
+	[A,0,L,0,0,0,0,0,E,0,E,0,0,0,X,0,0,0,0,0,E,0,E,0,0,0,0,L,0,C],
+	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],143:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,B,0,0,I,I,E,0,0,0,0,0,0,0,0,0,0,I,I,0,0,B,0,0,0,0,0],
+	[0,0,0,0,B,K,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,K,B,0,0,0,0,0],
+	[0,0,0,0,B,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,B,0,I,Y,0,0,0,0,0,0,E,0,0,L,0,0,0,0,Y,0,E,0,0,0,0,I,0,B,0],
+	[0,B,K,B,B,B,L,B,B,B,B,B,B,B,B,B,0,B,B,B,B,B,B,B,L,B,B,K,B,0],
+	[0,B,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,L,0,0,0,0,0],
+	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,B,0,I,0,0,L,0,I,0,B,0],
+	[0,B,0,I,0,0,L,0,0,I,0,B,0,0,0,0,0,0,0,B,K,B,B,B,B,B,B,K,B,0],
+	[0,B,K,A,B,B,B,B,B,C,K,B,0,0,0,0,0,0,0,B,0,0,0,0,0,0,0,0,B,0],
+	[0,B,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],144:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,I,0,0,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,I,0,0],
+	[0,B,K,K,K,K,A,L,C,K,K,K,K,K,C,0,A,K,K,K,K,A,L,C,K,K,K,B,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,I,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,B,K,0,0,0,L,0,0,0,0,0,0,I,0,I,E,0,0,E,0,L,0,0,0,0,0,I,0],
+	[0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,K,B,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,I,0,0,0,0,0,0,E,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0],
+	[0,B,0,0,0,A,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,0,B,0,0],
+	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,L,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,I,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,I,0],
+	[0,0,B,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,A,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],145:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,K,B,K,L,0,A,B,C,0,A,B,B,C,0,A,B,C,L,I,K,B,K,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,I,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,E,0,I,0,0,0,C,L,I,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,C,K,K,K,K,K,K,K,K,A,C,L,0,0,B,0,I,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,I,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,I,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,I,0,0,E,0,0,C,0,0,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,C,K,K,K,K,K,K,K,K,A,C,0,I,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,I,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,C,0,0,0,0,0,0,0,0,A,C,0,0,0,0,P,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,C,0,0,0,I,0,I,0,0,A,C,0,0,0,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 6, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],146:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,A,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,C,0,0,0,0],
+	[0,0,0,L,A,C,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,A,C,0,0,0,0],
+	[0,0,0,L,A,B,C,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,A,B,C,0,0,0,0],
+	[0,0,0,L,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0,0,0],
+	[0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,0,0,0],
+	[0,0,0,L,A,0,0,Y,0,0,0,0,0,0,I,0,0,I,0,0,0,0,I,0,0,C,L,0,0,0],
+	[0,0,0,L,A,B,B,B,B,K,B,B,B,B,B,B,B,B,B,B,K,B,B,B,B,C,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,K,K,B,B,K,K,C,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,0,0,B,B,0,0,C,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,0,0,B,B,0,0,C,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,D,D,B,B,D,D,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],147:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,I,0,I,0,0,0,A,C,0,0,0,I,0,I,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,K,K,K,K,K,K,K,A,C,K,K,K,K,K,K,K,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,I,0,0,E,0,I,0,0,I,0,E,0,0,I,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,L,0,0,0,0,0],
+	[0,0,0,A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
+	[0,0,0,A,0,L,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
+	[0,0,0,A,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],148:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,Y,0,0,0,0,0,0,I,I,I,0,0,0,E,0,0,0,0,0,0,I,0,0,0,0,0],
+	[0,0,0,A,B,C,0,0,A,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,L,0,0,0,E,0,0,0,I,I,I,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,I,0,L,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,C,K,K,K,K,K,K,K,K,K,A,L,B,B,B,B,B,B,C,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],149:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,A,C],
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,A,Y,0,0,0,0,Y,C,0,0,0,0,0,I,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,0,A,Y,0,0,Y,C,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,Y,0,0,0,0,0,0,0,A,K,K,C,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,A,0,0,0,0,I,I,0,0,0,0,C,0,0,0,Y,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,A,K,K,K,K,K,K,K,K,K,K,C,0,0,0,Y,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,C],
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 6, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],150:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,I,E,E,0,0,L,0,I,E,E,0,0,L,0,I,E,E,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,P,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,A,B,C,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,I,0,0,0,0,L,0,0,0,0,0,0,L,0,I,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,L,F,I,0,0,0,0,A,B,C,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 6, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],151:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,0,I,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,I,0,I,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
+	[0,0,0,A,0,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,C,0,0,0,0,0,0,0],
+	[0,0,0,P,0,0,0,0,0,0,F,0,0,0,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,A,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,L,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,E,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,L,E,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],152:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,F,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,F,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,F,0,I,0,L,A,B,B,C,L,0,I,0,F,0,0,0,0,0,0,0,0],
+	[0,0,P,0,F,0,F,0,L,A,B,C,L,0,0,0,0,L,A,B,C,L,0,F,0,F,0,0,0,0],
+	[0,0,0,0,L,A,L,C,L,0,0,0,L,0,0,0,0,L,0,0,0,L,A,L,C,L,0,0,0,0],
+	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
+	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,I,0,0],
+	[0,A,B,C,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,A,B,C,0],
+	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
+	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
+	[0,0,0,0,L,A,L,C,L,0,I,0,L,0,0,0,0,L,0,I,0,L,A,L,C,L,0,0,0,0],
+	[0,0,0,0,F,0,F,0,L,A,B,C,L,0,0,0,0,L,A,B,C,L,0,F,0,F,0,0,0,0],
+	[0,0,0,0,0,0,0,0,F,0,0,0,L,A,B,B,C,L,0,0,0,F,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,F,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,F,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],153:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,P,0,0,0,0,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
+	[0,0,A,B,B,L,C,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
+	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,Y,0,I,0,0],
+	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,A,L,C,0,0],
+	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,A,0,0,0,Y,Y,Y,0,0,I,I,I,0,0,0,0,C,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,A,C,K,K,K,K,K,K,K,K,K,K,K,K,K,A,C,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,I,I,0,0,I,I,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,A,B,B,B,B,B,C,K,K,K,K,K,0,0,K,K,K,K,K,A,B,B,B,B,B,C,0,0],
+	[0,0,A,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
+	[0,0,A,0,0,I,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
+	[0,0,A,0,0,I,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
+	[0,0,A,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,I,0,0,C,0,0],
+	[0,0,A,K,K,K,K,K,C,0,0,0,0,0,F,F,0,0,0,0,0,A,K,K,K,K,K,C,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],154:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,K,K,K,K,K,K,K,A,C,0,0],
+	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,A,C,0,0],
+	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,A,C,0,0],
+	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
+	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
+	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
+	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,0,0,0,I,I,I,I,0,0,A,C,0,0],
+	[0,0,A,C,E,E,L,L,L,L,0,0,0,0,0,0,0,0,E,E,0,0,0,0,0,0,A,C,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,A,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],155:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,A,C,0,0,0,0,0,0,0,0,0,A,C,0,0,A,C,0,0,0,0,0,0,0,0,0,A,C,0],
+	[0,A,C,0,0,0,I,I,I,0,0,0,A,C,0,0,A,C,0,0,0,Y,Y,Y,0,0,0,A,C,0],
+	[0,0,A,K,L,K,K,K,K,K,K,K,C,0,0,0,0,A,K,K,K,K,K,K,K,L,K,C,0,0],
+	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
+	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
+	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
+	[0,0,A,E,L,0,I,0,I,0,0,0,C,0,0,0,0,A,0,0,0,I,0,I,0,L,0,C,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,A,0,0,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,0,0,C,0,0],
+	[0,0,A,X,0,0,0,0,0,0,0,E,C,0,0,0,0,A,X,0,0,0,0,0,0,0,E,C,0,0],
+	[0,0,A,K,K,K,K,L,K,K,K,K,C,0,0,0,0,A,K,K,K,K,L,K,K,K,K,C,0,0],
+	[0,0,A,0,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
+	[0,0,A,0,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
+	[0,0,A,P,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
+	[0,0,A,0,Y,Y,0,L,0,Y,Y,0,C,0,0,0,0,A,0,I,I,0,L,0,I,I,0,C,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],156:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,I,I,0,0,0,0,I,E,0,0,0,I,0,0,0,0,I,I,0,0,0,0,0,0],
+	[0,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,L,K,K,K,K,K,K,K,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,F,0,0,L,I,I,E,E,I,I,L,0,0,F,0,0,0,0,0,0,0,0],
+	[0,0,0,A,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,F,0,0,0,0,F,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,F,0,0,0,F,0,F,0,0,F,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[I,I,I,0,0,0,F,L,F,0,0,0,0,0,0,P,0,0,0,0,0,F,L,F,0,0,0,I,I,I],
+	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],157:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,Y,Y,Y,0,E,0,0,0,0,0,0,0,E,0,0,I,I,I,0,0,0,0],
+	[0,0,0,0,0,A,B,L,B,B,B,B,B,C,0,0,0,0,0,A,B,L,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,E,0,L,I,0,0,0,0,0,0,0,0,0,0,E,0,L,Y,0,0,0,0,0,0,0],
+	[0,0,0,0,A,B,B,B,B,L,B,C,0,0,0,0,0,0,A,B,B,B,B,L,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,Y,Y,0,L,0,0,0,0,0,0,0,0,I,I,0,0,0,L,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],158:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,A,C,F,A,C,0,0,0,0,0,A,C,F,A,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,L,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,0,0,Y,0,L,0,Y,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,0,0,A,B,L,B,C,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,X,0,0,0,0,L,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,L,0,0,0,A,B,C,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,P,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,X,0,0,0,0,X,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],159:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,I,I,I,I,I,I,I,I,I,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,I,I,I,I,I,I,I,I,I,I,E,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,E,0,I,I,I,X,I,I,I,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,Y,0,0,E,0,E,0,E,0,Y,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,A,C,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],160:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,L,0,0,A,B,B,C,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,Y,Y,Y,0,L,0,0,0,0,0,0,0,0,L,0,Y,Y,Y,0,0,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,I,I,I,E,E,E,E,E,E,E,E,E,E,E,E,I,I,I,0,0,0,0,0,0],
+	[0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],161:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,E,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,E,0,0,0,0],
+	[0,0,A,B,B,B,B,L,C,0,0,0,0,0,0,0,0,0,0,0,0,A,L,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,X,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,K,K,K,A,B,B,C,K,K,K,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,E,L,Y,Y,0,0,0,0,0,0,0,0,0,0,Y,Y,L,E,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,C,Y,0,Y,0,0,0,0,Y,0,Y,A,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,A,B,L,C,0,0,0,0,A,L,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,X,0,0,0,L,0,0,0,0,0,0,L,0,0,0,X,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],162:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,A,B,B,C,0,0,0,A,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,0,0,0,0],
+	[0,0,0,0,A,B,B,C,0,A,B,B,B,C,0,0,A,B,B,B,C,0,A,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],163:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,X,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
+	[0,0,0,A,B,C,0,0,0,0,0,0,E,0,0,I,I,I,0,0,E,0,0,0,A,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,L,B,B,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,A,K,K,K,K,K,K,A,B,L,B,B,C,K,K,K,K,K,K,C,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,X,I,0,0,0,0,0,A,B,B,B,B,B,C,0,0,0,0,0,0,I,X,I,0,0,0],
+	[0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],164:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,Y,E,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,A,B,B,B,B,C,L,L,A,B,B,B,B,C,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,Y,L,L,Y,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,C,L,A,B,B,C,L,A,C,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,I,I,I,0,0,0,L,0,0,0,0,L,0,0,0,I,I,I,0,0,0,0,0,0],
+	[0,0,A,K,K,K,A,B,C,0,0,0,L,0,0,0,P,L,0,0,0,A,B,C,K,K,K,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,A,C,L,L,A,C,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,I,0,0,0,0,0,0,0,0,0,0,0,Y,L,L,Y,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,L,A,B,B,B,B,C,L,C,0,0,0,0,0,0,0,0,B,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,E,0,0,L,0,Y,Y,Y,Y,0,L,0,0,0,0,0,0,0,0,0,I,0],
+	[0,B,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],165:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,A,L,A,C,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,A,B,B,C,0],
+	[0,0,L,0,A,B,C,0,0,0,0,0,0,0,F,F,0,0,0,0,0,0,0,A,B,C,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,Y,Y,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,Y,Y,Y,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,A,B,B,B,B,C,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,E,E,E,E,E,E,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],166:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,I,0,0,0,0,0,0,A,C,0,0,0,0,X,0,0,0,I,0,0,X,0,0],
+	[0,A,C,0,0,A,B,B,B,C,0,0,0,0,A,C,0,0,0,0,A,C,0,A,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,X,0,0,X,0,0,0,A,C,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,C,0,A,C,0,0,A,C,0,0,A,B,B,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,A,C,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,I,I,I,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,A,B,B,B,C,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,P,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,Y,Y,Y,0,0,0,0,0,I,X,0,0,0,A,C,0,0,0,0,I,X,0,0,X,0,0,I,0,0],
+	[0,A,B,C,0,A,B,B,B,B,B,C,0,0,A,C,0,0,0,0,A,C,0,A,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 11, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],167:[function(require,module,exports){
 'use strict';
 
 /* プロローグ画面 */
@@ -13727,7 +15214,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/prologue":45,"./serif_base":140}],139:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/prologue":45,"./serif_base":169}],168:[function(require,module,exports){
 'use strict';
 
 /* 回想シーン画面 */
@@ -13762,7 +15249,7 @@ SceneReminiscence.prototype.background = function() {
 
 module.exports = SceneReminiscence;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/reminiscence":46,"./serif_base":140}],140:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/reminiscence":46,"./serif_base":169}],169:[function(require,module,exports){
 'use strict';
 
 /* 立ち絵＆セリフ */
@@ -14013,7 +15500,7 @@ SceneSerifBase.prototype.isInTransition = function() {
 
 module.exports = SceneSerifBase;
 
-},{"../constant":5,"../hakurei":8}],141:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8}],170:[function(require,module,exports){
 'use strict';
 
 /* スタッフロール画面 */
@@ -14121,7 +15608,7 @@ SceneStaffroll.prototype.draw = function(){
 
 module.exports = SceneStaffroll;
 
-},{"../hakurei":8,"../object/reimu_for_staffroll":91}],142:[function(require,module,exports){
+},{"../hakurei":8,"../object/reimu_for_staffroll":91}],171:[function(require,module,exports){
 'use strict';
 
 	var offset_x = 25;
@@ -14143,8 +15630,10 @@ var BlockBrown    = require('../object/tile/block_brown');
 var Ladder        = require('../object/tile/ladder');
 var Player        = require('../object/tile/player');
 var Enemy         = require('../object/tile/enemy');
+var EnemyVertical = require('../object/tile/enemy_vertical');
 var ItemForReimu  = require('../object/tile/item_for_reimu');
 var ItemForYukari = require('../object/tile/item_for_yukari');
+var ItemOfExchange= require('../object/tile/item_of_exchange');
 var Death         = require('../object/tile/death');
 var BlockStone1   = require('../object/tile/block_stone1');
 var BlockStone2   = require('../object/tile/block_stone2');
@@ -14161,8 +15650,10 @@ TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BROWN]     = BlockBrown;
 TILE_TYPE_TO_CLASS[CONSTANT.LADDER]          = Ladder;
 TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]          = Player;
 TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]           = Enemy;
+TILE_TYPE_TO_CLASS[CONSTANT.ENEMY_VERTICAL]  = EnemyVertical;
 TILE_TYPE_TO_CLASS[CONSTANT.ITEM_FOR_REIMU]  = ItemForReimu;
 TILE_TYPE_TO_CLASS[CONSTANT.ITEM_FOR_YUKARI] = ItemForYukari;
+TILE_TYPE_TO_CLASS[CONSTANT.ITEM_OF_EXCHANGE]= ItemOfExchange;
 TILE_TYPE_TO_CLASS[CONSTANT.DEATH]           = Death;
 TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE1]    = BlockStone1;
 TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE2]    = BlockStone2;
@@ -14192,33 +15683,33 @@ var MAPS = [
 	require("./map/stage11"),
 	require("./map/stage12"),
 	require("./map/stage13"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
-	require("./map/stage07"),
+	require("./map/stage14"),
+	require("./map/stage15"),
+	require("./map/stage16"),
+	require("./map/stage17"),
+	require("./map/stage18"),
+	require("./map/stage19"),
+	require("./map/stage20"),
+	require("./map/stage21"),
+	require("./map/stage22"),
+	require("./map/stage23"),
+	require("./map/stage24"),
+	require("./map/stage25"),
+	require("./map/stage26"),
+	require("./map/stage27"),
+	require("./map/stage28"),
+	require("./map/stage29"),
+	require("./map/stage30"),
+	require("./map/stage31"),
+	require("./map/stage32"),
+	require("./map/stage33"),
+	require("./map/stage34"),
+	require("./map/stage35"),
+	require("./map/stage36"),
+	require("./map/stage37"),
+	require("./map/stage38"),
+	require("./map/stage39"),
+	require("./map/stage40"),
 ];
 var SERIF_BEFORES = [
 	null,
@@ -14437,6 +15928,11 @@ SceneStage.prototype.isVertical = function () {
 	return this._is_vertical;
 };
 
+// 位置移動の垂直<=>水平の変更
+SceneStage.prototype.exchangeVertical = function () {
+	this._is_vertical = !this._is_vertical;
+};
+
 
 
 
@@ -14640,7 +16136,7 @@ SceneStage.prototype.calcItemNum = function() {
 
 module.exports = SceneStage;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/stage01/before":47,"../logic/serif/stage02/before":48,"../logic/serif/stage03/before":49,"../logic/serif/stage04/before":50,"../logic/serif/stage05/before":51,"../logic/serif/stage06/before":52,"../logic/serif/stage07/before":53,"../logic/serif/stage08/before":54,"../logic/serif/stage09/before":55,"../logic/serif/stage10/before":56,"../logic/serif/stage11/before":57,"../logic/serif/stage12/before":58,"../logic/serif/stage13/before":59,"../logic/serif/stage14/before":60,"../logic/serif/stage15/before":61,"../logic/serif/stage16/before":62,"../logic/serif/stage17/before":63,"../logic/serif/stage18/before":64,"../logic/serif/stage19/before":65,"../logic/serif/stage20/before":66,"../logic/serif/stage21/before":67,"../logic/serif/stage22/before":68,"../logic/serif/stage23/before":69,"../logic/serif/stage24/before":70,"../logic/serif/stage25/before":71,"../logic/serif/stage26/before":72,"../logic/serif/stage27/before":73,"../logic/serif/stage28/before":74,"../logic/serif/stage29/before":75,"../logic/serif/stage30/before":76,"../logic/serif/stage31/before":77,"../logic/serif/stage32/before":78,"../logic/serif/stage33/before":79,"../logic/serif/stage34/before":80,"../logic/serif/stage35/before":81,"../logic/serif/stage36/before":82,"../logic/serif/stage37/before":83,"../logic/serif/stage38/before":84,"../logic/serif/stage39/before":85,"../logic/serif/stage40/before":86,"../object/background_eye":89,"../object/stage_frame1":92,"../object/stage_frame2":93,"../object/tile/block_blue":95,"../object/tile/block_brown":96,"../object/tile/block_green":97,"../object/tile/block_purple":98,"../object/tile/block_red":99,"../object/tile/block_stone1":100,"../object/tile/block_stone2":101,"../object/tile/block_stone3":102,"../object/tile/death":103,"../object/tile/enemy":104,"../object/tile/item_for_reimu":105,"../object/tile/item_for_yukari":106,"../object/tile/ladder":107,"../object/tile/player":108,"./map/stage01":125,"./map/stage02":126,"./map/stage03":127,"./map/stage04":128,"./map/stage05":129,"./map/stage06":130,"./map/stage07":131,"./map/stage08":132,"./map/stage09":133,"./map/stage10":134,"./map/stage11":135,"./map/stage12":136,"./map/stage13":137,"./stage/play":143,"./stage/result_clear":145,"./stage/result_gameover":146,"./stage/talk":147}],143:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/stage01/before":47,"../logic/serif/stage02/before":48,"../logic/serif/stage03/before":49,"../logic/serif/stage04/before":50,"../logic/serif/stage05/before":51,"../logic/serif/stage06/before":52,"../logic/serif/stage07/before":53,"../logic/serif/stage08/before":54,"../logic/serif/stage09/before":55,"../logic/serif/stage10/before":56,"../logic/serif/stage11/before":57,"../logic/serif/stage12/before":58,"../logic/serif/stage13/before":59,"../logic/serif/stage14/before":60,"../logic/serif/stage15/before":61,"../logic/serif/stage16/before":62,"../logic/serif/stage17/before":63,"../logic/serif/stage18/before":64,"../logic/serif/stage19/before":65,"../logic/serif/stage20/before":66,"../logic/serif/stage21/before":67,"../logic/serif/stage22/before":68,"../logic/serif/stage23/before":69,"../logic/serif/stage24/before":70,"../logic/serif/stage25/before":71,"../logic/serif/stage26/before":72,"../logic/serif/stage27/before":73,"../logic/serif/stage28/before":74,"../logic/serif/stage29/before":75,"../logic/serif/stage30/before":76,"../logic/serif/stage31/before":77,"../logic/serif/stage32/before":78,"../logic/serif/stage33/before":79,"../logic/serif/stage34/before":80,"../logic/serif/stage35/before":81,"../logic/serif/stage36/before":82,"../logic/serif/stage37/before":83,"../logic/serif/stage38/before":84,"../logic/serif/stage39/before":85,"../logic/serif/stage40/before":86,"../object/background_eye":89,"../object/stage_frame1":92,"../object/stage_frame2":93,"../object/tile/block_blue":95,"../object/tile/block_brown":96,"../object/tile/block_green":97,"../object/tile/block_purple":98,"../object/tile/block_red":99,"../object/tile/block_stone1":100,"../object/tile/block_stone2":101,"../object/tile/block_stone3":102,"../object/tile/death":103,"../object/tile/enemy":104,"../object/tile/enemy_vertical":105,"../object/tile/item_for_reimu":106,"../object/tile/item_for_yukari":107,"../object/tile/item_of_exchange":108,"../object/tile/ladder":109,"../object/tile/player":110,"./map/stage01":127,"./map/stage02":128,"./map/stage03":129,"./map/stage04":130,"./map/stage05":131,"./map/stage06":132,"./map/stage07":133,"./map/stage08":134,"./map/stage09":135,"./map/stage10":136,"./map/stage11":137,"./map/stage12":138,"./map/stage13":139,"./map/stage14":140,"./map/stage15":141,"./map/stage16":142,"./map/stage17":143,"./map/stage18":144,"./map/stage19":145,"./map/stage20":146,"./map/stage21":147,"./map/stage22":148,"./map/stage23":149,"./map/stage24":150,"./map/stage25":151,"./map/stage26":152,"./map/stage27":153,"./map/stage28":154,"./map/stage29":155,"./map/stage30":156,"./map/stage31":157,"./map/stage32":158,"./map/stage33":159,"./map/stage34":160,"./map/stage35":161,"./map/stage36":162,"./map/stage37":163,"./map/stage38":164,"./map/stage39":165,"./map/stage40":166,"./stage/play":172,"./stage/result_clear":174,"./stage/result_gameover":175,"./stage/talk":176}],172:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../../hakurei').scene.base;
@@ -14707,7 +16203,7 @@ SceneStagePlay.prototype.draw = function() {
 
 module.exports = SceneStagePlay;
 
-},{"../../hakurei":8}],144:[function(require,module,exports){
+},{"../../hakurei":8}],173:[function(require,module,exports){
 'use strict';
 
 // メッセージを表示する間隔
@@ -14838,7 +16334,7 @@ SceneStageResultBase.prototype.notifyResultEnd = function(){
 module.exports = SceneStageResultBase;
 
 
-},{"../../hakurei":8}],145:[function(require,module,exports){
+},{"../../hakurei":8}],174:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -14865,7 +16361,7 @@ SceneStageResultClear.prototype.resultMessage = function(){
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":8,"./result_base":144}],146:[function(require,module,exports){
+},{"../../hakurei":8,"./result_base":173}],175:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -14892,7 +16388,7 @@ SceneStageResultClear.prototype.resultMessage = function(){
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":8,"./result_base":144}],147:[function(require,module,exports){
+},{"../../hakurei":8,"./result_base":173}],176:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
@@ -15098,7 +16594,7 @@ SceneStageTalk.prototype._showMessage = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":8}],148:[function(require,module,exports){
+},{"../../hakurei":8}],177:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../hakurei').scene.base;
@@ -15223,4 +16719,4 @@ SceneTitle.prototype.draw = function(){
 
 module.exports = SceneTitle;
 
-},{"../constant":5,"../hakurei":8,"../save":118}]},{},[87]);
+},{"../constant":5,"../hakurei":8,"../save":120}]},{},[87]);
