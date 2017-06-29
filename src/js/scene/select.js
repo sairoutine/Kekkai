@@ -99,22 +99,22 @@ SceneTitle.prototype.draw = function(){
 
 	// サムネイル：横720px 縦480px
 	var i;
-	ctx.font = "12px 'Migu'";
+	ctx.font = "24px 'Migu'";
 	ctx.textAlign = 'left';
-	for (i = 0; i<4; i++) {
-		ctx.fillText("Stage N", 70 + 150*i, 140);
-		ctx.fillRect(70 + 150*i, 150, 72*2, 48*2);
+	for (i = 0; i<2; i++) {
+		ctx.fillText("Stage N", 70 + 310*i, 80);
+		ctx.fillRect(70 + 310*i, 100, 72*4, 48*4);
 	}
-	for (i = 0; i<4; i++) {
-		ctx.fillText("Stage N", 70 + 150*i, 320);
-		ctx.fillRect(70 + 150*i, 330 + 10, 72*2, 48*2);
+	for (i = 0; i<2; i++) {
+		ctx.fillText("Stage N", 70 + 310*i, 320);
+		ctx.fillRect(70 + 310*i, 330 + 10, 72*4, 48*4);
 	}
 
 	// カーソル矢印
 	var yajirushi = this.core.image_loader.getImage('yajirushi');
 	ctx.drawImage(yajirushi,
-					200,
-					410,
+					300,
+					510,
 					yajirushi.width*0.20,
 					yajirushi.height*0.20);
 
