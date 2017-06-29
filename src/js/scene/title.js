@@ -83,16 +83,18 @@ SceneTitle.prototype.draw = function(){
 	ctx.save();
 
 	// 切り替え効果
+	var alpha;
 	if( this.frame_count < SHOW_TRANSITION_COUNT ) {
-		ctx.globalAlpha = this.frame_count / SHOW_TRANSITION_COUNT;
+		alpha = this.frame_count / SHOW_TRANSITION_COUNT;
 	}
 	else {
-		ctx.globalAlpha = 1.0;
+		alpha = 1.0;
 	}
 
 
 	var title_bg = this.core.image_loader.getImage('title_bg');
 	// 背景画像表示
+	ctx.globalAlpha = alpha;
 	ctx.drawImage(title_bg,
 					0,
 					0,
@@ -111,15 +113,20 @@ SceneTitle.prototype.draw = function(){
 					title.width,
 					title.height);
 
-	ctx.restore();
+
+
+	var cursor_x    = this.core.width - 200;
+	var text_x      = cursor_x + 30;
+	var y = this.core.height/2 - 50;
+
+	// 文字背景 表示
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = 0.7; // 半透明
+	ctx.fillRect(cursor_x - 10, y - 100, this.core.width - cursor_x - 20, this.core.height - y + 70);
 
 	// 文字表示
-	var cursor_x    = this.core.width/2 - 160;
-	var text_x      = cursor_x + 50;
-	var y = 360;
-
 	ctx.globalAlpha = 1.0; // 半透明戻す
-	ctx.font = "30px 'Migu'";
+	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
