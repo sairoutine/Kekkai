@@ -9,12 +9,6 @@ var StorageSave = require('../save');
 var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
 
-// transition time ready to show canvas
-var SHOW_TRANSITION_COUNT = 100;
-
-// blink interval time
-var SHOW_START_MESSAGE_INTERVAL = 50;
-
 
 
 
@@ -66,15 +60,6 @@ SceneTitle.prototype.draw = function(){
 
 	ctx.save();
 
-	// 切り替え効果
-	if( this.frame_count < SHOW_TRANSITION_COUNT ) {
-		ctx.globalAlpha = this.frame_count / SHOW_TRANSITION_COUNT;
-	}
-	else {
-		ctx.globalAlpha = 1.0;
-	}
-
-
 	var title_bg = this.core.image_loader.getImage('title_bg');
 	// 背景画像表示
 	ctx.drawImage(title_bg,
@@ -95,26 +80,45 @@ SceneTitle.prototype.draw = function(){
 					title.width,
 					title.height);
 
+	// 文字背景 表示
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = 0.7; // 半透明
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
-	// show press z
-	ctx.font = "38px 'Migu'";
+	// 画面遷移やじるし表示
+	ctx.globalAlpha = 1.0; // 半透明戻す
+	ctx.font = "36px 'Migu'";
 	ctx.textAlign = 'center';
+	ctx.textBaseAlign = 'middle';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText("▶", this.core.width - 30, this.core.height/2 - 10);
+	ctx.fillText("◀", 30,                   this.core.height/2 - 10);
 
-	if(this.frame_count % 80 > 40) {
-		var text;
-		text = "select 画面";
+	// ステージサムネイル 表示
+	ctx.fillStyle = 'rgb(255, 255, 255)' ;
 
-		ctx.fillStyle = 'rgb( 0, 0, 0 )';
-		ctx.lineWidth = 4.0;
-		ctx.strokeText(text, this.core.width/2, 420);
-
-		ctx.fillStyle = 'rgb( 255, 255, 255 )';
-		ctx.fillText(text, this.core.width/2, 420);
+	// サムネイル：横720px 縦480px
+	var i;
+	ctx.font = "12px 'Migu'";
+	ctx.textAlign = 'left';
+	for (i = 0; i<4; i++) {
+		ctx.fillText("Stage N", 70 + 150*i, 140);
+		ctx.fillRect(70 + 150*i, 150, 72*2, 48*2);
+	}
+	for (i = 0; i<4; i++) {
+		ctx.fillText("Stage N", 70 + 150*i, 320);
+		ctx.fillRect(70 + 150*i, 330 + 10, 72*2, 48*2);
 	}
 
+	// カーソル矢印
+	var yajirushi = this.core.image_loader.getImage('yajirushi');
+	ctx.drawImage(yajirushi,
+					200,
+					410,
+					yajirushi.width*0.20,
+					yajirushi.height*0.20);
 
-	//ctx.fillText('→ Story Start', 280, 400);
-	//ctx.fillText('　 Stage Select', 280, 450);
+
 	ctx.restore();
 };
 

@@ -22,6 +22,8 @@ AssetsConfig.images = {
 	// ノーマルステージクリア後背景
 	shrine_night:   "./image/shrine_night.jpg",
 
+	yajirushi:      "./image/yajirushi.png",
+
 	reimu_angry1:   "./image/reimu/angry1.png",
 	reimu_angry2:   "./image/reimu/angry2.png",
 	reimu_confused: "./image/reimu/confused.png",
