@@ -12,8 +12,13 @@ var SHOW_TRANSITION_COUNT = 100;
 // blink interval time
 var SHOW_START_MESSAGE_INTERVAL = 50;
 
-
-
+var MENU = [
+	["Story Start", "reminiscence"],
+	["Ex Story Start", "ex_epigraph"],
+	["Select Stage", "select"],
+	["Config", "config"],
+	["Music Room", "music"],
+];
 
 var SceneTitle = function(core) {
 	base_scene.apply(this, arguments);
@@ -22,6 +27,9 @@ util.inherit(SceneTitle, base_scene);
 
 SceneTitle.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
+
+	// 今どれにカーソルがあるか
+	this.index = 0;
 
 	// Exステージ解放されているかどうか */
 	var save_data = StorageSave.load();
@@ -41,18 +49,29 @@ SceneTitle.prototype.beforeDraw = function(){
 		this.core.playBGM("title");
 	}
 
+	// カーソルを下移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+		this.index++;
+
+		if(this.index >= MENU.length) {
+			this.index = MENU.length - 1;
+		}
+	}
+	// カーソルを上移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+		this.index--;
+
+		if(this.index < 0) {
+			this.index = 0;
+		}
+	}
+
+	// 決定
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
 
-		if(this.is_normal_stage_cleared) {
-			// Exストーリー
-			this.core.changeScene("ex_epigraph");
-		}
-		else {
-			// 通常ストーリー
-			this.core.changeScene("reminiscence");
-		}
-
+		var scene_name = MENU[this.index][1];
+		this.core.changeScene(scene_name);
 	}
 };
 
@@ -84,7 +103,7 @@ SceneTitle.prototype.draw = function(){
 					this.core.width,
 					this.core.height);
 
-	// show game title text
+	// タイトルロゴ
 	var title = this.core.image_loader.getImage('title');
 	ctx.drawImage(title,
 					20,
@@ -92,32 +111,53 @@ SceneTitle.prototype.draw = function(){
 					title.width,
 					title.height);
 
+	ctx.restore();
 
-	// show press z
-	ctx.font = "38px 'Migu'";
-	ctx.textAlign = 'center';
+	// 文字表示
+	var cursor_x    = this.core.width/2 - 160;
+	var text_x      = cursor_x + 50;
+	var y = 360;
 
-	if(this.frame_count % 80 > 40) {
-		var text;
-		if(this.is_normal_stage_cleared) {
-			text = "Press Z to Start EX"; //Exステージ解放後
+	ctx.globalAlpha = 1.0; // 半透明戻す
+	ctx.font = "30px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+
+	for(var i = 0, len = MENU.length; i < len; i++) {
+		var menu = MENU[i];
+
+		// 通常ストーリークリア後のみ、Ex Story を表示する
+		if(!this.is_normal_stage_cleared && menu[1] === "ex_epigraph") {
+			continue;
 		}
-		else {
-			text = "Press Z to Start"; // Exステージ開放前
+
+		if(this.index === i) {
+			// cursor 表示
+			this._drawText("▶", cursor_x, y);
 		}
+		// 文字表示
+		this._drawText(menu[0], text_x, y); // 1行表示
 
-		ctx.fillStyle = 'rgb( 0, 0, 0 )';
-		ctx.lineWidth = 4.0;
-		ctx.strokeText(text, this.core.width/2, 420);
-
-		ctx.fillStyle = 'rgb( 255, 255, 255 )';
-		ctx.fillText(text, this.core.width/2, 420);
+		y+= 40;
 	}
 
-
-	//ctx.fillText('→ Story Start', 280, 400);
-	//ctx.fillText('　 Stage Select', 280, 450);
 	ctx.restore();
+
+
 };
+
+SceneTitle.prototype._drawText = function(text, x, y){
+	var ctx = this.core.ctx;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, x, y);
+
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText(text, x, y);
+};
+
+
+
 
 module.exports = SceneTitle;
