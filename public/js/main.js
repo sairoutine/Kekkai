@@ -435,6 +435,8 @@ AssetsConfig.images = {
 	// ノーマルステージクリア後背景
 	shrine_night:   "./image/shrine_night.jpg",
 
+	yajirushi:      "./image/yajirushi.png",
+
 	reimu_angry1:   "./image/reimu/angry1.png",
 	reimu_angry2:   "./image/reimu/angry2.png",
 	reimu_confused: "./image/reimu/confused.png",
@@ -567,8 +569,8 @@ module.exports = CONSTANT;
 var DEBUG = {
 	ON: true,
 	SOUND_OFF: true,
-	START_STAGE_NO: 40,
-	START_SCENE: "stage",
+	START_STAGE_NO: 20,
+	START_SCENE: "select",
 };
 
 module.exports = DEBUG;
@@ -583,6 +585,8 @@ var CONSTANT = require('./constant');
 var SceneLoading = require('./scene/loading');
 // タイトル画面
 var SceneTitle = require('./scene/title');
+// ステージセレクト画面
+var SceneSelect = require('./scene/select');
 // 回想シーン画面
 var SceneReminiscence = require('./scene/reminiscence');
 // プロローグ画面
@@ -611,6 +615,7 @@ Game.prototype.init = function () {
 
 	this.addScene("loading", new SceneLoading(this));
 	this.addScene("title", new SceneTitle(this));
+	this.addScene("select", new SceneSelect(this));
 	this.addScene("reminiscence", new SceneReminiscence(this));
 	this.addScene("prologue", new ScenePrologue(this));
 	this.addScene("stage", new SceneStage(this));
@@ -643,7 +648,7 @@ Game.prototype.stopBGM = function () {
 
 module.exports = Game;
 
-},{"./constant":5,"./hakurei":8,"./scene/after_ex":121,"./scene/after_normal":122,"./scene/epilogue":123,"./scene/ex_epigraph":124,"./scene/ex_prologue":125,"./scene/loading":126,"./scene/prologue":167,"./scene/reminiscence":168,"./scene/staffroll":170,"./scene/stage":171,"./scene/title":177}],8:[function(require,module,exports){
+},{"./constant":5,"./hakurei":8,"./scene/after_ex":121,"./scene/after_normal":122,"./scene/epilogue":123,"./scene/ex_epigraph":124,"./scene/ex_prologue":125,"./scene/loading":126,"./scene/prologue":167,"./scene/reminiscence":168,"./scene/select":169,"./scene/staffroll":171,"./scene/stage":172,"./scene/title":178}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -13101,7 +13106,7 @@ SceneAfterEx.prototype.background = function() {
 };
 module.exports = SceneAfterEx;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/after_ex":41,"../save":120,"./serif_base":169}],122:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/after_ex":41,"../save":120,"./serif_base":170}],122:[function(require,module,exports){
 'use strict';
 
 /* 通常ストーリー クリア後画面 */
@@ -13145,7 +13150,7 @@ SceneAfterNormal.prototype.background = function() {
 };
 module.exports = SceneAfterNormal;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/after_normal":42,"../save":120,"./serif_base":169}],123:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/after_normal":42,"../save":120,"./serif_base":170}],123:[function(require,module,exports){
 'use strict';
 
 /* エピローグ画面 */
@@ -13181,7 +13186,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/epilogue":43,"../save":120,"./serif_base":169}],124:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/epilogue":43,"../save":120,"./serif_base":170}],124:[function(require,module,exports){
 'use strict';
 
 /* Ex エピグラフ画面 */
@@ -13288,7 +13293,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/ex_prologue":44,"./serif_base":169}],126:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/ex_prologue":44,"./serif_base":170}],126:[function(require,module,exports){
 'use strict';
 
 // ローディングシーン
@@ -15214,7 +15219,7 @@ ScenePrologue.prototype.background = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/prologue":45,"./serif_base":169}],168:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/prologue":45,"./serif_base":170}],168:[function(require,module,exports){
 'use strict';
 
 /* 回想シーン画面 */
@@ -15249,7 +15254,134 @@ SceneReminiscence.prototype.background = function() {
 
 module.exports = SceneReminiscence;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/reminiscence":46,"./serif_base":169}],169:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/reminiscence":46,"./serif_base":170}],169:[function(require,module,exports){
+'use strict';
+
+/* ステージセレクト画面 */
+
+
+var base_scene = require('../hakurei').scene.base;
+var util = require('../hakurei').util;
+var StorageSave = require('../save');
+var H_CONSTANT = require('../hakurei').constant;
+var CONSTANT = require('../constant');
+
+
+
+
+var SceneTitle = function(core) {
+	base_scene.apply(this, arguments);
+};
+util.inherit(SceneTitle, base_scene);
+
+SceneTitle.prototype.init = function(){
+	base_scene.prototype.init.apply(this, arguments);
+
+	// Exステージ解放されているかどうか */
+	var save_data = StorageSave.load();
+	if(!save_data) {
+		save_data = new StorageSave();
+	}
+	this.is_normal_stage_cleared = save_data.getIsNormalStageCleared();
+
+	this.core.stopBGM();
+};
+
+
+SceneTitle.prototype.beforeDraw = function(){
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.frame_count === 60) {
+		this.core.playBGM("title");
+	}
+
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
+		this.core.playSound('select');
+
+		if(this.is_normal_stage_cleared) {
+			// Exストーリー
+			this.core.changeScene("ex_epigraph");
+		}
+		else {
+			// 通常ストーリー
+			this.core.changeScene("reminiscence");
+		}
+
+	}
+};
+
+// 画面更新
+SceneTitle.prototype.draw = function(){
+	this.core.clearCanvas();
+	var ctx = this.core.ctx;
+
+	ctx.save();
+
+	var title_bg = this.core.image_loader.getImage('title_bg');
+	// 背景画像表示
+	ctx.drawImage(title_bg,
+					0,
+					0,
+					title_bg.width,
+					title_bg.height,
+					0,
+					0,
+					this.core.width,
+					this.core.height);
+
+	// show game title text
+	var title = this.core.image_loader.getImage('title');
+	ctx.drawImage(title,
+					20,
+					-20,
+					title.width,
+					title.height);
+
+	// 文字背景 表示
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = 0.7; // 半透明
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+
+	// 画面遷移やじるし表示
+	ctx.globalAlpha = 1.0; // 半透明戻す
+	ctx.font = "36px 'Migu'";
+	ctx.textAlign = 'center';
+	ctx.textBaseAlign = 'middle';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText("▶", this.core.width - 30, this.core.height/2 - 10);
+	ctx.fillText("◀", 30,                   this.core.height/2 - 10);
+
+	// ステージサムネイル 表示
+	ctx.fillStyle = 'rgb(255, 255, 255)' ;
+
+	// サムネイル：横720px 縦480px
+	var i;
+	ctx.font = "24px 'Migu'";
+	ctx.textAlign = 'left';
+	for (i = 0; i<2; i++) {
+		ctx.fillText("Stage N", 70 + 310*i, 80);
+		ctx.fillRect(70 + 310*i, 100, 72*4, 48*4);
+	}
+	for (i = 0; i<2; i++) {
+		ctx.fillText("Stage N", 70 + 310*i, 320);
+		ctx.fillRect(70 + 310*i, 330 + 10, 72*4, 48*4);
+	}
+
+	// カーソル矢印
+	var yajirushi = this.core.image_loader.getImage('yajirushi');
+	ctx.drawImage(yajirushi,
+					300,
+					510,
+					yajirushi.width*0.20,
+					yajirushi.height*0.20);
+
+
+	ctx.restore();
+};
+
+module.exports = SceneTitle;
+
+},{"../constant":5,"../hakurei":8,"../save":120}],170:[function(require,module,exports){
 'use strict';
 
 /* 立ち絵＆セリフ */
@@ -15500,7 +15632,7 @@ SceneSerifBase.prototype.isInTransition = function() {
 
 module.exports = SceneSerifBase;
 
-},{"../constant":5,"../hakurei":8}],170:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8}],171:[function(require,module,exports){
 'use strict';
 
 /* スタッフロール画面 */
@@ -15608,7 +15740,7 @@ SceneStaffroll.prototype.draw = function(){
 
 module.exports = SceneStaffroll;
 
-},{"../hakurei":8,"../object/reimu_for_staffroll":91}],171:[function(require,module,exports){
+},{"../hakurei":8,"../object/reimu_for_staffroll":91}],172:[function(require,module,exports){
 'use strict';
 
 	var offset_x = 25;
@@ -15907,7 +16039,7 @@ SceneStage.prototype.notifyGameOverEnd = function() {
 };
 // ノーマルステージの最終ステージかどうか
 SceneStage.prototype.isLastNormalStory = function() {
-	return this.stage_no === 5 ? true : false;
+	return this.stage_no === 30 ? true : false;
 };
 // Exステージの最終ステージかどうか
 SceneStage.prototype.isLastExStory = function() {
@@ -16136,7 +16268,7 @@ SceneStage.prototype.calcItemNum = function() {
 
 module.exports = SceneStage;
 
-},{"../constant":5,"../hakurei":8,"../logic/serif/stage01/before":47,"../logic/serif/stage02/before":48,"../logic/serif/stage03/before":49,"../logic/serif/stage04/before":50,"../logic/serif/stage05/before":51,"../logic/serif/stage06/before":52,"../logic/serif/stage07/before":53,"../logic/serif/stage08/before":54,"../logic/serif/stage09/before":55,"../logic/serif/stage10/before":56,"../logic/serif/stage11/before":57,"../logic/serif/stage12/before":58,"../logic/serif/stage13/before":59,"../logic/serif/stage14/before":60,"../logic/serif/stage15/before":61,"../logic/serif/stage16/before":62,"../logic/serif/stage17/before":63,"../logic/serif/stage18/before":64,"../logic/serif/stage19/before":65,"../logic/serif/stage20/before":66,"../logic/serif/stage21/before":67,"../logic/serif/stage22/before":68,"../logic/serif/stage23/before":69,"../logic/serif/stage24/before":70,"../logic/serif/stage25/before":71,"../logic/serif/stage26/before":72,"../logic/serif/stage27/before":73,"../logic/serif/stage28/before":74,"../logic/serif/stage29/before":75,"../logic/serif/stage30/before":76,"../logic/serif/stage31/before":77,"../logic/serif/stage32/before":78,"../logic/serif/stage33/before":79,"../logic/serif/stage34/before":80,"../logic/serif/stage35/before":81,"../logic/serif/stage36/before":82,"../logic/serif/stage37/before":83,"../logic/serif/stage38/before":84,"../logic/serif/stage39/before":85,"../logic/serif/stage40/before":86,"../object/background_eye":89,"../object/stage_frame1":92,"../object/stage_frame2":93,"../object/tile/block_blue":95,"../object/tile/block_brown":96,"../object/tile/block_green":97,"../object/tile/block_purple":98,"../object/tile/block_red":99,"../object/tile/block_stone1":100,"../object/tile/block_stone2":101,"../object/tile/block_stone3":102,"../object/tile/death":103,"../object/tile/enemy":104,"../object/tile/enemy_vertical":105,"../object/tile/item_for_reimu":106,"../object/tile/item_for_yukari":107,"../object/tile/item_of_exchange":108,"../object/tile/ladder":109,"../object/tile/player":110,"./map/stage01":127,"./map/stage02":128,"./map/stage03":129,"./map/stage04":130,"./map/stage05":131,"./map/stage06":132,"./map/stage07":133,"./map/stage08":134,"./map/stage09":135,"./map/stage10":136,"./map/stage11":137,"./map/stage12":138,"./map/stage13":139,"./map/stage14":140,"./map/stage15":141,"./map/stage16":142,"./map/stage17":143,"./map/stage18":144,"./map/stage19":145,"./map/stage20":146,"./map/stage21":147,"./map/stage22":148,"./map/stage23":149,"./map/stage24":150,"./map/stage25":151,"./map/stage26":152,"./map/stage27":153,"./map/stage28":154,"./map/stage29":155,"./map/stage30":156,"./map/stage31":157,"./map/stage32":158,"./map/stage33":159,"./map/stage34":160,"./map/stage35":161,"./map/stage36":162,"./map/stage37":163,"./map/stage38":164,"./map/stage39":165,"./map/stage40":166,"./stage/play":172,"./stage/result_clear":174,"./stage/result_gameover":175,"./stage/talk":176}],172:[function(require,module,exports){
+},{"../constant":5,"../hakurei":8,"../logic/serif/stage01/before":47,"../logic/serif/stage02/before":48,"../logic/serif/stage03/before":49,"../logic/serif/stage04/before":50,"../logic/serif/stage05/before":51,"../logic/serif/stage06/before":52,"../logic/serif/stage07/before":53,"../logic/serif/stage08/before":54,"../logic/serif/stage09/before":55,"../logic/serif/stage10/before":56,"../logic/serif/stage11/before":57,"../logic/serif/stage12/before":58,"../logic/serif/stage13/before":59,"../logic/serif/stage14/before":60,"../logic/serif/stage15/before":61,"../logic/serif/stage16/before":62,"../logic/serif/stage17/before":63,"../logic/serif/stage18/before":64,"../logic/serif/stage19/before":65,"../logic/serif/stage20/before":66,"../logic/serif/stage21/before":67,"../logic/serif/stage22/before":68,"../logic/serif/stage23/before":69,"../logic/serif/stage24/before":70,"../logic/serif/stage25/before":71,"../logic/serif/stage26/before":72,"../logic/serif/stage27/before":73,"../logic/serif/stage28/before":74,"../logic/serif/stage29/before":75,"../logic/serif/stage30/before":76,"../logic/serif/stage31/before":77,"../logic/serif/stage32/before":78,"../logic/serif/stage33/before":79,"../logic/serif/stage34/before":80,"../logic/serif/stage35/before":81,"../logic/serif/stage36/before":82,"../logic/serif/stage37/before":83,"../logic/serif/stage38/before":84,"../logic/serif/stage39/before":85,"../logic/serif/stage40/before":86,"../object/background_eye":89,"../object/stage_frame1":92,"../object/stage_frame2":93,"../object/tile/block_blue":95,"../object/tile/block_brown":96,"../object/tile/block_green":97,"../object/tile/block_purple":98,"../object/tile/block_red":99,"../object/tile/block_stone1":100,"../object/tile/block_stone2":101,"../object/tile/block_stone3":102,"../object/tile/death":103,"../object/tile/enemy":104,"../object/tile/enemy_vertical":105,"../object/tile/item_for_reimu":106,"../object/tile/item_for_yukari":107,"../object/tile/item_of_exchange":108,"../object/tile/ladder":109,"../object/tile/player":110,"./map/stage01":127,"./map/stage02":128,"./map/stage03":129,"./map/stage04":130,"./map/stage05":131,"./map/stage06":132,"./map/stage07":133,"./map/stage08":134,"./map/stage09":135,"./map/stage10":136,"./map/stage11":137,"./map/stage12":138,"./map/stage13":139,"./map/stage14":140,"./map/stage15":141,"./map/stage16":142,"./map/stage17":143,"./map/stage18":144,"./map/stage19":145,"./map/stage20":146,"./map/stage21":147,"./map/stage22":148,"./map/stage23":149,"./map/stage24":150,"./map/stage25":151,"./map/stage26":152,"./map/stage27":153,"./map/stage28":154,"./map/stage29":155,"./map/stage30":156,"./map/stage31":157,"./map/stage32":158,"./map/stage33":159,"./map/stage34":160,"./map/stage35":161,"./map/stage36":162,"./map/stage37":163,"./map/stage38":164,"./map/stage39":165,"./map/stage40":166,"./stage/play":173,"./stage/result_clear":175,"./stage/result_gameover":176,"./stage/talk":177}],173:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../../hakurei').scene.base;
@@ -16203,7 +16335,7 @@ SceneStagePlay.prototype.draw = function() {
 
 module.exports = SceneStagePlay;
 
-},{"../../hakurei":8}],173:[function(require,module,exports){
+},{"../../hakurei":8}],174:[function(require,module,exports){
 'use strict';
 
 // メッセージを表示する間隔
@@ -16334,7 +16466,7 @@ SceneStageResultBase.prototype.notifyResultEnd = function(){
 module.exports = SceneStageResultBase;
 
 
-},{"../../hakurei":8}],174:[function(require,module,exports){
+},{"../../hakurei":8}],175:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -16361,7 +16493,7 @@ SceneStageResultClear.prototype.resultMessage = function(){
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":8,"./result_base":173}],175:[function(require,module,exports){
+},{"../../hakurei":8,"./result_base":174}],176:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -16388,7 +16520,7 @@ SceneStageResultClear.prototype.resultMessage = function(){
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":8,"./result_base":173}],176:[function(require,module,exports){
+},{"../../hakurei":8,"./result_base":174}],177:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
@@ -16594,7 +16726,7 @@ SceneStageTalk.prototype._showMessage = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":8}],177:[function(require,module,exports){
+},{"../../hakurei":8}],178:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../hakurei').scene.base;
@@ -16609,8 +16741,13 @@ var SHOW_TRANSITION_COUNT = 100;
 // blink interval time
 var SHOW_START_MESSAGE_INTERVAL = 50;
 
-
-
+var MENU = [
+	["Story Start", "reminiscence"],
+	["Ex Story Start", "ex_epigraph"],
+	["Select Stage", "select"],
+	["Config", "config"],
+	["Music Room", "music"],
+];
 
 var SceneTitle = function(core) {
 	base_scene.apply(this, arguments);
@@ -16619,6 +16756,9 @@ util.inherit(SceneTitle, base_scene);
 
 SceneTitle.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
+
+	// 今どれにカーソルがあるか
+	this.index = 0;
 
 	// Exステージ解放されているかどうか */
 	var save_data = StorageSave.load();
@@ -16638,18 +16778,29 @@ SceneTitle.prototype.beforeDraw = function(){
 		this.core.playBGM("title");
 	}
 
+	// カーソルを下移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+		this.index++;
+
+		if(this.index >= MENU.length) {
+			this.index = MENU.length - 1;
+		}
+	}
+	// カーソルを上移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+		this.index--;
+
+		if(this.index < 0) {
+			this.index = 0;
+		}
+	}
+
+	// 決定
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
 
-		if(this.is_normal_stage_cleared) {
-			// Exストーリー
-			this.core.changeScene("ex_epigraph");
-		}
-		else {
-			// 通常ストーリー
-			this.core.changeScene("reminiscence");
-		}
-
+		var scene_name = MENU[this.index][1];
+		this.core.changeScene(scene_name);
 	}
 };
 
@@ -16661,16 +16812,18 @@ SceneTitle.prototype.draw = function(){
 	ctx.save();
 
 	// 切り替え効果
+	var alpha;
 	if( this.frame_count < SHOW_TRANSITION_COUNT ) {
-		ctx.globalAlpha = this.frame_count / SHOW_TRANSITION_COUNT;
+		alpha = this.frame_count / SHOW_TRANSITION_COUNT;
 	}
 	else {
-		ctx.globalAlpha = 1.0;
+		alpha = 1.0;
 	}
 
 
 	var title_bg = this.core.image_loader.getImage('title_bg');
 	// 背景画像表示
+	ctx.globalAlpha = alpha;
 	ctx.drawImage(title_bg,
 					0,
 					0,
@@ -16681,7 +16834,7 @@ SceneTitle.prototype.draw = function(){
 					this.core.width,
 					this.core.height);
 
-	// show game title text
+	// タイトルロゴ
 	var title = this.core.image_loader.getImage('title');
 	ctx.drawImage(title,
 					20,
@@ -16690,32 +16843,58 @@ SceneTitle.prototype.draw = function(){
 					title.height);
 
 
-	// show press z
-	ctx.font = "38px 'Migu'";
-	ctx.textAlign = 'center';
 
-	if(this.frame_count % 80 > 40) {
-		var text;
-		if(this.is_normal_stage_cleared) {
-			text = "Press Z to Start EX"; //Exステージ解放後
+	var cursor_x    = this.core.width - 200;
+	var text_x      = cursor_x + 30;
+	var y = this.core.height/2 - 50;
+
+	// 文字背景 表示
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = 0.7; // 半透明
+	ctx.fillRect(cursor_x - 10, y - 100, this.core.width - cursor_x - 20, this.core.height - y + 70);
+
+	// 文字表示
+	ctx.globalAlpha = 1.0; // 半透明戻す
+	ctx.font = "18px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+
+	for(var i = 0, len = MENU.length; i < len; i++) {
+		var menu = MENU[i];
+
+		// 通常ストーリークリア後のみ、Ex Story を表示する
+		if(!this.is_normal_stage_cleared && menu[1] === "ex_epigraph") {
+			continue;
 		}
-		else {
-			text = "Press Z to Start"; // Exステージ開放前
+
+		if(this.index === i) {
+			// cursor 表示
+			this._drawText("▶", cursor_x, y);
 		}
+		// 文字表示
+		this._drawText(menu[0], text_x, y); // 1行表示
 
-		ctx.fillStyle = 'rgb( 0, 0, 0 )';
-		ctx.lineWidth = 4.0;
-		ctx.strokeText(text, this.core.width/2, 420);
-
-		ctx.fillStyle = 'rgb( 255, 255, 255 )';
-		ctx.fillText(text, this.core.width/2, 420);
+		y+= 40;
 	}
 
-
-	//ctx.fillText('→ Story Start', 280, 400);
-	//ctx.fillText('　 Stage Select', 280, 450);
 	ctx.restore();
+
+
 };
+
+SceneTitle.prototype._drawText = function(text, x, y){
+	var ctx = this.core.ctx;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, x, y);
+
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText(text, x, y);
+};
+
+
+
 
 module.exports = SceneTitle;
 
