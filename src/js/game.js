@@ -7,6 +7,8 @@ var CONSTANT = require('./constant');
 var SceneLoading = require('./scene/loading');
 // タイトル画面
 var SceneTitle = require('./scene/title');
+// ステージセレクト画面
+var SceneSelect = require('./scene/select');
 // 回想シーン画面
 var SceneReminiscence = require('./scene/reminiscence');
 // プロローグ画面
@@ -35,6 +37,7 @@ Game.prototype.init = function () {
 
 	this.addScene("loading", new SceneLoading(this));
 	this.addScene("title", new SceneTitle(this));
+	this.addScene("select", new SceneSelect(this));
 	this.addScene("reminiscence", new SceneReminiscence(this));
 	this.addScene("prologue", new ScenePrologue(this));
 	this.addScene("stage", new SceneStage(this));
