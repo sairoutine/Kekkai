@@ -102,37 +102,41 @@ SceneTitle.prototype.draw = function(){
 	var i;
 	ctx.font = "24px 'Migu'";
 	ctx.textAlign = 'left';
-	for (i = 0; i<2; i++) {
-		ctx.fillText("Stage N", 70 + 310*i, 80);
+	for (i = 0; i<4; i++) {
+		ctx.fillText("Stage N", 70 + 150*i, 140);
+		ctx.fillRect(70 + 150*i, 150, 72*2, 48*2);
 		ctx.drawImage(thumbnail,
 						25,
 						50,
 						30*24,
 						20*24,
-						70+310*i,
-						100,
-						30*24 *0.40,
-						20*24 *0.40);
-	}
-	for (i = 0; i<2; i++) {
-		ctx.fillText("Stage N", 70 + 310*i, 320);
-		ctx.drawImage(thumbnail,
-						25,
-						50,
-						30*24,
-						20*24,
-						70+310*i,
-						330,
-						30*24 *0.40,
-						20*24 *0.40);
+						70+150*i,
+						150,
+						30*24 *0.20,
+						20*24 *0.20);
 
 	}
+	for (i = 0; i<4; i++) {
+		ctx.fillText("Stage N", 70 + 150*i, 320);
+		ctx.drawImage(thumbnail,
+						25,
+						50,
+						30*24,
+						20*24,
+						70+150*i,
+						330 + 10,
+						30*24 *0.20,
+						20*24 *0.20);
+
+	}
+
+
 
 	// カーソル矢印
 	var yajirushi = this.core.image_loader.getImage('yajirushi');
 	ctx.drawImage(yajirushi,
 					300,
-					510,
+					210,
 					yajirushi.width*0.20,
 					yajirushi.height*0.20);
 
