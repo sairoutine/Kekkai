@@ -345,7 +345,7 @@ SceneStage.prototype.draw = function() {
 	ctx.fillStyle = cpt2;
 	ctx.fillRect(
 		CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y,
-		CONSTANT.TILE_SIZE * 30, CONSTANT.TILE_SIZE * 20
+		CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_X_NUM, CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_Y_NUM
 	);
 	ctx.restore();
 
@@ -400,7 +400,7 @@ SceneStage.prototype.addYukariItemNum = function () {
 
 // マップデータが正しいか確認する
 SceneStage.prototype.checkValidMap = function(map) {
-	if (map.length !== 20) {
+	if (map.length !== CONSTANT.STAGE_TILE_Y_NUM) {
 		window.alert("マップの縦が20行である必要があります。");
 	}
 
@@ -408,7 +408,7 @@ SceneStage.prototype.checkValidMap = function(map) {
 	for (var pos_y = 0; pos_y < map.length; pos_y++) {
 		var line = map[pos_y];
 
-		if (line.length !== 30) {
+		if (line.length !== CONSTANT.STAGE_TILE_X_NUM) {
 			window.alert("マップの縦が30行である必要があります。");
 		}
 
@@ -456,7 +456,7 @@ SceneStage.prototype.drawFrames = function() {
 	var stage_frame1 = new StageFrame1(this);
 	var stage_frame2 = new StageFrame2(this);
 
-	for (var pos_y = 0; pos_y < 20-1; pos_y++) { //縦
+	for (var pos_y = 0; pos_y < CONSTANT.STAGE_TILE_Y_NUM-1; pos_y++) { //縦
 		// 左
 		x = CONSTANT.STAGE_OFFSET_X;
 		y = pos_y * CONSTANT.TILE_SIZE + (CONSTANT.STAGE_OFFSET_Y) + 24;
@@ -465,13 +465,13 @@ SceneStage.prototype.drawFrames = function() {
 		stage_frame1.draw(x, y, is_vertical);
 
 		// 右
-		x = CONSTANT.STAGE_OFFSET_X + CONSTANT.TILE_SIZE * 30;
+		x = CONSTANT.STAGE_OFFSET_X + CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_X_NUM;
 
 		is_vertical = true;
 		stage_frame1.draw(x, y, is_vertical);
 
 	}
-	for (var pos_x = 0; pos_x < 30-1; pos_x++) { // 横
+	for (var pos_x = 0; pos_x < CONSTANT.STAGE_TILE_X_NUM-1; pos_x++) { // 横
 		// 上
 		x = pos_x * CONSTANT.TILE_SIZE + (CONSTANT.STAGE_OFFSET_X) + 24;
 		y = CONSTANT.STAGE_OFFSET_Y;
@@ -480,7 +480,7 @@ SceneStage.prototype.drawFrames = function() {
 		stage_frame1.draw(x, y, is_vertical);
 
 		// 下
-		y = CONSTANT.STAGE_OFFSET_Y + CONSTANT.TILE_SIZE * 20;
+		y = CONSTANT.STAGE_OFFSET_Y + CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_Y_NUM;
 
 		is_vertical = false;
 		stage_frame1.draw(x, y, is_vertical);
@@ -488,9 +488,9 @@ SceneStage.prototype.drawFrames = function() {
 
 	// 角
 	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y, 270);
-	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X+CONSTANT.TILE_SIZE*30, CONSTANT.STAGE_OFFSET_Y, 0);
-	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y+CONSTANT.TILE_SIZE*20, 180);
-	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X+CONSTANT.TILE_SIZE*30, CONSTANT.STAGE_OFFSET_Y+CONSTANT.TILE_SIZE*20, 90);
+	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X+CONSTANT.TILE_SIZE*CONSTANT.STAGE_TILE_X_NUM, CONSTANT.STAGE_OFFSET_Y, 0);
+	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y+CONSTANT.TILE_SIZE*CONSTANT.STAGE_TILE_Y_NUM, 180);
+	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X+CONSTANT.TILE_SIZE*CONSTANT.STAGE_TILE_X_NUM, CONSTANT.STAGE_OFFSET_Y+CONSTANT.TILE_SIZE*CONSTANT.STAGE_TILE_Y_NUM, 90);
 };
 
 
@@ -502,8 +502,8 @@ SceneStage.prototype.drawFrames = function() {
 
 
 SceneStage.prototype.createBackGroundEyes = function() {
-	var width = CONSTANT.TILE_SIZE * 30;
-	var height = CONSTANT.TILE_SIZE * 20;
+	var width = CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_X_NUM;
+	var height = CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_Y_NUM;
 
 	for (var i = 0; i < EYES_NUM[this.stage_no]; i++) {
 		var x = CONSTANT.STAGE_OFFSET_X + Math.floor(Math.random() * width);

@@ -14,6 +14,10 @@ var CONSTANT = {
 	STAGE_OFFSET_X: 25,
 	STAGE_OFFSET_Y: 50,
 
+	// ステージの縦 横のタイル数
+	STAGE_TILE_X_NUM: 30,
+	STAGE_TILE_Y_NUM: 20,
+
 	// ステージ上のタイルの種類
 	BLOCK_GREEN:     1,
 	BLOCK_BLUE:      2,
