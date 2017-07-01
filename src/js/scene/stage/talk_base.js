@@ -27,7 +27,7 @@ SceneStageTalk.prototype.beforeDraw = function(){
 
 	this.parent.player().update();
 
-	// セリフのないステージならば、そのままプレイに移行
+	// セリフのないステージならば、そのまま終了
 	if(this.frame_count === 1 && this.serif.is_end()) {
 		this.notifyTalkEnd();
 		return;

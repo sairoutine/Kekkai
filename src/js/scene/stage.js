@@ -48,6 +48,7 @@ TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE3]    = BlockStone3;
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
 var SceneStageBeforeTalk     = require("./stage/before_talk");
+var SceneStageAfterTalk      = require("./stage/after_talk");
 var SceneStagePlay           = require("./stage/play");
 var SceneStageResultClear    = require("./stage/result_clear");
 var SceneStageResultGameOver = require("./stage/result_gameover");
@@ -241,6 +242,7 @@ var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
 
 	this.addSubScene("talk",            new SceneStageBeforeTalk(core, this));
+	this.addSubScene("after_talk",      new SceneStageAfterTalk(core, this));
 	this.addSubScene("play",            new SceneStagePlay(core, this));
 	this.addSubScene("result_clear",    new SceneStageResultClear(core, this));
 	this.addSubScene("result_gameover", new SceneStageResultGameOver(core, this));
@@ -297,9 +299,6 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	if(sub_scene === "talk") {
 		this.changeSubScene("talk", SERIF_BEFORES[this.stage_no]);
 	}
-	else if(sub_scene === "after_talk") {
-		this.changeSubScene("talk", SERIF_AFTERS[this.stage_no]);
-	}
 	else {
 		this.changeSubScene(sub_scene);
 	}
@@ -318,7 +317,10 @@ SceneStage.prototype.notifyPlayerDie = function(){
 SceneStage.prototype.notifyStageClear = function(){
 	this.changeSubScene("result_clear");
 };
-
+// クリア後のリザルト画面終了後
+SceneStage.prototype.notifyResultClearEnd = function(){
+	this.changeSubScene("after_talk", SERIF_AFTERS[this.stage_no]);
+};
 
 // ステージクリア
 SceneStage.prototype.notifyClearEnd = function() {
