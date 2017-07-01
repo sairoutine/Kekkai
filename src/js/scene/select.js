@@ -5,56 +5,29 @@
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
-var StorageSave = require('../save');
 var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
 
 
 
 
-var SceneTitle = function(core) {
+var SceneSelect = function(core) {
 	base_scene.apply(this, arguments);
 };
-util.inherit(SceneTitle, base_scene);
+util.inherit(SceneSelect, base_scene);
 
-SceneTitle.prototype.init = function(){
+SceneSelect.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
-
-	// Exステージ解放されているかどうか */
-	var save_data = StorageSave.load();
-	if(!save_data) {
-		save_data = new StorageSave();
-	}
-	this.is_normal_stage_cleared = save_data.getIsNormalStageCleared();
-
-	this.core.stopBGM();
 };
 
 
-SceneTitle.prototype.beforeDraw = function(){
+SceneSelect.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	if(this.frame_count === 60) {
-		this.core.playBGM("title");
-	}
-
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		this.core.playSound('select');
-
-		if(this.is_normal_stage_cleared) {
-			// Exストーリー
-			this.core.changeScene("ex_epigraph");
-		}
-		else {
-			// 通常ストーリー
-			this.core.changeScene("reminiscence");
-		}
-
-	}
 };
 
 // 画面更新
-SceneTitle.prototype.draw = function(){
+SceneSelect.prototype.draw = function(){
 	this.core.clearCanvas();
 	var ctx = this.core.ctx;
 
@@ -135,7 +108,7 @@ SceneTitle.prototype.draw = function(){
 	this._drawText("★★★", this.core.width - 300, this.core.height - 50);
 	ctx.restore();
 };
-SceneTitle.prototype._drawText = function(text, x, y){
+SceneSelect.prototype._drawText = function(text, x, y){
 	var ctx = this.core.ctx;
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.lineWidth = 4.0;
@@ -146,4 +119,4 @@ SceneTitle.prototype._drawText = function(text, x, y){
 };
 
 
-module.exports = SceneTitle;
+module.exports = SceneSelect;
