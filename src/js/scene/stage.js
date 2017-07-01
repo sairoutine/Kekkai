@@ -292,7 +292,7 @@ SceneStage.prototype.notifyGameOverEnd = function() {
 };
 // ノーマルステージの最終ステージかどうか
 SceneStage.prototype.isLastNormalStory = function() {
-	return this.stage_no === 30 ? true : false;
+	return this.stage_no === (CONSTANT.EX_STORY_START_STAGE_NO - 1) ? true : false;
 };
 // Exステージの最終ステージかどうか
 SceneStage.prototype.isLastExStory = function() {
