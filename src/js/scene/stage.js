@@ -407,6 +407,11 @@ SceneStage.prototype.checkValidMap = function(map) {
 	var is_exists_player = false;
 	for (var pos_y = 0; pos_y < map.length; pos_y++) {
 		var line = map[pos_y];
+
+		if (line.length !== 30) {
+			window.alert("マップの縦が30行である必要があります。");
+		}
+
 		for (var pos_x = 0; pos_x < line.length; pos_x++) {
 			var tile = line[pos_x];
 			if (tile === CONSTANT.PLAYER) is_exists_player = true;
