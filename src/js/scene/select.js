@@ -61,6 +61,7 @@ SceneTitle.prototype.draw = function(){
 	ctx.save();
 
 	var title_bg = this.core.image_loader.getImage('title_bg');
+
 	// 背景画像表示
 	ctx.drawImage(title_bg,
 					0,
@@ -73,75 +74,74 @@ SceneTitle.prototype.draw = function(){
 					this.core.height);
 
 	// show game title text
+	/*
 	var title = this.core.image_loader.getImage('title');
 	ctx.drawImage(title,
 					20,
 					-20,
 					title.width,
 					title.height);
-
+	*/
 	// 文字背景 表示
 	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.7; // 半透明
+	ctx.globalAlpha = 0.5; // 半透明
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
 	// 画面遷移やじるし表示
 	ctx.globalAlpha = 1.0; // 半透明戻す
-	ctx.font = "36px 'Migu'";
-	ctx.textAlign = 'center';
+	ctx.fillRect(this.core.width - 170, 0, 160, this.core.height);
+
+	ctx.font = "16px 'Migu'";
+	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.fillText("▶", this.core.width - 30, this.core.height/2 - 10);
-	ctx.fillText("◀", 30,                   this.core.height/2 - 10);
+
+	for(var i = 1, len = 25; i <= len; i++) {
+		var menu = "Stage " + i.toString();
+
+		if(i === 1) {
+			// cursor 表示
+			this._drawText("▶", this.core.width - 150, 30 + 20*i);
+		}
+		// 文字表示
+		this._drawText(menu, this.core.width - 120, 30 + 20 * i); // 1行表示
+
+	}
+
+
+
+
+	ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
 
 	// ステージサムネイル 表示
 	ctx.fillStyle = 'rgb(255, 255, 255)' ;
 
 	// サムネイル：横720px 縦480px
 	var thumbnail = this.core.image_loader.getImage('thumbnail15');
-	var i;
-	ctx.font = "24px 'Migu'";
+	ctx.font = "36px 'Migu'";
 	ctx.textAlign = 'left';
-	for (i = 0; i<4; i++) {
-		ctx.fillText("Stage N", 70 + 150*i, 140);
-		ctx.fillRect(70 + 150*i, 150, 72*2, 48*2);
-		ctx.drawImage(thumbnail,
-						25,
-						50,
-						30*24,
-						20*24,
-						70+150*i,
-						150,
-						30*24 *0.20,
-						20*24 *0.20);
-
-	}
-	for (i = 0; i<4; i++) {
-		ctx.fillText("Stage N", 70 + 150*i, 320);
-		ctx.drawImage(thumbnail,
-						25,
-						50,
-						30*24,
-						20*24,
-						70+150*i,
-						330 + 10,
-						30*24 *0.20,
-						20*24 *0.20);
-
-	}
-
-
-
-	// カーソル矢印
-	var yajirushi = this.core.image_loader.getImage('yajirushi');
-	ctx.drawImage(yajirushi,
-					300,
-					210,
-					yajirushi.width*0.20,
-					yajirushi.height*0.20);
-
+	ctx.fillText("Stage N", 20, 50);
+	ctx.drawImage(thumbnail,
+					25,
+					50,
+					30*24,
+					20*24,
+					10,
+					90,
+					30*24 *0.80,
+					20*24 *0.80);
 
 	ctx.restore();
 };
+SceneTitle.prototype._drawText = function(text, x, y){
+	var ctx = this.core.ctx;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, x, y);
+
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText(text, x, y);
+};
+
 
 module.exports = SceneTitle;
