@@ -98,16 +98,34 @@ SceneTitle.prototype.draw = function(){
 	ctx.fillStyle = 'rgb(255, 255, 255)' ;
 
 	// サムネイル：横720px 縦480px
+	var thumbnail = this.core.image_loader.getImage('thumbnail15');
 	var i;
 	ctx.font = "24px 'Migu'";
 	ctx.textAlign = 'left';
 	for (i = 0; i<2; i++) {
 		ctx.fillText("Stage N", 70 + 310*i, 80);
-		ctx.fillRect(70 + 310*i, 100, 72*4, 48*4);
+		ctx.drawImage(thumbnail,
+						25,
+						50,
+						30*24,
+						20*24,
+						70+310*i,
+						100,
+						30*24 *0.40,
+						20*24 *0.40);
 	}
 	for (i = 0; i<2; i++) {
 		ctx.fillText("Stage N", 70 + 310*i, 320);
-		ctx.fillRect(70 + 310*i, 330 + 10, 72*4, 48*4);
+		ctx.drawImage(thumbnail,
+						25,
+						50,
+						30*24,
+						20*24,
+						70+310*i,
+						330,
+						30*24 *0.40,
+						20*24 *0.40);
+
 	}
 
 	// カーソル矢印
