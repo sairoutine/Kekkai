@@ -131,6 +131,8 @@ SceneTitle.prototype.draw = function(){
 					30*24 *0.80,
 					20*24 *0.80);
 
+	ctx.font = "40px 'Migu'";
+	this._drawText("★★★", this.core.width - 300, this.core.height - 50);
 	ctx.restore();
 };
 SceneTitle.prototype._drawText = function(text, x, y){
