@@ -8,7 +8,6 @@ var serif_script = require("../logic/serif/epilogue");
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
 var base_scene = require('./serif_base');
-var StorageSave = require('../save');
 
 var ScenePrologue = function(game) {
 	base_scene.apply(this, arguments);

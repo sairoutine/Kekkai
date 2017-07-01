@@ -13,7 +13,6 @@ var backgrounds = [
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
 var base_scene = require('./serif_base');
-var StorageSave = require('../save');
 
 var SceneAfterEx = function(game) {
 	base_scene.apply(this, arguments);

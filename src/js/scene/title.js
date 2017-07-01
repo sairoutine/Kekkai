@@ -2,7 +2,6 @@
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
-var StorageSave = require('../save');
 var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
 
@@ -32,11 +31,7 @@ SceneTitle.prototype.init = function(){
 	this.index = 0;
 
 	// Exステージ解放されているかどうか */
-	var save_data = StorageSave.load();
-	if(!save_data) {
-		save_data = new StorageSave();
-	}
-	this.is_normal_stage_cleared = save_data.getIsNormalStageCleared();
+	this.is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
 
 	this.core.stopBGM();
 };
