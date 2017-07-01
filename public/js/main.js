@@ -567,10 +567,10 @@ module.exports = CONSTANT;
 },{"./debug_constant":6}],6:[function(require,module,exports){
 'use strict';
 var DEBUG = {
-	ON: true,
+	ON: false,
 	SOUND_OFF: true,
-	START_STAGE_NO: 20,
-	START_SCENE: "select",
+	START_STAGE_NO: 15,
+	START_SCENE: "stage",
 };
 
 module.exports = DEBUG;
