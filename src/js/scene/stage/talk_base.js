@@ -29,13 +29,13 @@ SceneStageTalk.prototype.beforeDraw = function(){
 
 	// セリフのないステージならば、そのままプレイに移行
 	if(this.frame_count === 1 && this.serif.is_end()) {
-		this.parent.changeSubScene("play");
+		this.notifyTalkEnd();
 		return;
 	}
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
 		if(this.serif.is_end()) {
-			this.parent.changeSubScene("play");
+			this.notifyTalkEnd();
 		}
 		else {
 			// セリフを送る
@@ -198,7 +198,8 @@ SceneStageTalk.prototype._showMessage = function() {
 	ctx.restore();
 };
 
-
-
+SceneStageTalk.prototype.notifyTalkEnd = function() {
+	throw new Error("notifyTalkEnd must be implemented.");
+};
 
 module.exports = SceneStageTalk;

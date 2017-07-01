@@ -47,7 +47,7 @@ TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE3]    = BlockStone3;
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
-var SceneStageTalk           = require("./stage/talk");
+var SceneStageBeforeTalk     = require("./stage/before_talk");
 var SceneStagePlay           = require("./stage/play");
 var SceneStageResultClear    = require("./stage/result_clear");
 var SceneStageResultGameOver = require("./stage/result_gameover");
@@ -139,6 +139,53 @@ var SERIF_BEFORES = [
 	require("../logic/serif/stage39/before"),
 	require("../logic/serif/stage40/before"),
 ];
+var SERIF_AFTERS = [
+	null,
+	require("../logic/serif/stage01/after"),
+	require("../logic/serif/stage02/after"),
+	require("../logic/serif/stage03/after"),
+	require("../logic/serif/stage04/after"),
+	require("../logic/serif/stage05/after"),
+	require("../logic/serif/stage06/after"),
+	require("../logic/serif/stage07/after"),
+	require("../logic/serif/stage08/after"),
+	require("../logic/serif/stage09/after"),
+	require("../logic/serif/stage10/after"),
+	require("../logic/serif/stage11/after"),
+	require("../logic/serif/stage12/after"),
+	require("../logic/serif/stage13/after"),
+	require("../logic/serif/stage14/after"),
+	require("../logic/serif/stage15/after"),
+	require("../logic/serif/stage16/after"),
+	require("../logic/serif/stage17/after"),
+	require("../logic/serif/stage18/after"),
+	require("../logic/serif/stage19/after"),
+	require("../logic/serif/stage20/after"),
+	require("../logic/serif/stage21/after"),
+	require("../logic/serif/stage22/after"),
+	require("../logic/serif/stage23/after"),
+	require("../logic/serif/stage24/after"),
+	require("../logic/serif/stage25/after"),
+	require("../logic/serif/stage26/after"),
+	require("../logic/serif/stage27/after"),
+	require("../logic/serif/stage28/after"),
+	require("../logic/serif/stage29/after"),
+	require("../logic/serif/stage30/after"),
+	require("../logic/serif/stage31/after"),
+	require("../logic/serif/stage32/after"),
+	require("../logic/serif/stage33/after"),
+	require("../logic/serif/stage34/after"),
+	require("../logic/serif/stage35/after"),
+	require("../logic/serif/stage36/after"),
+	require("../logic/serif/stage37/after"),
+	require("../logic/serif/stage38/after"),
+	require("../logic/serif/stage39/after"),
+	require("../logic/serif/stage40/after"),
+];
+
+
+
+
 
 var EYES_NUM = [
 	null,
@@ -193,7 +240,7 @@ var EYES_NUM = [
 var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
 
-	this.addSubScene("talk",            new SceneStageTalk(core, this));
+	this.addSubScene("talk",            new SceneStageBeforeTalk(core, this));
 	this.addSubScene("play",            new SceneStagePlay(core, this));
 	this.addSubScene("result_clear",    new SceneStageResultClear(core, this));
 	this.addSubScene("result_gameover", new SceneStageResultGameOver(core, this));
@@ -249,6 +296,9 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	// 会話シーン
 	if(sub_scene === "talk") {
 		this.changeSubScene("talk", SERIF_BEFORES[this.stage_no]);
+	}
+	else if(sub_scene === "after_talk") {
+		this.changeSubScene("talk", SERIF_AFTERS[this.stage_no]);
 	}
 	else {
 		this.changeSubScene(sub_scene);
