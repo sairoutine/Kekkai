@@ -4,9 +4,17 @@ var DEBUG = require("./debug_constant");
 var CONSTANT = {
 	DEBUG: {},
 
+	// Ex Story の開始 stage no
 	EX_STORY_START_STAGE_NO:  31,
+
+	// ステージ上のタイルのサイズ
 	TILE_SIZE:  24,
 
+	// ステージの、画面上の表示開始位置
+	STAGE_OFFSET_X: 25,
+	STAGE_OFFSET_Y: 50,
+
+	// ステージ上のタイルの種類
 	BLOCK_GREEN:     1,
 	BLOCK_BLUE:      2,
 	BLOCK_RED:       3,
@@ -25,6 +33,7 @@ var CONSTANT = {
 	ENEMY_VERTICAL:  16,
 
 
+	// プレイヤーの状態
 	STATE_NORMAL:    1,
 	STATE_CLIMBDOWN: 2,
 	STATE_DYING:     3,
