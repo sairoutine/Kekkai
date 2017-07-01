@@ -323,7 +323,7 @@ SceneStage.prototype.notifyResultClearEnd = function(){
 };
 
 // ステージクリア
-SceneStage.prototype.notifyClearEnd = function() {
+SceneStage.prototype.notifyAfterTalkEnd = function() {
 	// 通常ストーリークリア後
 	if (this.isLastNormalStory()) {
 		this.core.changeScene("after_normal");

@@ -17,7 +17,7 @@ SceneAfterTalk.prototype.init = function(serif_before){
 
 // リザルト画面が終了した
 SceneAfterTalk.prototype.notifyTalkEnd = function () {
-	this.parent.notifyClearEnd();
+	this.parent.notifyAfterTalkEnd();
 };
 
 module.exports = SceneAfterTalk;
