@@ -7,16 +7,6 @@ var StorageSave = function(scene) {
 };
 util.inherit(StorageSave, base_class);
 
-StorageSave.KEY = function(){
-	var key = "hakurei_engine_game:save";
-	if (window && window.location) {
-		return(key + ":" + window.location.pathname);
-	}
-	else {
-		return key;
-	}
-};
-
 StorageSave.prototype.setIsNormalStageCleared = function(flag){
 	this._data.is_normal_stage_cleared = flag;
 };
