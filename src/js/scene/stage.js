@@ -315,6 +315,10 @@ SceneStage.prototype.notifyPlayerDie = function(){
 	this.changeSubScene("result_gameover");
 };
 SceneStage.prototype.notifyStageClear = function(){
+	// ステージクリアしたことをセーブ
+	this.core.save.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);
+	this.core.save.save();
+
 	this.changeSubScene("result_clear");
 };
 // クリア後のリザルト画面終了後
