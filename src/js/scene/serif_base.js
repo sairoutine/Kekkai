@@ -7,6 +7,10 @@ var SCALE = 1;
 
 var TRANSITION_COUNT = 100;
 
+// セリフウィンドウの縦の長さ
+var MESSAGE_WINDOW_HEIGHT = 100;
+
+
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
 var H_CONSTANT = require('../hakurei').constant;
@@ -103,6 +107,10 @@ SceneSerifBase.prototype.draw = function(){
 
 		// メッセージ表示
 		this._showMessage();
+
+		// 操作説明 表示
+		this._showHowTo();
+
 	}
 };
 
@@ -181,15 +189,13 @@ SceneSerifBase.prototype._showMessageWindow = function(){
 	// show message window
 	ctx.save();
 
-	var message_height = 100;
-
 	ctx.globalAlpha = 0.5;
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.fillRect(
 		MESSAGE_WINDOW_OUTLINE_MARGIN,
-		this.core.height - message_height - MESSAGE_WINDOW_OUTLINE_MARGIN,
+		this.core.height - 125,
 		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
-		message_height
+		MESSAGE_WINDOW_HEIGHT
 	);
 
 	ctx.restore();
@@ -209,8 +215,7 @@ SceneSerifBase.prototype._showMessage = function() {
 	var lines = this.serif.lines();
 	if (lines.length) {
 		// セリフテキストの y 座標初期位置
-		var message_height = 80;
-		y = this.core.height - message_height + MESSAGE_WINDOW_OUTLINE_MARGIN;
+		y = this.core.height - 125 + 40;
 
 		for(var i = 0, len = lines.length; i < len; i++) {
 			ctx.fillStyle = 'rgb( 0, 0, 0 )';
@@ -226,6 +231,28 @@ SceneSerifBase.prototype._showMessage = function() {
 
 	ctx.restore();
 };
+
+// 操作説明 表示
+SceneSerifBase.prototype._showHowTo = function() {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var text = "Xキー：スキップ";
+
+	ctx.font = "14px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, this.core.width - 130, this.core.height - 10);
+
+	ctx.fillStyle = 'white';
+	ctx.fillText(text, this.core.width - 130, this.core.height - 10);
+
+	ctx.restore();
+};
+
 
 
 

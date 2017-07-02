@@ -64,6 +64,9 @@ SceneStageTalk.prototype.draw = function(){
 	this._showMessageWindow();
 
 	this._showMessage();
+
+	// 操作説明 表示
+	this._showHowTo();
 };
 
 SceneStageTalk.prototype._showRightChara = function(){
@@ -164,7 +167,7 @@ SceneStageTalk.prototype._showMessageWindow = function(){
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.fillRect(
 		MESSAGE_WINDOW_OUTLINE_MARGIN,
-		this.core.height - message_height - MESSAGE_WINDOW_OUTLINE_MARGIN,
+		this.core.height - 125,
 		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
 		message_height
 	);
@@ -187,7 +190,7 @@ SceneStageTalk.prototype._showMessage = function() {
 	if (lines.length) {
 		// セリフテキストの y 座標初期位置
 		var message_height = 80;
-		y = this.core.height - message_height + MESSAGE_WINDOW_OUTLINE_MARGIN;
+		y = this.core.height - 125 + 40;
 
 		for(var i = 0, len = lines.length; i < len; i++) {
 			ctx.fillStyle = 'rgb( 0, 0, 0 )';
@@ -203,6 +206,30 @@ SceneStageTalk.prototype._showMessage = function() {
 
 	ctx.restore();
 };
+
+// 操作説明 表示
+SceneStageTalk.prototype._showHowTo = function() {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var text = "Xキー：スキップ";
+
+	ctx.font = "14px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, this.core.width - 130, this.core.height - 10);
+
+	ctx.fillStyle = 'white';
+	ctx.fillText(text, this.core.width - 130, this.core.height - 10);
+
+	ctx.restore();
+};
+
+
+
 
 SceneStageTalk.prototype.notifyTalkEnd = function() {
 	throw new Error("notifyTalkEnd must be implemented.");
