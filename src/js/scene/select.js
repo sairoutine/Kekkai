@@ -18,12 +18,17 @@ util.inherit(SceneSelect, base_scene);
 
 SceneSelect.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
+
 };
 
 
 SceneSelect.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
+	// 戻る
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
+		this.core.changeScene("title");
+	}
 };
 
 // 画面更新
@@ -106,6 +111,11 @@ SceneSelect.prototype.draw = function(){
 
 	ctx.font = "40px 'Migu'";
 	this._drawText("★★★", this.core.width - 300, this.core.height - 50);
+
+
+	// 操作方法説明
+	this._showHowTo();
+
 	ctx.restore();
 };
 SceneSelect.prototype._drawText = function(text, x, y){
@@ -117,6 +127,24 @@ SceneSelect.prototype._drawText = function(text, x, y){
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 	ctx.fillText(text, x, y);
 };
+
+// 操作説明 表示
+SceneSelect.prototype._showHowTo = function() {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var text = "Xキー：戻る";
+
+	ctx.font = "14px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	this._drawText(text, 10, this.core.height - 10);
+	ctx.restore();
+};
+
+
+
 
 
 module.exports = SceneSelect;
