@@ -40,6 +40,7 @@ StorageSave.prototype.updateStageResult = function(stage_no, time, exchange_num)
 	// 初期化
 	if(!list[stage_no]) {
 		list[stage_no] = {
+			stage_no: stage_no,
 			time:         null, // クリア時刻
 			exchange_num: null, // 使用 交換回数
 		};
