@@ -8,7 +8,10 @@ var util = require('../hakurei').util;
 var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
 
+var StageConfig = require('../stage_config');
 
+// 画面に何個までステージを表示するか
+var SHOW_STAGE_LIST_NUM = 20;
 
 
 var SceneSelect = function(core) {
@@ -24,7 +27,18 @@ SceneSelect.prototype.init = function(){
 	this.stage_list = this.core.save.getStageResultList();
 
 	// カーソル位置
-	this.index = 0;
+	this.selected_stage = 0;
+
+	/* デバッグ
+	this.stage_list = [];
+	for (var i = 0; i<40; i++) {
+		this.stage_list.push({
+			stage_no: i+1,
+			time: 1,
+			exchange_num: 1,
+		});
+	}
+	*/
 };
 
 
@@ -38,18 +52,18 @@ SceneSelect.prototype.beforeDraw = function(){
 
 	// カーソルを下移動
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
-		this.index++;
+		this.selected_stage++;
 
-		if(this.index >= this.stage_list.length) {
-			this.index = this.stage_list.length - 1;
+		if(this.selected_stage >= this.stage_list.length) {
+			this.selected_stage = this.stage_list.length - 1;
 		}
 	}
 	// カーソルを上移動
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
-		this.index--;
+		this.selected_stage--;
 
-		if(this.index < 0) {
-			this.index = 0;
+		if(this.selected_stage < 0) {
+			this.selected_stage = 0;
 		}
 	}
 
@@ -85,31 +99,58 @@ SceneSelect.prototype.draw = function(){
 	ctx.globalAlpha = 1.0; // 半透明戻す
 	ctx.fillRect(this.core.width - 170, 0, 170, this.core.height);
 
-	ctx.font = "16px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 
-
-	// ステージ一覧 文字列
-	for(var i = 0, len = this.stage_list.length; i < len; i++) {
-		var stage_no = (i + 1).toString();
-		stage_no = ( '00' + stage_no ).slice(-2); // 数字を2桁に揃える
-		var menu = "Stage " + stage_no;
-
-		if(i === this.index) {
-			// cursor 表示
-			this._drawText("▶", this.core.width - 150, 30 + 20*i);
-		}
-		// 文字表示
-		this._drawText(menu, this.core.width - 120, 30 + 20 * i); // 1行表示
-
+	var stage_list;   // 表示するステージ一覧
+	var index;        // カーソルの表示位置
+	var is_show_up;   // 上カーソルを表示するかどうか
+	var is_show_down; // 下カーソルを表示するかどうか
+	if (this.selected_stage <= SHOW_STAGE_LIST_NUM/2) {
+		stage_list = this.stage_list.slice(0, SHOW_STAGE_LIST_NUM);
+		index = this.selected_stage;
+		is_show_up   = false;
+		is_show_down = true;
+	}
+	else if (SHOW_STAGE_LIST_NUM/2 < this.selected_stage && this.selected_stage <= StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2) {
+		stage_list = this.stage_list.slice(this.selected_stage - SHOW_STAGE_LIST_NUM/2, SHOW_STAGE_LIST_NUM/2 + this.selected_stage);
+		index = SHOW_STAGE_LIST_NUM/2;
+		is_show_up   = true;
+		is_show_down = true;
+	}
+	else if (StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2 < this.selected_stage) {
+		stage_list = this.stage_list.slice(SHOW_STAGE_LIST_NUM, StageConfig.MAP_NUM);
+		index = this.selected_stage - (StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2) + SHOW_STAGE_LIST_NUM/2;
+		is_show_up   = true;
+		is_show_down = false;
 	}
 
 
+	// ステージ一覧 文字列
+	ctx.font = "18px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	for(var i = 0, len = stage_list.length; i < len; i++) {
+		var data = stage_list[i];
+		var stage_no = data.stage_no.toString();
+		stage_no = ( '00' + stage_no ).slice(-2); // 数字を2桁に揃える
+		var menu = "Stage " + stage_no;
 
+		var x = (this.core.height - 24 * SHOW_STAGE_LIST_NUM)/2;
+		if(i === index) {
+			// カーソル表示
+			this._drawText("▶", this.core.width - 150, x + 24*i);
+		}
+		// 文字表示
+		this._drawText(menu, this.core.width - 120, x + 24 * i); // 1行表示
 
-	ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
+	}
+
+	if (is_show_up) {
+		ctx.fillText("▲", this.core.width - 100, 20);
+	}
+	if (is_show_down) {
+		ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
+	}
 
 	// ステージ名表示
 	ctx.font = "36px 'Migu'";
