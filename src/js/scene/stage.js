@@ -24,6 +24,8 @@ var BlockStone1   = require('../object/tile/block_stone1');
 var BlockStone2   = require('../object/tile/block_stone2');
 var BlockStone3   = require('../object/tile/block_stone3');
 
+var LogicScore = require('../logic/score');
+
 // tile_type => クラス名
 var TILE_TYPE_TO_CLASS = {};
 //TILE_TYPE_TO_CLASS[CONSTANT.BACKGROUND]  = BackGround;
@@ -576,8 +578,14 @@ SceneStage.prototype.calcItemNum = function() {
 	return this.objects_by_tile_type[CONSTANT.ITEM_FOR_REIMU].length + this.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI].length;
 };
 
-
-
-
+SceneStage.prototype.calcHonor = function() {
+	return LogicScore.calcHonor(
+		this.getSubScene("play").frame_count,
+		this.player().exchange_num,
+		// TODO: 各マップから取得する
+		100,
+		1
+	);
+};
 
 module.exports = SceneStage;

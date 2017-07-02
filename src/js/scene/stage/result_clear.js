@@ -11,6 +11,9 @@ util.inherit(SceneStageResultClear, base_scene);
 
 // リザルト画面が終了した
 SceneStageResultClear.prototype.notifyResultEnd = function () {
+
+	// TODO:
+	//console.log("score: " + this.parent.calcHonor());
 	this.parent.notifyResultClearEnd();
 };
 
