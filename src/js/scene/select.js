@@ -23,8 +23,8 @@ SceneSelect.prototype.init = function(){
 	// ステージ一覧
 	this.stage_list = this.core.save.getStageResultList();
 
-	// ステージ数
-	this.stage_num = this.stage_list.length;
+	// カーソル位置
+	this.index = 0;
 };
 
 
@@ -35,6 +35,25 @@ SceneSelect.prototype.beforeDraw = function(){
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
 		this.core.changeScene("title");
 	}
+
+	// カーソルを下移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+		this.index++;
+
+		if(this.index >= this.stage_list.length) {
+			this.index = this.stage_list.length - 1;
+		}
+	}
+	// カーソルを上移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+		this.index--;
+
+		if(this.index < 0) {
+			this.index = 0;
+		}
+	}
+
+
 };
 
 // 画面更新
@@ -78,7 +97,7 @@ SceneSelect.prototype.draw = function(){
 		stage_no = ( '00' + stage_no ).slice(-2); // 数字を2桁に揃える
 		var menu = "Stage " + stage_no;
 
-		if(i === 1) {
+		if(i === this.index) {
 			// cursor 表示
 			this._drawText("▶", this.core.width - 150, 30 + 20*i);
 		}
@@ -95,7 +114,7 @@ SceneSelect.prototype.draw = function(){
 	// ステージ名表示
 	ctx.font = "36px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx._drawText("Stage N", 20, 50);
+	this._drawText("Stage N", 20, 50);
 
 	// ステージサムネイル 表示
 	// 横720px 縦480px
