@@ -53,7 +53,6 @@ var SceneStageBeforeTalk     = require("./stage/before_talk");
 var SceneStageAfterTalk      = require("./stage/after_talk");
 var SceneStagePlay           = require("./stage/play");
 var SceneStageResultClear    = require("./stage/result_clear");
-var SceneStageResultGameOver = require("./stage/result_gameover");
 
 
 var MAPS = [
@@ -243,7 +242,6 @@ var SceneStage = function(core) {
 	this.addSubScene("after_talk",      new SceneStageAfterTalk(core, this));
 	this.addSubScene("play",            new SceneStagePlay(core, this));
 	this.addSubScene("result_clear",    new SceneStageResultClear(core, this));
-	this.addSubScene("result_gameover", new SceneStageResultGameOver(core, this));
 };
 util.inherit(SceneStage, base_scene);
 
@@ -310,7 +308,8 @@ SceneStage.prototype.beforeDraw = function(){
 };
 
 SceneStage.prototype.notifyPlayerDie = function(){
-	this.changeSubScene("result_gameover");
+	// 当該ステージの最初から
+	this.core.changeScene("stage", this.stage_no, "play");
 };
 SceneStage.prototype.notifyStageClear = function(){
 	// ステージクリアしたことをセーブ
@@ -338,11 +337,6 @@ SceneStage.prototype.notifyAfterTalkEnd = function() {
 	else {
 		this.core.changeScene("stage", this.stage_no + 1);
 	}
-};
-// ゲームオーバー後
-SceneStage.prototype.notifyGameOverEnd = function() {
-	// 当該ステージの最初から
-	this.core.changeScene("stage", this.stage_no, "play");
 };
 // ノーマルステージの最終ステージかどうか
 SceneStage.prototype.isLastNormalStory = function() {
