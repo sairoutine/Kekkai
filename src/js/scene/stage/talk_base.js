@@ -10,6 +10,8 @@ var util = require('../../hakurei').util;
 
 var SerifManager = require('../../hakurei').serif_manager;
 
+var CreateDarkerImage = require('../../logic/create_darker_image');
+
 var SceneStageTalk = function(core) {
 	base_scene.apply(this, arguments);
 	this.serif = new SerifManager();
@@ -76,15 +78,16 @@ SceneStageTalk.prototype._showRightChara = function(){
 	var x = 400;
 	var y = 65;
 
+	var right_image = this.core.image_loader.getImage(this.serif.right_image());
 	if(!this.serif.is_right_talking()) {
-		ctx.globalAlpha = 0.75;
+		// 喋ってない方のキャラは暗くなる
+		right_image = CreateDarkerImage.exec(right_image);
 	}
 	else {
 		x -= TALKER_MOVE_PX;
 		y -= TALKER_MOVE_PX;
 	}
 
-	var right_image = this.core.image_loader.getImage(this.serif.right_image());
 
 	ctx.drawImage(right_image,
 		x,
@@ -103,15 +106,15 @@ SceneStageTalk.prototype._showLeftChara = function(){
 	var x = -50;
 	var y = 25;
 
+	var left_image = this.core.image_loader.getImage(this.serif.left_image());
 	if(!this.serif.is_left_talking()) {
-		ctx.globalAlpha = 0.75;
+		// 喋ってない方のキャラは暗くなる
+		left_image = CreateDarkerImage.exec(left_image);
 	}
 	else {
 		x += TALKER_MOVE_PX;
 		y -= TALKER_MOVE_PX;
 	}
-
-	var left_image = this.core.image_loader.getImage(this.serif.left_image());
 
 	ctx.drawImage(left_image,
 		x,
