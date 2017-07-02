@@ -19,6 +19,12 @@ util.inherit(SceneSelect, base_scene);
 SceneSelect.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
+
+	// ステージ一覧
+	this.stage_list = this.core.save.getStageResultList();
+
+	// ステージ数
+	this.stage_num = this.stage_list.length;
 };
 
 
@@ -51,31 +57,26 @@ SceneSelect.prototype.draw = function(){
 					this.core.width,
 					this.core.height);
 
-	// show game title text
-	/*
-	var title = this.core.image_loader.getImage('title');
-	ctx.drawImage(title,
-					20,
-					-20,
-					title.width,
-					title.height);
-	*/
-	// 文字背景 表示
+	// 背景をちょっと暗めに表示
 	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
 	ctx.globalAlpha = 0.5; // 半透明
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
-	// 画面遷移やじるし表示
+	// ステージ一覧背景 表示
 	ctx.globalAlpha = 1.0; // 半透明戻す
-	ctx.fillRect(this.core.width - 170, 0, 160, this.core.height);
+	ctx.fillRect(this.core.width - 170, 0, 170, this.core.height);
 
 	ctx.font = "16px 'Migu'";
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 
-	for(var i = 1, len = 25; i <= len; i++) {
-		var menu = "Stage " + i.toString();
+
+	// ステージ一覧 文字列
+	for(var i = 0, len = this.stage_list.length; i < len; i++) {
+		var stage_no = (i + 1).toString();
+		stage_no = ( '00' + stage_no ).slice(-2); // 数字を2桁に揃える
+		var menu = "Stage " + stage_no;
 
 		if(i === 1) {
 			// cursor 表示
@@ -92,9 +93,7 @@ SceneSelect.prototype.draw = function(){
 	ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
 
 	// ステージサムネイル 表示
-	ctx.fillStyle = 'rgb(255, 255, 255)' ;
-
-	// サムネイル：横720px 縦480px
+	// 横720px 縦480px
 	var thumbnail = this.core.image_loader.getImage('thumbnail15');
 	ctx.font = "36px 'Migu'";
 	ctx.textAlign = 'left';
