@@ -68,6 +68,11 @@ SceneSerifBase.prototype.beforeDraw = function(){
 			}
 		}
 	}
+
+	// スキップ
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
+		this.notifySerifEnd();
+	}
 };
 
 // 画面更新

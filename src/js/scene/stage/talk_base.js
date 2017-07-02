@@ -42,6 +42,12 @@ SceneStageTalk.prototype.beforeDraw = function(){
 			this.serif.next();
 		}
 	}
+
+	// スキップ
+	if(this.core.isKeyPush(CONSTANT.BUTTON_X)) {
+		this.notifyTalkEnd();
+	}
+
 };
 
 SceneStageTalk.prototype.draw = function(){
