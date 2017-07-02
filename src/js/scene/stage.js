@@ -186,10 +186,6 @@ var SERIF_AFTERS = [
 	require("../logic/serif/stage40/after"),
 ];
 
-
-
-
-
 var EYES_NUM = [
 	null,
 	0,
@@ -386,7 +382,7 @@ SceneStage.prototype.draw = function() {
 	// background
 	ctx.save();
 
-	var bg = this.core.image_loader.getImage("stage_bg");
+	var bg = this.core.image_loader.getImage(this.getBGImageName());
 	var cpt = ctx.createPattern(bg, "repeat");
 
 	ctx.fillStyle = cpt;
@@ -586,6 +582,26 @@ SceneStage.prototype.calcHonor = function() {
 		100,
 		1
 	);
+};
+
+// ステージ背景画像名
+SceneStage.prototype.getBGImageName = function() {
+	if (this.stage_no <= 10) {
+		return "stage_bg01";
+	}
+	else if (10 < this.stage_no && this.stage_no <= 20) {
+		return "stage_bg02";
+	}
+	else if (20 < this.stage_no && this.stage_no <= 30) {
+		return "stage_bg03";
+	}
+	else if (30 < this.stage_no && this.stage_no <= 40) {
+		return "stage_bg04";
+	}
+	else {
+		// ここにくることはないはず
+		return "stage_bg01";
+	}
 };
 
 module.exports = SceneStage;

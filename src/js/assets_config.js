@@ -11,7 +11,11 @@ AssetsConfig.images = {
 	shrine_noon:   "./image/shrine_noon.jpg",
 
 	// ステージ画面背景
-	stage_bg:      "./image/stage_bg.png",
+	stage_bg01:      "./image/stage_bg01.png",
+	stage_bg02:      "./image/stage_bg02.png",
+	stage_bg03:      "./image/stage_bg03.png",
+	stage_bg04:      "./image/stage_bg04.png",
+
 	// ステージ画面ステージ背景
 	bg:            "./image/bg.png",
 	stage_tile_24: "./image/stage_tile_24.png",
