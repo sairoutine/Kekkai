@@ -206,7 +206,7 @@ SceneStage.prototype.draw = function() {
 	var cpt = ctx.createPattern(bg, "repeat");
 
 	ctx.fillStyle = cpt;
-	ctx.translate(-this.frame_count%103,-103 + this.frame_count%103);
+	ctx.translate(-this.core.frame_count%103,-103 + this.core.frame_count%103);
 	ctx.fillRect(0, 0, 1648, 1648);
 	ctx.restore();
 
