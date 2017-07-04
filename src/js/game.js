@@ -28,6 +28,9 @@ var SceneAfterEx = require('./scene/after_ex');
 var SceneStaffroll = require('./scene/staffroll');
 // エピローグ
 var SceneEpilogue = require('./scene/epilogue');
+// Music Room
+var SceneMusic = require('./scene/music');
+
 
 var Game = function(canvas) {
 	core.apply(this, arguments);
@@ -52,6 +55,7 @@ Game.prototype.init = function () {
 	this.addScene("after_ex", new SceneAfterEx(this));
 	this.addScene("staffroll", new SceneStaffroll(this));
 	this.addScene("epilogue", new SceneEpilogue(this));
+	this.addScene("music", new SceneMusic(this));
 
 	this.changeScene("loading");
 

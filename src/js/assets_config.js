@@ -83,11 +83,15 @@ AssetsConfig.bgms = {
 		path: "./bgm/stage_a.ogg",
 		loopStart: 0*60 + 29 + 0.143,
 		loopEnd: 1*60 + 51 + 0.429,
+		title: "春色小径 ～ Colorful Path",
+		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
 	},
 	title: {
 		path: "./bgm/title.ogg",
 		loopStart: 0*60 + 10 + 0.312,
 		loopEnd: 0*60 + 51 + 0.562,
+		title: "永夜抄 ～ Eastern Night.",
+		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
 	},
 };
 
