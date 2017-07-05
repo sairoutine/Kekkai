@@ -39,6 +39,11 @@ SceneStagePlay.prototype.beforeDraw = function(){
 		}
 	}
 
+	// ポーズ
+	if(this.core.isKeyPush(CONSTANT.BUTTON_SPACE)) {
+		this.parent.changeSubScene("pause");
+	}
+
 	// プレイヤーの更新
 	this.parent.player().update();
 

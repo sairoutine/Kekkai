@@ -1,6 +1,7 @@
 'use strict';
 
 var util = require('../hakurei').util;
+var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
 
 var BackGroundEye  = require('../object/background_eye');
@@ -53,6 +54,7 @@ var SceneStageBeforeTalk     = require("./stage/before_talk");
 var SceneStageAfterTalk      = require("./stage/after_talk");
 var SceneStagePlay           = require("./stage/play");
 var SceneStageResultClear    = require("./stage/result_clear");
+var ScenePause               = require("./stage/pause");
 
 
 var StageConfig = require('../stage_config');
@@ -68,6 +70,7 @@ var SceneStage = function(core) {
 	this.addSubScene("after_talk",      new SceneStageAfterTalk(core, this));
 	this.addSubScene("play",            new SceneStagePlay(core, this));
 	this.addSubScene("result_clear",    new SceneStageResultClear(core, this));
+	this.addSubScene("pause",           new ScenePause(core, this));
 };
 util.inherit(SceneStage, base_scene);
 
