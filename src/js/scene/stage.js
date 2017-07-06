@@ -129,7 +129,15 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	}
 };
 SceneStage.prototype.beforeDraw = function(){
-	base_scene.prototype.beforeDraw.apply(this, arguments);
+	/* 基底クラスの beforeDraw 処理 start */
+	this.frame_count++;
+
+	// go to next sub scene if next scene is set
+	this.changeNextSubSceneIfReserved();
+
+	if(this.currentSubScene()) this.currentSubScene().beforeDraw();
+	/* 基底クラスの beforeDraw 処理 end */
+
 
 	if(this.is_play_bgm && this.frame_count === 60) {
 		this.core.playBGM('stage_a');
