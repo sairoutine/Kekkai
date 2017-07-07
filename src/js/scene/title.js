@@ -33,6 +33,9 @@ SceneTitle.prototype.init = function(){
 	// Exステージ解放されているかどうか */
 	this.is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
 
+	// stage 1 がクリアされているかどうか
+	this.is_any_stage_cleared = this.core.save.getStageResult(1);
+
 	this.core.stopBGM();
 };
 
@@ -131,6 +134,10 @@ SceneTitle.prototype.draw = function(){
 
 		// 通常ストーリークリア後のみ、Ex Story を表示する
 		if(!this.is_normal_stage_cleared && menu[1] === "ex_epigraph") {
+			continue;
+		}
+		// stage 1クリア後のみ、ステージセレクトを表示する
+		else if (!this.is_any_stage_cleared && menu[1] === "select") {
 			continue;
 		}
 

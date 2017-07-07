@@ -129,13 +129,13 @@ SceneSelect.prototype.draw = function(){
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	var x = (this.core.height - 24 * SHOW_STAGE_LIST_NUM)/2;
 	for(var i = 0, len = stage_list.length; i < len; i++) {
 		var data = stage_list[i];
 		var stage_no = data.stage_no.toString();
 		stage_no = ( '00' + stage_no ).slice(-2); // 数字を2桁に揃える
 		var menu = "Stage " + stage_no;
 
-		var x = (this.core.height - 24 * SHOW_STAGE_LIST_NUM)/2;
 		if(i === index) {
 			// カーソル表示
 			this._drawText("▶", this.core.width - 150, x + 24*i);
@@ -152,27 +152,31 @@ SceneSelect.prototype.draw = function(){
 		ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
 	}
 
-	// ステージ名表示
-	ctx.font = "36px 'Migu'";
-	ctx.textAlign = 'left';
-	this._drawText("Stage N", 20, 50);
+	var stage_data = this.core.save.getStageResult(this.selected_stage);
 
-	// ステージサムネイル 表示
-	// 横720px 縦480px
-	var thumbnail = this.core.image_loader.getImage('thumbnail15');
-	ctx.drawImage(thumbnail,
-					25,
-					50,
-					30*24,
-					20*24,
-					10,
-					90,
-					30*24 *0.80,
-					20*24 *0.80);
+	if (stage_data) {
+		// ステージ名表示
+		ctx.font = "36px 'Migu'";
+		ctx.textAlign = 'left';
+		this._drawText("Stage N", 20, 50);
 
-	// ステージスコア表示
-	ctx.font = "40px 'Migu'";
-	this._drawText("★★★", this.core.width - 300, this.core.height - 50);
+		// ステージサムネイル 表示
+		// 横720px 縦480px
+		var thumbnail = this.core.image_loader.getImage('thumbnail15');
+		ctx.drawImage(thumbnail,
+						25,
+						50,
+						30*24,
+						20*24,
+						10,
+						90,
+						30*24 *0.80,
+						20*24 *0.80);
+
+		// ステージスコア表示
+		ctx.font = "40px 'Migu'";
+		this._drawText("★★★", this.core.width - 300, this.core.height - 50);
+	}
 
 	// 操作方法説明
 	this._showHowTo();

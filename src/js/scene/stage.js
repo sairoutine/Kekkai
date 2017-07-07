@@ -138,6 +138,7 @@ SceneStage.prototype.beforeDraw = function(){
 	if(this.currentSubScene()) this.currentSubScene().beforeDraw();
 	/* 基底クラスの beforeDraw 処理 end */
 
+	// サブオブジェクトのbeforeDraw は sub scene play の中でやっている
 
 	if(this.is_play_bgm && this.frame_count === 60) {
 		this.core.playBGM('stage_a');
