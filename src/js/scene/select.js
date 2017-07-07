@@ -152,7 +152,7 @@ SceneSelect.prototype.draw = function(){
 		ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
 	}
 
-	var stage_data = this.core.save.getStageResult(this.selected_stage);
+	var stage_data = this.core.save.getStageResult(this.selected_stage + 1); // selected_stage は 0から始まるので +1
 
 	if (stage_data) {
 		// ステージ名表示
