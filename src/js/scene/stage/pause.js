@@ -1,5 +1,5 @@
 'use strict';
-// クリア リザルト
+// ポーズ画面
 
 var base_scene = require('../../hakurei').scene.base;
 var CONSTANT = require('../../hakurei').constant;
@@ -14,6 +14,7 @@ util.inherit(SceneStagePause, base_scene);
 SceneStagePause.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
+	// カーソルがどこにあるか
 	this.selectIndex = 0;
 };
 
@@ -22,12 +23,23 @@ SceneStagePause.prototype.beforeDraw = function(){
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_UP)) {
 		this.core.playSound('select');
-		this.selectIndex = 0;
+		this.selectIndex--;
+
+		// 最小値を超えないように
+		if (this.selectIndex < 0) {
+			this.selectIndex = 0;
+		}
 	}
 	else if(this.core.isKeyPush(CONSTANT.BUTTON_DOWN)) {
 		this.core.playSound('select');
-		this.selectIndex = 1;
+		this.selectIndex++;
+
+		// 最大値を超えないように
+		if (this.selectIndex > 2) {
+			this.selectIndex = 2;
+		}
 	}
+
 	if(this.core.isKeyPush(CONSTANT.BUTTON_SPACE)) {
 		this.core.playSound('select');
 
@@ -41,6 +53,10 @@ SceneStagePause.prototype.beforeDraw = function(){
 			this.parent.changeSubScene("play");
 		}
 		else if(this.selectIndex === 1) {
+			// Restart
+			this.parent.notifyRestart();
+		}
+		else if(this.selectIndex === 2) {
 			// Quit
 			this.core.changeScene("title");
 		}
@@ -72,14 +88,24 @@ SceneStagePause.prototype.draw = function(){
 
 	ctx.fillText( 'Continue', this.parent.width/2, 200 ) ;
 
-	if(this.selectIndex === 0) {
-		ctx.globalAlpha = 0.2;
-	}
-	else {
+	if(this.selectIndex === 1) {
 		ctx.globalAlpha = 1.0;
 	}
+	else {
+		ctx.globalAlpha = 0.2;
+	}
 
-	ctx.fillText( 'Quit',     this.parent.width/2, 240 ) ;
+	ctx.fillText( 'Restart',     this.parent.width/2, 240 ) ;
+
+	if(this.selectIndex === 2) {
+		ctx.globalAlpha = 1.0;
+	}
+	else {
+		ctx.globalAlpha = 0.2;
+	}
+
+	ctx.fillText( 'Quit',     this.parent.width/2, 280 ) ;
+
 	ctx.restore();
 };
 module.exports = SceneStagePause;

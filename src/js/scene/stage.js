@@ -146,6 +146,9 @@ SceneStage.prototype.beforeDraw = function(){
 
 SceneStage.prototype.notifyPlayerDie = function(){
 	// 当該ステージの最初から
+	this.notifyRestart();
+};
+SceneStage.prototype.notifyRestart = function(){
 	this.core.changeScene("stage", this.stage_no, "play");
 };
 SceneStage.prototype.notifyStageClear = function(){
