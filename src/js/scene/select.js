@@ -9,6 +9,7 @@ var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
 
 var StageConfig = require('../stage_config');
+var LogicScore = require('../logic/score');
 
 // 画面に何個までステージを表示するか
 var SHOW_STAGE_LIST_NUM = 20;
@@ -129,8 +130,11 @@ SceneSelect.prototype.draw = function(){
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+
+	var i, len;
 	var x = (this.core.height - 24 * SHOW_STAGE_LIST_NUM)/2;
-	for(var i = 0, len = stage_list.length; i < len; i++) {
+
+	for(i = 0, len = stage_list.length; i < len; i++) {
 		var data = stage_list[i];
 		var stage_no = data.stage_no.toString();
 		stage_no = ( '00' + stage_no ).slice(-2); // 数字を2桁に揃える
@@ -155,10 +159,11 @@ SceneSelect.prototype.draw = function(){
 	var stage_data = this.core.save.getStageResult(this.selected_stage + 1); // selected_stage は 0から始まるので +1
 
 	if (stage_data) {
+		var stage_no_string = ( '00' + stage_data.stage_no ).slice(-2); // 数字を2桁に揃える
 		// ステージ名表示
 		ctx.font = "36px 'Migu'";
 		ctx.textAlign = 'left';
-		this._drawText("Stage N", 20, 50);
+		this._drawText("Stage " + stage_no_string, 20, 50);
 
 		// ステージサムネイル 表示
 		// 横720px 縦480px
@@ -173,9 +178,23 @@ SceneSelect.prototype.draw = function(){
 						30*24 *0.80,
 						20*24 *0.80);
 
+
+		var honor_num = LogicScore.calcHonor(
+			stage_data.time,
+			stage_data.exchange_num,
+			// TODO: 各マップから取得する
+			100,
+			1
+		);
+
+		var honor_str = "";
+		for (i = 0; i < honor_num; i++) {
+			honor_str = honor_str + "★";
+		}
+
 		// ステージスコア表示
 		ctx.font = "40px 'Migu'";
-		this._drawText("★★★", this.core.width - 300, this.core.height - 50);
+		this._drawText(honor_str, this.core.width - 300, this.core.height - 50);
 	}
 
 	// 操作方法説明
