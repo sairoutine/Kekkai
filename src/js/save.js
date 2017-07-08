@@ -22,6 +22,17 @@ StorageSave.prototype.getStageResultList = function(){
 
 	if(!list) list = [];
 
+	/* デバッグ
+	list = [];
+	for (var i = 0; i<40; i++) {
+		list.push({
+			stage_no: i+1,
+			time: 1,
+			exchange_num: 1,
+		});
+	}
+	*/
+
 	return list;
 };
 
