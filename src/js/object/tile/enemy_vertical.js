@@ -3,7 +3,7 @@
 var SPEED = 1;
 
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.sprite;
+var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
 
 var Enemy = function (scene) {
@@ -122,11 +122,4 @@ Enemy.prototype.spriteWidth = function(){
 Enemy.prototype.spriteHeight = function(){
 	return 32;
 };
-Enemy.prototype.scaleWidth = function(){
-	return 1;
-};
-Enemy.prototype.scaleHeight = function(){
-	return 1;
-};
-
 module.exports = Enemy;

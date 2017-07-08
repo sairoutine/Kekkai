@@ -1,6 +1,6 @@
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.sprite;
+var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
 
 var Ladder = function (scene) {
@@ -54,10 +54,10 @@ Ladder.prototype.spriteHeight = function(){
 	return 16;
 };
 Ladder.prototype.scaleWidth = function(){
-	return 0.75;
+	return this._scale * 0.75;
 };
 Ladder.prototype.scaleHeight = function(){
-	return 1.5;
+	return this._scale * 1.5;
 };
 
 // collision configuration

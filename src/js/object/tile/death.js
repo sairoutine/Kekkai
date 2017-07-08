@@ -1,6 +1,6 @@
 'use strict';
 var CONSTANT = require('../../constant');
-var base_object = require('../../hakurei').object.sprite;
+var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
 
 var Death = function (scene) {

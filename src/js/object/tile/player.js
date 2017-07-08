@@ -42,7 +42,7 @@ var BLOCK_TILE_TYPES2 = [
 
 
 
-var base_object = require('../../hakurei').object.sprite;
+var base_object = require('./tile_base');
 var BlockBase = require('./block_base');
 var AlterEgo = require('../alterego');
 var ExchangeAnim = require('../exchange_anim');

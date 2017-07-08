@@ -1,5 +1,5 @@
 'use strict';
-var base_object = require('../../hakurei').object.sprite;
+var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
 
 var BlockBase = function (scene) {
@@ -41,10 +41,10 @@ BlockBase.prototype.spriteHeight = function(){
 	return 16;
 };
 BlockBase.prototype.scaleWidth = function(){
-	return 1.5;
+	return this._scale * 1.5;
 };
 BlockBase.prototype.scaleHeight = function(){
-	return 1.5;
+	return this._scale * 1.5;
 };
 
 
