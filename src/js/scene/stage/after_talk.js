@@ -11,7 +11,6 @@ util.inherit(SceneAfterTalk, base_scene);
 
 SceneAfterTalk.prototype.init = function(serif_before){
 	base_scene.prototype.init.apply(this, arguments);
-	console.log("ok");
 
 };
 
