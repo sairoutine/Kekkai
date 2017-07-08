@@ -5,9 +5,6 @@ var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
 
 var BackGroundEye  = require('../object/background_eye');
-var StageFrame1  = require('../object/stage_frame1');
-var StageFrame2  = require('../object/stage_frame2');
-
 var LogicScore = require('../logic/score');
 var LogicCreateMap = require('../logic/create_map');
 
@@ -189,17 +186,7 @@ SceneStage.prototype.draw = function() {
 	ctx.restore();
 
 	// stage background
-	ctx.save();
-
-	var bg2 = this.core.image_loader.getImage("bg");
-	var cpt2 = ctx.createPattern(bg2, "repeat");
-
-	ctx.fillStyle = cpt2;
-	ctx.fillRect(
-		CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y,
-		CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_X_NUM, CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_Y_NUM
-	);
-	ctx.restore();
+	LogicCreateMap.drawBackground(ctx, this.core.image_loader.getImage("bg"), CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y);
 
 	// ステージNo.
 	ctx.save();
@@ -225,7 +212,7 @@ SceneStage.prototype.draw = function() {
 	}
 
 	// ステージ枠を描画
-	this.drawFrames();
+	LogicCreateMap.drawFrames(this, CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y);
 
 	// draw sub scene
 	if(this.currentSubScene()) this.currentSubScene().draw();
@@ -273,57 +260,6 @@ SceneStage.prototype.parseAndCreateMap = function(map) {
 		this.addObjects(this.objects_by_tile_type[key]);
 	}
 };
-
-SceneStage.prototype.drawFrames = function() {
-	var x,y, is_vertical;
-
-	var stage_frame1 = new StageFrame1(this);
-	var stage_frame2 = new StageFrame2(this);
-
-	for (var pos_y = 0; pos_y < CONSTANT.STAGE_TILE_Y_NUM-1; pos_y++) { //縦
-		// 左
-		x = CONSTANT.STAGE_OFFSET_X;
-		y = pos_y * CONSTANT.TILE_SIZE + (CONSTANT.STAGE_OFFSET_Y) + 24;
-
-		is_vertical = true;
-		stage_frame1.draw(x, y, is_vertical);
-
-		// 右
-		x = CONSTANT.STAGE_OFFSET_X + CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_X_NUM;
-
-		is_vertical = true;
-		stage_frame1.draw(x, y, is_vertical);
-
-	}
-	for (var pos_x = 0; pos_x < CONSTANT.STAGE_TILE_X_NUM-1; pos_x++) { // 横
-		// 上
-		x = pos_x * CONSTANT.TILE_SIZE + (CONSTANT.STAGE_OFFSET_X) + 24;
-		y = CONSTANT.STAGE_OFFSET_Y;
-
-		is_vertical = false;
-		stage_frame1.draw(x, y, is_vertical);
-
-		// 下
-		y = CONSTANT.STAGE_OFFSET_Y + CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_Y_NUM;
-
-		is_vertical = false;
-		stage_frame1.draw(x, y, is_vertical);
-	}
-
-	// 角
-	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y, 270);
-	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X+CONSTANT.TILE_SIZE*CONSTANT.STAGE_TILE_X_NUM, CONSTANT.STAGE_OFFSET_Y, 0);
-	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y+CONSTANT.TILE_SIZE*CONSTANT.STAGE_TILE_Y_NUM, 180);
-	stage_frame2.draw(CONSTANT.STAGE_OFFSET_X+CONSTANT.TILE_SIZE*CONSTANT.STAGE_TILE_X_NUM, CONSTANT.STAGE_OFFSET_Y+CONSTANT.TILE_SIZE*CONSTANT.STAGE_TILE_Y_NUM, 90);
-};
-
-
-
-
-
-
-
-
 
 SceneStage.prototype.createBackGroundEyes = function() {
 	var width = CONSTANT.TILE_SIZE * CONSTANT.STAGE_TILE_X_NUM;

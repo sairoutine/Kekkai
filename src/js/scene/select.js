@@ -10,9 +10,13 @@ var CONSTANT = require('../constant');
 
 var StageConfig = require('../stage_config');
 var LogicScore = require('../logic/score');
+var LogicCreateMap = require('../logic/create_map');
 
 // 画面に何個までステージを表示するか
 var SHOW_STAGE_LIST_NUM = 20;
+
+var StageConfig = require('../stage_config');
+var MAPS = StageConfig.MAPS;
 
 
 var SceneSelect = function(core) {
@@ -23,26 +27,15 @@ util.inherit(SceneSelect, base_scene);
 SceneSelect.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
-
 	// ステージ一覧
 	this.stage_list = this.core.save.getStageResultList();
 
 	// カーソル位置
 	this.selected_stage = 0;
 
-	/* デバッグ
-	this.stage_list = [];
-	for (var i = 0; i<40; i++) {
-		this.stage_list.push({
-			stage_no: i+1,
-			time: 1,
-			exchange_num: 1,
-		});
-	}
-	*/
+	// マップを更新
+	this.stage_objects = this.createMap();
 };
-
-
 SceneSelect.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
@@ -58,6 +51,9 @@ SceneSelect.prototype.beforeDraw = function(){
 		if(this.selected_stage >= this.stage_list.length) {
 			this.selected_stage = this.stage_list.length - 1;
 		}
+
+		// マップを更新
+		this.stage_objects = this.createMap();
 	}
 	// カーソルを上移動
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
@@ -66,9 +62,28 @@ SceneSelect.prototype.beforeDraw = function(){
 		if(this.selected_stage < 0) {
 			this.selected_stage = 0;
 		}
+
+		// マップを更新
+		this.stage_objects = this.createMap();
 	}
 
 
+};
+
+SceneSelect.prototype.createMap = function(){
+	var stage_objects = [];
+	var objects_by_tile_type = LogicCreateMap.exec(this, MAPS[this.selected_stage + 1].map, 12, 70, 0.8);
+
+	for (var key in objects_by_tile_type) {
+		// プレイヤーは描画しない
+		if (Number(key) === CONSTANT.PLAYER) {
+			continue;
+		}
+
+		stage_objects = stage_objects.concat(objects_by_tile_type[key]);
+	}
+
+	return stage_objects;
 };
 
 // 画面更新
@@ -167,6 +182,7 @@ SceneSelect.prototype.draw = function(){
 
 		// ステージサムネイル 表示
 		// 横720px 縦480px
+		/*
 		var thumbnail = this.core.image_loader.getImage('thumbnail15');
 		ctx.drawImage(thumbnail,
 						25,
@@ -177,7 +193,15 @@ SceneSelect.prototype.draw = function(){
 						90,
 						30*24 *0.80,
 						20*24 *0.80);
+		*/
 
+		LogicCreateMap.drawBackground(ctx, this.core.image_loader.getImage("bg"), 12, 70, 0.8);
+		// ステージ描画
+		for (i = 0; i < this.stage_objects.length; i++) {
+			this.stage_objects[i].draw();
+		}
+
+		LogicCreateMap.drawFrames(this, 12, 70, 0.8);
 
 		var honor_num = LogicScore.calcHonor(
 			stage_data.time,
