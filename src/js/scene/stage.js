@@ -8,45 +8,8 @@ var BackGroundEye  = require('../object/background_eye');
 var StageFrame1  = require('../object/stage_frame1');
 var StageFrame2  = require('../object/stage_frame2');
 
-var BlockGreen    = require('../object/tile/block_green');
-var BlockBlue     = require('../object/tile/block_blue');
-var BlockRed      = require('../object/tile/block_red');
-var BlockPurple   = require('../object/tile/block_purple');
-var BlockBrown    = require('../object/tile/block_brown');
-var Ladder        = require('../object/tile/ladder');
-var Player        = require('../object/tile/player');
-var Enemy         = require('../object/tile/enemy');
-var EnemyVertical = require('../object/tile/enemy_vertical');
-var ItemForReimu  = require('../object/tile/item_for_reimu');
-var ItemForYukari = require('../object/tile/item_for_yukari');
-var ItemOfExchange= require('../object/tile/item_of_exchange');
-var Death         = require('../object/tile/death');
-var BlockStone1   = require('../object/tile/block_stone1');
-var BlockStone2   = require('../object/tile/block_stone2');
-var BlockStone3   = require('../object/tile/block_stone3');
-
 var LogicScore = require('../logic/score');
-
-// tile_type => クラス名
-var TILE_TYPE_TO_CLASS = {};
-//TILE_TYPE_TO_CLASS[CONSTANT.BACKGROUND]  = BackGround;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_GREEN]     = BlockGreen;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BLUE]      = BlockBlue;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_RED]       = BlockRed;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_PURPLE]    = BlockPurple;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BROWN]     = BlockBrown;
-TILE_TYPE_TO_CLASS[CONSTANT.LADDER]          = Ladder;
-TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]          = Player;
-TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]           = Enemy;
-TILE_TYPE_TO_CLASS[CONSTANT.ENEMY_VERTICAL]  = EnemyVertical;
-TILE_TYPE_TO_CLASS[CONSTANT.ITEM_FOR_REIMU]  = ItemForReimu;
-TILE_TYPE_TO_CLASS[CONSTANT.ITEM_FOR_YUKARI] = ItemForYukari;
-TILE_TYPE_TO_CLASS[CONSTANT.ITEM_OF_EXCHANGE]= ItemOfExchange;
-TILE_TYPE_TO_CLASS[CONSTANT.DEATH]           = Death;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE1]    = BlockStone1;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE2]    = BlockStone2;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_STONE3]    = BlockStone3;
-
+var LogicCreateMap = require('../logic/create_map');
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
@@ -105,7 +68,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	this._is_vertical = MAPS[this.stage_no].is_vertical;
 
 	// タイルの種類毎のオブジェクトの配列
-	this.objects_by_tile_type = this.initializeObjectsByTileType();
+	this.objects_by_tile_type = null;
 
 	// 背景の目玉を作成
 	//this.createBackGroundEyes();
@@ -268,16 +231,6 @@ SceneStage.prototype.draw = function() {
 	if(this.currentSubScene()) this.currentSubScene().draw();
 };
 
-SceneStage.prototype.initializeObjectsByTileType = function () {
-	var data = {};
-
-	for (var tile_type in TILE_TYPE_TO_CLASS) {
-		data[ tile_type ] = [];
-	}
-
-	return data;
-};
-
 // 霊夢用アイテム獲得
 SceneStage.prototype.addReimuItemNum = function () {
 	this.reimu_item_num += 1;
@@ -313,29 +266,11 @@ SceneStage.prototype.checkValidMap = function(map) {
 };
 
 SceneStage.prototype.parseAndCreateMap = function(map) {
-	var stage = map;
+	this.objects_by_tile_type = LogicCreateMap.exec(this, map, CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y);
 
 
-	for (var pos_y = 0; pos_y < map.length; pos_y++) {
-		var line = stage[pos_y];
-		for (var pos_x = 0; pos_x < line.length; pos_x++) {
-			var tile = line[pos_x];
-			var x = pos_x * CONSTANT.TILE_SIZE + CONSTANT.STAGE_OFFSET_X + 12; // 12 = TILE TIP SIZE * 1.5 / 2
-			var y = pos_y * CONSTANT.TILE_SIZE + CONSTANT.STAGE_OFFSET_Y + 12;
-
-			var Class = TILE_TYPE_TO_CLASS[ tile ];
-
-			if(!Class) continue; // 何もタイルがなければ何も表示しない
-
-			// シーンにオブジェクト追加
-			var instance = new Class(this);
-			instance.init(x, y);
-			this.addObject(instance);
-
-			// タイルの種類毎にオブジェクトを管理
-			if(!this.objects_by_tile_type[ tile ]) this.objects_by_tile_type[ tile ] = []; //初期化
-			this.objects_by_tile_type[ tile ].push(instance);
-		}
+	for (var key in this.objects_by_tile_type) {
+		this.addObjects(this.objects_by_tile_type[key]);
 	}
 };
 
