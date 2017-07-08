@@ -20,6 +20,9 @@ var BlockStone1   = require('../object/tile/block_stone1');
 var BlockStone2   = require('../object/tile/block_stone2');
 var BlockStone3   = require('../object/tile/block_stone3');
 
+var StageFrame1  = require('../object/stage_frame1');
+var StageFrame2  = require('../object/stage_frame2');
+
 var LogicScore = require('../logic/score');
 
 // tile_type => クラス名
@@ -78,7 +81,7 @@ CreateMap.exec = function (scene, map, offset_x, offset_y, scale) {
 
 			// シーンにオブジェクト追加
 			var instance = new Class(scene);
-			instance.init(x, y);
+			instance.init(x, y, scale);
 
 			// タイルの種類毎にオブジェクトを管理
 			if(!objects_by_tile_type[ tile ]) objects_by_tile_type[ tile ] = []; //初期化
@@ -88,5 +91,68 @@ CreateMap.exec = function (scene, map, offset_x, offset_y, scale) {
 
 	return objects_by_tile_type;
 };
+
+CreateMap.drawBackground = function (ctx, bg_image, offset_x, offset_y, scale) {
+	scale = scale || 1;
+	var tile_size = CONSTANT.TILE_SIZE * scale;
+	ctx.save();
+
+	var cpt2 = ctx.createPattern(bg_image, "repeat");
+
+	ctx.fillStyle = cpt2;
+	ctx.fillRect(
+		offset_x, offset_y,
+		tile_size * CONSTANT.STAGE_TILE_X_NUM, tile_size * CONSTANT.STAGE_TILE_Y_NUM
+	);
+	ctx.restore();
+};
+
+CreateMap.drawFrames = function(scene, offset_x, offset_y, scale) {
+	scale = scale || 1;
+	var tile_size = CONSTANT.TILE_SIZE * scale;
+
+	var x,y, is_vertical;
+
+	var stage_frame1 = new StageFrame1(scene);
+	var stage_frame2 = new StageFrame2(scene);
+
+	for (var pos_y = 0; pos_y < CONSTANT.STAGE_TILE_Y_NUM-1; pos_y++) { //縦
+		// 左
+		x = offset_x;
+		y = pos_y * tile_size + (offset_y) + 24;
+
+		is_vertical = true;
+		stage_frame1.draw(x, y, is_vertical);
+
+		// 右
+		x = offset_x + tile_size * CONSTANT.STAGE_TILE_X_NUM;
+
+		is_vertical = true;
+		stage_frame1.draw(x, y, is_vertical);
+
+	}
+	for (var pos_x = 0; pos_x < CONSTANT.STAGE_TILE_X_NUM-1; pos_x++) { // 横
+		// 上
+		x = pos_x * tile_size + (offset_x) + 24;
+		y = offset_y;
+
+		is_vertical = false;
+		stage_frame1.draw(x, y, is_vertical);
+
+		// 下
+		y = offset_y + tile_size * CONSTANT.STAGE_TILE_Y_NUM;
+
+		is_vertical = false;
+		stage_frame1.draw(x, y, is_vertical);
+	}
+
+	// 角
+	stage_frame2.draw(offset_x, offset_y, 270);
+	stage_frame2.draw(offset_x+tile_size*CONSTANT.STAGE_TILE_X_NUM, offset_y, 0);
+	stage_frame2.draw(offset_x, offset_y+tile_size*CONSTANT.STAGE_TILE_Y_NUM, 180);
+	stage_frame2.draw(offset_x+tile_size*CONSTANT.STAGE_TILE_X_NUM, offset_y+tile_size*CONSTANT.STAGE_TILE_Y_NUM, 90);
+};
+
+
 
 module.exports = CreateMap;
