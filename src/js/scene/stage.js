@@ -10,11 +10,12 @@ var LogicCreateMap = require('../logic/create_map');
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
-var SceneStageBeforeTalk     = require("./stage/before_talk");
-var SceneStageAfterTalk      = require("./stage/after_talk");
-var SceneStagePlay           = require("./stage/play");
-var SceneStageResultClear    = require("./stage/result_clear");
-var ScenePause               = require("./stage/pause");
+var SceneStageBeforeTalk         = require("./stage/before_talk");
+var SceneStageAfterTalk          = require("./stage/after_talk");
+var SceneStagePlay               = require("./stage/play");
+var SceneStageResultClearByStory = require("./stage/result_clear_by_story");
+var SceneStageResultClearBySelect= require("./stage/result_clear_by_select");
+var ScenePause                   = require("./stage/pause");
 
 
 var StageConfig = require('../stage_config');
@@ -26,11 +27,12 @@ var EYES_NUM = StageConfig.EYES_NUM;
 var SceneStage = function(core) {
 	base_scene.apply(this, arguments);
 
-	this.addSubScene("talk",            new SceneStageBeforeTalk(core, this));
-	this.addSubScene("after_talk",      new SceneStageAfterTalk(core, this));
-	this.addSubScene("play",            new SceneStagePlay(core, this));
-	this.addSubScene("result_clear",    new SceneStageResultClear(core, this));
-	this.addSubScene("pause",           new ScenePause(core, this));
+	this.addSubScene("talk",                  new SceneStageBeforeTalk(core, this));
+	this.addSubScene("after_talk",            new SceneStageAfterTalk(core, this));
+	this.addSubScene("play",                  new SceneStagePlay(core, this));
+	this.addSubScene("result_clear_by_story", new SceneStageResultClearByStory(core, this));
+	this.addSubScene("result_clear_by_select",new SceneStageResultClearBySelect(core, this));
+	this.addSubScene("pause",                 new ScenePause(core, this));
 };
 util.inherit(SceneStage, base_scene);
 
@@ -116,16 +118,19 @@ SceneStage.prototype.notifyStageClear = function(){
 	this.core.save.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);
 	this.core.save.save();
 
-	this.changeSubScene("result_clear");
-};
-// クリア後のリザルト画面終了後
-SceneStage.prototype.notifyResultClearEnd = function(){
-	// セレクト画面からプレイした場合、セリフなしで終了
+	// セレクト画面からプレイしたなら
 	if (this.is_from_select_scene) {
-		this.notifyAfterTalkEnd();
+		this.changeSubScene("result_clear_by_select");
 	}
+	// ストーリーモードでプレイしたなら
+	else {
+		this.changeSubScene("result_clear_by_story");
+	}
+};
+// ストーリー: クリア後のリザルト画面終了後
+SceneStage.prototype.notifyResultClearEndByStory = function(){
 	// 終了後のセリフがある場合
-	else if (SERIF_AFTERS[this.stage_no].length > 0) {
+	if (SERIF_AFTERS[this.stage_no].length > 0) {
 		this.changeSubScene("after_talk", SERIF_AFTERS[this.stage_no]);
 	}
 	// 終了後のセリフがない場合
@@ -134,21 +139,22 @@ SceneStage.prototype.notifyResultClearEnd = function(){
 	}
 };
 
+// セレクト: クリア後のリザルト画面終了後
+SceneStage.prototype.notifyResultClearEndBySelect = function(){
+	this.core.changeScene("select", this.stage_no);
+};
+
 // ステージクリア
 SceneStage.prototype.notifyAfterTalkEnd = function() {
-	// セレクト画面から来た場合、セレクト画面に戻る
-	if (this.is_from_select_scene) {
-		this.core.changeScene("select", this.stage_no);
-	}
 	// 通常ストーリークリア後
-	else if (this.isLastNormalStory()) {
+	if (this.isLastNormalStory()) {
 		this.core.changeScene("after_normal");
 	}
 	// Exステージクリア後
 	else if (this.isLastExStory()) {
 		this.core.changeScene("after_ex");
 	}
-	// ストーリーならば次のステージへ
+	// 次のステージへ
 	else {
 		this.core.changeScene("stage", this.stage_no + 1);
 	}

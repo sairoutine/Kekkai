@@ -120,7 +120,7 @@ SceneStageResultClear.prototype.notifyResultEnd = function () {
 
 	// TODO:
 	//console.log("score: " + this.parent.calcHonor());
-	this.parent.notifyResultClearEnd();
+	this.parent.notifyResultClearEndBySelect();
 };
 
 SceneStageResultClear.prototype.resultName = function(){
