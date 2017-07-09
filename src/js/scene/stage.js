@@ -88,6 +88,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm, is_from_s
 	else {
 		this.changeSubScene(sub_scene);
 	}
+		this.changeSubScene("result_clear_by_select");
 };
 SceneStage.prototype.beforeDraw = function(){
 	/* 基底クラスの beforeDraw 処理 start */

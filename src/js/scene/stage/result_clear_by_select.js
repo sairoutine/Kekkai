@@ -1,29 +1,21 @@
 'use strict';
 // クリア リザルト
 
-// メッセージを表示する間隔
-var SHOW_MESSAGE_INTERVAL = 50;
-
-// メッセージの黒帯の表示
-var RESULT_TRANSITION_COUNT = 100;
-
 var base_scene = require('../../hakurei').scene.base;
 var CONSTANT = require('../../hakurei').constant;
 var util = require('../../hakurei').util;
 
-var SceneStageResultClear = function(core, parent) {
+var SceneStageResultClearBySelect = function(core, parent) {
 	base_scene.apply(this, arguments);
 };
 
-util.inherit(SceneStageResultClear, base_scene);
+util.inherit(SceneStageResultClearBySelect, base_scene);
 
-SceneStageResultClear.prototype.init = function(){
+SceneStageResultClearBySelect.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
-
-	this.transitionStartFrame = 0;
 };
 
-SceneStageResultClear.prototype.beforeDraw = function(){
+SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
 	// parent class (stage scene) に所属するオブジェクトを動かす
@@ -31,103 +23,138 @@ SceneStageResultClear.prototype.beforeDraw = function(){
 		this.parent.objects[i].beforeDraw();
 	}
 
-	if(this.isTransitionEnd()) {
-		//this.core.stopBGM();
-		this.notifyResultEnd();
+	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
+		this.core.playSound('select');
+		this.parent.notifyResultClearEndBySelect();
 	}
-	else {
-		if(this.core.isKeyPush(CONSTANT.BUTTON_Z) && !this.isInTransition()) {
-				this.core.playSound('select');
-				this.setTransition();
-		}
-	}
-
-};
-
-SceneStageResultClear.prototype.isInTransition = function(){
-	return this.transitionStartFrame ? true : false;
-};
-SceneStageResultClear.prototype.isTransitionEnd = function(){
-	return this.isInTransition() && (this.transitionStartFrame + RESULT_TRANSITION_COUNT < this.frame_count);
-};
-SceneStageResultClear.prototype.setTransition = function(){
-	this.transitionStartFrame = this.frame_count;
 };
 
 // 画面更新
-SceneStageResultClear.prototype.draw = function(){
+SceneStageResultClearBySelect.prototype.draw = function(){
 	var ctx = this.core.ctx;
 
-	// スコア表示
-	this._showScoreWindow();
+	/*
+	// 背景をちょっと暗転
+	ctx.save();
+	var alpha = 0.5;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = alpha;
+	ctx.fillRect(0, 0, this.parent.width, this.parent.height);
+	ctx.restore();
+	*/
 
-	// トランジション表示
-	if(this.isInTransition()) {
-		ctx.save();
-		var alpha = 1.0;
-		if(this.transitionStartFrame + RESULT_TRANSITION_COUNT >= this.frame_count) {
-			alpha = (this.frame_count - this.transitionStartFrame) / RESULT_TRANSITION_COUNT;
-		}
-		else {
-			alpha = 1.0;
-		}
-		ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-		ctx.globalAlpha = alpha;
-		ctx.fillRect(0, 0, this.parent.width, this.parent.height);
 
-		ctx.restore();
-	}
 
-};
-SceneStageResultClear.prototype._showScoreWindow = function(){
-	var ctx = this.core.ctx;
+	var image = this.core.image_loader.getImage("mari_bg");
+	ctx.drawImage(image,
+		// sprite position
+		3, 928,
+		// sprite size to get
+		this.core.width*4, 868,
+		// position which where to draw
+		0, this.core.height/2 - 868*0.25/2,
+		// sprite size to show
+		this.core.width, 868 * 0.25
+	);
 
 	ctx.save();
-
-	var alpha = 1.0;
-	if(this.frame_count < RESULT_TRANSITION_COUNT) {
-		alpha = this.frame_count / RESULT_TRANSITION_COUNT;
-	}
-	else {
-		alpha = 1.0;
-	}
-
-	ctx.fillStyle = 'rgb(0, 0, 0)' ;
-	ctx.globalAlpha = alpha * 0.5; // タイトル背景黒は半透明
-	ctx.fillRect( this.parent.width/2 - 100, this.parent.height/2 - 140, 100*2, 140);
-
-	ctx.globalAlpha = alpha; // 文字を表示するので戻す
-
-	ctx.fillStyle = 'white';
-	ctx.textAlign = 'center';
-	ctx.font = "18px 'Migu'" ;
-	ctx.fillText(this.resultName(), this.parent.width/2, 180);
-
-
-	ctx.fillStyle = 'white';
 	ctx.textAlign = 'left';
-	ctx.font = "16px 'Migu'" ;
-	// N秒ごとにメッセージを点滅
-	if (Math.floor(this.frame_count / SHOW_MESSAGE_INTERVAL) % 2 === 0) {
-		ctx.textAlign = 'center';
-		ctx.fillText(this.resultMessage(), this.parent.width/2, 255);
+	ctx.textBaseAlign = 'middle';
+
+	ctx.fillStyle = 'rgb(232, 52, 33)';
+	ctx.font = "24px 'Migu'";
+	ctx.fillText("STAGE CLEAR !", 150, 250);
+	ctx.fillRect(150, 260, 280, 1);
+	ctx.font = "28px 'Migu'";
+	ctx.fillText("Score:", 240, 320);
+	ctx.textAlign = 'right';
+	ctx.fillText("★★★", 430, 320);
+	ctx.restore();
+
+
+
+
+	// キャラ表示
+	this._showRightChara("reimu_smile");
+
+	// メッセージウィンドウ
+	this._showMessageWindow();
+
+	// メッセージ表示
+	this._showMessage("やるじゃない！");
+};
+
+SceneStageResultClearBySelect.prototype._showRightChara = function(image_name){
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var x = 400;
+	var y = 65;
+
+	var right_image = this.core.image_loader.getImage(image_name);
+	ctx.drawImage(right_image,
+		x,
+		y,
+		right_image.width,
+		right_image.height
+	);
+
+	ctx.restore();
+};
+
+var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
+SceneStageResultClearBySelect.prototype._showMessageWindow = function(){
+	var ctx = this.core.ctx;
+	// show message window
+	ctx.save();
+
+	var message_height = 100;
+
+	ctx.globalAlpha = 0.5;
+	ctx.fillStyle = 'rgb(0, 0, 0)';
+	ctx.fillRect(
+		MESSAGE_WINDOW_OUTLINE_MARGIN,
+		this.core.height - 125,
+		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
+		message_height
+	);
+
+	ctx.restore();
+};
+
+// セリフ表示
+SceneStageResultClearBySelect.prototype._showMessage = function(message) {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	ctx.font = "18px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	var x, y;
+	// セリフ表示
+	var lines = [message];
+	if (lines.length) {
+		// セリフテキストの y 座標初期位置
+		var message_height = 80;
+		y = this.core.height - 125 + 40;
+
+		for(var i = 0, len = lines.length; i < len; i++) {
+			ctx.fillStyle = 'rgb( 0, 0, 0 )';
+			ctx.lineWidth = 4.0;
+			ctx.strokeText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
+
+			ctx.fillStyle = 'white';
+			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
+
+			y+= 30;
+		}
 	}
 
 	ctx.restore();
 };
 
-SceneStageResultClear.prototype.notifyResultEnd = function () {
 
-	// TODO:
-	//console.log("score: " + this.parent.calcHonor());
-	this.parent.notifyResultClearEndBySelect();
-};
 
-SceneStageResultClear.prototype.resultName = function(){
-	return "STAGE CLEAR !";
-};
-SceneStageResultClear.prototype.resultMessage = function(){
-	return "Press Z to Next";
-};
 
-module.exports = SceneStageResultClear;
+module.exports = SceneStageResultClearBySelect;

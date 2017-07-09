@@ -23,6 +23,7 @@ AssetsConfig.images = {
 	block:         "./image/block.png",
 	hashigo:       "./image/hashigo.png",
 
+	mari_bg:       "./image/mari_bg.png",
 	// ノーマルステージクリア後背景
 	shrine_night:   "./image/shrine_night.jpg",
 
