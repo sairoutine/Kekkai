@@ -34,12 +34,8 @@ var SceneStage = function(core) {
 };
 util.inherit(SceneStage, base_scene);
 
-SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
+SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm, is_from_select_scene){
 	base_scene.prototype.init.apply(this, arguments);
-
-	if (CONSTANT.DEBUG.START_STAGE_NO) {
-		stage_no = CONSTANT.DEBUG.START_STAGE_NO;
-	}
 
 	// stage no
 	this.stage_no = stage_no || 1;
@@ -51,6 +47,9 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm){
 	if(this.is_play_bgm) {
 		this.core.stopBGM();
 	}
+
+	// ステージセレクトから遷移したのか、ストーリーから遷移したのか
+	this.is_from_select_scene = is_from_select_scene ? true : false;
 
 	this.reimu_item_num = 0;
 	this.yukari_item_num = 0;
@@ -126,15 +125,19 @@ SceneStage.prototype.notifyResultClearEnd = function(){
 
 // ステージクリア
 SceneStage.prototype.notifyAfterTalkEnd = function() {
+	// セレクト画面から来た場合、セレクト画面に戻る
+	if (this.is_from_select_scene) {
+		this.core.changeScene("select", this.stage_no);
+	}
 	// 通常ストーリークリア後
-	if (this.isLastNormalStory()) {
+	else if (this.isLastNormalStory()) {
 		this.core.changeScene("after_normal");
 	}
 	// Exステージクリア後
 	else if (this.isLastExStory()) {
 		this.core.changeScene("after_ex");
 	}
-	// 次のステージへ
+	// ストーリーならば次のステージへ
 	else {
 		this.core.changeScene("stage", this.stage_no + 1);
 	}

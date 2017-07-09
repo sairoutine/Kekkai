@@ -24,14 +24,19 @@ var SceneSelect = function(core) {
 };
 util.inherit(SceneSelect, base_scene);
 
-SceneSelect.prototype.init = function(){
+SceneSelect.prototype.init = function(selected_stage_no){
 	base_scene.prototype.init.apply(this, arguments);
 
 	// ステージ一覧
 	this.stage_list = this.core.save.getStageResultList();
 
 	// カーソル位置
-	this.selected_stage = 0;
+	if (selected_stage_no) {
+		this.selected_stage = selected_stage_no - 1; // selected_stage は 0 から始まるので
+	}
+	else {
+		this.selected_stage = 0;
+	}
 
 	// マップを更新
 	this.stage_objects = this.createMap();
@@ -39,8 +44,12 @@ SceneSelect.prototype.init = function(){
 SceneSelect.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
+	// 決定
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
+		this.core.changeScene("stage", this.selected_stage + 1, "play", true, true); // 0 から selected_stage は始まるので +1
+	}
 	// 戻る
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
+	else if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
 		this.core.changeScene("title");
 	}
 
