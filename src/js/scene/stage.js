@@ -120,7 +120,18 @@ SceneStage.prototype.notifyStageClear = function(){
 };
 // クリア後のリザルト画面終了後
 SceneStage.prototype.notifyResultClearEnd = function(){
-	this.changeSubScene("after_talk", SERIF_AFTERS[this.stage_no]);
+	// セレクト画面からプレイした場合、セリフなしで終了
+	if (this.is_from_select_scene) {
+		this.notifyAfterTalkEnd();
+	}
+	// 終了後のセリフがある場合
+	else if (SERIF_AFTERS[this.stage_no].length > 0) {
+		this.changeSubScene("after_talk", SERIF_AFTERS[this.stage_no]);
+	}
+	// 終了後のセリフがない場合
+	else {
+		this.notifyAfterTalkEnd();
+	}
 };
 
 // ステージクリア

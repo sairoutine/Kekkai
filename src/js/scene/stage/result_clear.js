@@ -26,6 +26,11 @@ SceneStageResultClear.prototype.init = function(){
 SceneStageResultClear.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
+	// parent class (stage scene) に所属するオブジェクトを動かす
+	for(var i = 0, len = this.parent.objects.length; i < len; i++) {
+		this.parent.objects[i].beforeDraw();
+	}
+
 	if(this.isTransitionEnd()) {
 		//this.core.stopBGM();
 		this.notifyResultEnd();
