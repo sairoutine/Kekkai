@@ -109,7 +109,7 @@ SceneStage.prototype.notifyPlayerDie = function(){
 	this.notifyRestart();
 };
 SceneStage.prototype.notifyRestart = function(){
-	this.core.changeScene("stage", this.stage_no, "play");
+	this.core.changeScene("stage", this.stage_no, "play", false, this.is_from_select_scene);
 };
 SceneStage.prototype.notifyStageClear = function(){
 	// ステージクリアしたことをセーブ

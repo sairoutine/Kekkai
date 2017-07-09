@@ -17,7 +17,4 @@ TileBase.prototype.init = function(x, y, scale) {
 	this._scale = scale;
 };
 
-TileBase.prototype.scale = function() {
-	return this._scale;
-};
 module.exports = TileBase;

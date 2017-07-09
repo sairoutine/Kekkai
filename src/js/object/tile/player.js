@@ -434,7 +434,7 @@ Player.prototype.changeState = function(state) {
 	this.currentState().init();
 
 	if (CONSTANT.DEBUG.ON) {
-		console.log(this.state);
+		//console.log(this.state);
 	}
 };
 Player.prototype.currentState = function() {
