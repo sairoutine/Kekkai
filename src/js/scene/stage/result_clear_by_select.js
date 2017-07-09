@@ -4,6 +4,7 @@
 var base_scene = require('../../hakurei').scene.base;
 var CONSTANT = require('../../hakurei').constant;
 var util = require('../../hakurei').util;
+var LogicScore = require('../../logic/score');
 
 var SceneStageResultClearBySelect = function(core, parent) {
 	base_scene.apply(this, arguments);
@@ -13,6 +14,13 @@ util.inherit(SceneStageResultClearBySelect, base_scene);
 
 SceneStageResultClearBySelect.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
+
+	this.move_frame_count0 = 0;
+	this.is_show_bg = false;
+	this.move_frame_count1 = 1000;
+	this.move_frame_count2 = 1000;
+	this.move_frame_count3 = -500;
+	this.is_show_serif = false;
 };
 
 SceneStageResultClearBySelect.prototype.beforeDraw = function(){
@@ -27,6 +35,32 @@ SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 		this.core.playSound('select');
 		this.parent.notifyResultClearEndBySelect();
 	}
+
+	// 何もしない
+	if (this.move_frame_count0 < 40) {
+		this.move_frame_count0 += 1;
+	}
+	// 背景画像表示
+	else if (!this.is_show_bg) {
+		this.is_show_bg = true;
+	}
+	// Stage Clear メッセージ表示
+	else if (this.move_frame_count1 > 150) {
+		this.move_frame_count1-=50;
+	}
+	// スコア表示
+	else if (this.move_frame_count2 > 250) {
+		this.move_frame_count2-=50;
+	}
+	// キャラ画像表示
+	else if (this.move_frame_count3 < 400) {
+		this.move_frame_count3+=50;
+	}
+	// セリフ表示
+	else if (!this.is_show_serif) {
+		this.is_show_serif = true;
+	}
+
 };
 
 // 画面更新
@@ -43,19 +77,19 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 	ctx.restore();
 	*/
 
-
-
-	var image = this.core.image_loader.getImage("mari_bg");
-	ctx.drawImage(image,
-		// sprite position
-		3, 928,
-		// sprite size to get
-		this.core.width*4, 868,
-		// position which where to draw
-		0, this.core.height/2 - 868*0.25/2,
-		// sprite size to show
-		this.core.width, 868 * 0.25
-	);
+	if (this.is_show_bg) {
+		var image = this.core.image_loader.getImage("mari_bg");
+		ctx.drawImage(image,
+			// sprite position
+			3, 928,
+			// sprite size to get
+			this.core.width*4, 868,
+			// position which where to draw
+			0, this.core.height/2 - 868*0.25/2,
+			// sprite size to show
+			this.core.width, 868 * 0.25
+		);
+	}
 
 	ctx.save();
 	ctx.textAlign = 'left';
@@ -63,12 +97,27 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 
 	ctx.fillStyle = 'rgb(232, 52, 33)';
 	ctx.font = "24px 'Migu'";
-	ctx.fillText("STAGE CLEAR !", 150, 250);
-	ctx.fillRect(150, 260, 280, 1);
+	ctx.fillText("STAGE CLEAR !", this.move_frame_count1, 250);
+	ctx.fillRect(this.move_frame_count1, 260, 280, 1);
 	ctx.font = "28px 'Migu'";
-	ctx.fillText("Score:", 240, 320);
+	ctx.fillText("Score:", this.move_frame_count2, 320);
+
+	// スコア計算
+	var honor_num = LogicScore.calcHonor(
+		this.parent.getSubScene("play").frame_count,
+		this.parent.player().exchange_num,
+		// TODO: 各マップから取得する
+		100,
+		1
+	);
+
+	var honor_str = "";
+	for (var i = 0; i < honor_num; i++) {
+		honor_str = honor_str + "★";
+	}
+
 	ctx.textAlign = 'right';
-	ctx.fillText("★★★", 430, 320);
+	ctx.fillText(honor_str, this.move_frame_count2 + 190, 320);
 	ctx.restore();
 
 
@@ -77,18 +126,20 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 	// キャラ表示
 	this._showRightChara("reimu_smile");
 
-	// メッセージウィンドウ
-	this._showMessageWindow();
+	if (this.is_show_serif) {
+		// メッセージウィンドウ
+		this._showMessageWindow();
 
-	// メッセージ表示
-	this._showMessage("やるじゃない！");
+		// メッセージ表示
+		this._showMessage("やるじゃない！");
+	}
 };
 
 SceneStageResultClearBySelect.prototype._showRightChara = function(image_name){
 	var ctx = this.core.ctx;
 	ctx.save();
 
-	var x = 400;
+	var x = this.move_frame_count3;
 	var y = 65;
 
 	var right_image = this.core.image_loader.getImage(image_name);
