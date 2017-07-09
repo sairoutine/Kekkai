@@ -35,6 +35,18 @@ Enemy.prototype.beforeDraw = function() {
 		this._x = before_x;
 		this.is_left = !this.is_left;
 	}
+
+	// 移動によって左右の壁にめり込んだら押し返す
+	var repulse_x = this.checkCollisionWithLeftRightBlocks();
+	if(repulse_x) {
+		repulse_x = repulse_x > 0 ? SPEED : -SPEED;
+		// 自機の調整
+		this._x += repulse_x;
+
+		this.is_left = !this.is_left;
+	}
+
+
 };
 
 Enemy.prototype.isCollision = function() {
@@ -79,6 +91,43 @@ Enemy.prototype.checkCollisionWithBlocks = function() {
 	}
 
 	return is_collision;
+};
+
+// 壁ブロック一覧
+var BLOCK_TILE_TYPES2 = [
+	CONSTANT.BLOCK_GREEN,
+	CONSTANT.BLOCK_BLUE,
+	CONSTANT.BLOCK_RED,
+	CONSTANT.BLOCK_PURPLE,
+	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_STONE1,
+	CONSTANT.BLOCK_STONE2,
+	CONSTANT.BLOCK_STONE3,
+];
+
+// 壁との衝突判定
+Enemy.prototype.checkCollisionWithLeftRightBlocks = function() {
+	var self = this;
+	// 壁と自機の衝突判定
+	var repulse_x = 0;
+	for (var i = 0; i < BLOCK_TILE_TYPES2.length; i++) {
+		var tile_type = BLOCK_TILE_TYPES2[i];
+		var tile_objects = self.scene.objects_by_tile_type[tile_type];
+
+		for (var j = 0; j < tile_objects.length; j++) {
+			var obj = tile_objects[j];
+
+			// 壁の衝突判定なので自機より上あるいは下のブロックは無視する
+			if(self.getCollisionDownY() -1 <= obj.getCollisionUpY()) continue; // 自機より下(-1 は地面とのめり込み分)
+			if(self.getCollisionUpY() > obj.getCollisionDownY()) continue; // 自機より上
+			if(obj.isCollision() && self.checkCollision(obj)) {
+				repulse_x = self.x() - obj.x();
+				break;
+			}
+		}
+	}
+
+	return repulse_x;
 };
 
 
