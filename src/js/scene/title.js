@@ -15,7 +15,8 @@ var MENU = [
 	["Story Start", "reminiscence"],
 	["Ex Story Start", "ex_epigraph"],
 	["Select Stage", "select"],
-	["Config", "config"],
+	["How To", "howto"],
+	//["Config", "config"],
 	["Music Room", "music"],
 ];
 
@@ -31,10 +32,27 @@ SceneTitle.prototype.init = function(){
 	this.index = 0;
 
 	// Exステージ解放されているかどうか */
-	this.is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
+	var is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
 
 	// stage 1 がクリアされているかどうか
-	this.is_any_stage_cleared = this.core.save.getStageResult(1);
+	var is_any_stage_cleared = this.core.save.getStageResult(1);
+
+	// メニュー一覧
+	this.menu_list = [];
+	for(var i = 0, len = MENU.length; i < len; i++) {
+		var menu = MENU[i];
+
+		// 通常ストーリークリア後のみ、Ex Story を表示する
+		if(!is_normal_stage_cleared && menu[1] === "ex_epigraph") {
+			continue;
+		}
+		// stage 1クリア後のみ、ステージセレクトを表示する
+		else if (!is_any_stage_cleared && menu[1] === "select") {
+			continue;
+		}
+
+		this.menu_list.push(menu);
+	}
 
 	this.core.stopBGM();
 };
@@ -51,8 +69,8 @@ SceneTitle.prototype.beforeDraw = function(){
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
 		this.index++;
 
-		if(this.index >= MENU.length) {
-			this.index = MENU.length - 1;
+		if(this.index >= this.menu_list.length) {
+			this.index = this.menu_list.length - 1;
 		}
 	}
 	// カーソルを上移動
@@ -68,7 +86,7 @@ SceneTitle.prototype.beforeDraw = function(){
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
 
-		var scene_name = MENU[this.index][1];
+		var scene_name = this.menu_list[this.index][1];
 		this.core.changeScene(scene_name);
 	}
 };
@@ -129,17 +147,8 @@ SceneTitle.prototype.draw = function(){
 	ctx.textBaseAlign = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 
-	for(var i = 0, len = MENU.length; i < len; i++) {
-		var menu = MENU[i];
-
-		// 通常ストーリークリア後のみ、Ex Story を表示する
-		if(!this.is_normal_stage_cleared && menu[1] === "ex_epigraph") {
-			continue;
-		}
-		// stage 1クリア後のみ、ステージセレクトを表示する
-		else if (!this.is_any_stage_cleared && menu[1] === "select") {
-			continue;
-		}
+	for(var i = 0, len = this.menu_list.length; i < len; i++) {
+		var menu = this.menu_list[i];
 
 		if(this.index === i) {
 			// cursor 表示

@@ -30,6 +30,9 @@ var SceneStaffroll = require('./scene/staffroll');
 var SceneEpilogue = require('./scene/epilogue');
 // Music Room
 var SceneMusic = require('./scene/music');
+// 遊び方
+var SceneHowTo = require('./scene/howto');
+
 
 
 var Game = function(canvas) {
@@ -56,6 +59,7 @@ Game.prototype.init = function () {
 	this.addScene("staffroll", new SceneStaffroll(this));
 	this.addScene("epilogue", new SceneEpilogue(this));
 	this.addScene("music", new SceneMusic(this));
+	this.addScene("howto", new SceneHowTo(this));
 
 	this.changeScene("loading");
 
