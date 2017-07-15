@@ -42,7 +42,7 @@ window.onerror = function (msg, file, line, column, err) {
 	column: column number
 	err: error object
 	*/ 
-	window.alert(msg + "\n" + line + ":" + column);
+	//window.alert(msg + "\n" + line + ":" + column);
 };
 /*
 window.runGame = function () {
