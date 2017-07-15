@@ -56,3 +56,10 @@ window.stopGame = function () {
 window.changeFullScreen = function () {
 	game.fullscreen();
 };
+
+// Electron のレンダラプロセスならば
+if(window.require) {
+	require('electron').webFrame.setZoomLevelLimits(1,1); //zoomさせない
+}
+
+
