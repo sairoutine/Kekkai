@@ -15,7 +15,7 @@ window.onload = function() {
 	game.init();
 
 	// フォントの読み込みが完了
-	if(document.fonts) {
+	if(document.fonts && !navigator.userAgent.toLowerCase().indexOf("safari")) {
 		document.fonts.addEventListener('loadingdone', function() { game.fontLoadingDone(); });
 	}
 	else {
@@ -31,7 +31,6 @@ window.onload = function() {
 	if(window.Gamepad && navigator.getGamepads) {
 		game.enableGamePad();
 	}
-
 	// ゲーム起動
 	game.startRun();
 };
@@ -56,3 +55,10 @@ window.stopGame = function () {
 window.changeFullScreen = function () {
 	game.fullscreen();
 };
+
+// Electron のレンダラプロセスならば
+if(window.require) {
+	require('electron').webFrame.setZoomLevelLimits(1,1); //zoomさせない
+}
+
+

@@ -56,39 +56,40 @@ AssetsConfig.images = {
 	yukari_yarare:       "./image/yukari/yarare.png",
 };
 
+// sound ファイルはogg と m4a の二種類を用意してください
 AssetsConfig.sounds = {
 	forbidden:    {
-		path: "./sound/forbidden.wav",
+		path: "./sound/forbidden",
 		volume: 0.8,
 	},
 	select:    {
-		path: "./sound/select.wav",
+		path: "./sound/select",
 		volume: 0.8,
 	},
 	boss_powerup:    {
-		path: "./sound/boss_powerup.wav",
+		path: "./sound/boss_powerup",
 		volume: 0.5,
 	},
 	dead:    {
-		path: "./sound/dead.wav",
+		path: "./sound/dead",
 		volume: 0.5,
 	},
 	powerup:    {
-		path: "./sound/powerup.wav",
+		path: "./sound/powerup",
 		volume: 0.8,
 	},
 };
-
+// bgm ファイルはogg と m4a の二種類を用意してください
 AssetsConfig.bgms = {
 	stage_a: {
-		path: "./bgm/stage_a.ogg",
+		path: "./bgm/stage_a",
 		loopStart: 0*60 + 29 + 0.143,
 		loopEnd: 1*60 + 51 + 0.429,
 		title: "春色小径 ～ Colorful Path",
 		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
 	},
 	title: {
-		path: "./bgm/title.ogg",
+		path: "./bgm/title",
 		loopStart: 0*60 + 10 + 0.312,
 		loopEnd: 0*60 + 51 + 0.562,
 		title: "永夜抄 ～ Eastern Night.",
