@@ -13,15 +13,39 @@ var SHOW_START_MESSAGE_INTERVAL = 50;
 
 var MENU = [
 	["Story Start", "reminiscence", function (core) {
-		core.changeScene("reminiscence");
+		var progress_stage_no = core.save.getNormalStageProgress();
+
+		// 最初から
+		if (!progress_stage_no) {
+			// 回想シーン画面へ
+			core.changeScene("reminiscence");
+		}
+		// 続きから
+		else {
+			// 続きのステージから
+			this.core.changeScene("stage", progress_stage_no, "talk", true);
+		}
 	}],
 	["Ex Story Start", "ex_epigraph", function (core) {
-		core.changeScene("ex_epigraph");
+		var progress_stage_no = core.save.getExStageProgress();
+
+		// 最初から
+		if (!progress_stage_no) {
+			// Ex エピグラフ画面へ
+			core.changeScene("ex_epigraph");
+		}
+		// 続きから
+		else {
+			// 続きのステージから
+			this.core.changeScene("stage", progress_stage_no, "talk", true);
+		}
 	}],
 	["Select Stage", "select", function (core) {
+		// ステージセレクト画面へ
 		core.changeScene("select");
 	}],
 	["How To", "howto", function (core) {
+		// 遊び方画面へ
 		core.changeScene("howto");
 	}],
 	/*
@@ -30,6 +54,7 @@ var MENU = [
 	}],
 	*/
 	["Music Room", "music", function (core) {
+		// Music Room 画面へ
 		core.changeScene("music");
 	}],
 ];
