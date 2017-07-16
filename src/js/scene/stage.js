@@ -163,10 +163,20 @@ SceneStage.prototype.notifyResultClearEndBySelect = function(){
 SceneStage.prototype.notifyAfterTalkEnd = function() {
 	// 通常ストーリークリア後
 	if (this.isLastNormalStory()) {
+		// 進捗をリセット
+		this.core.save.resetNormalStageProgress();
+		this.core.save.save();
+
+		// 次のシーンへ
 		this.core.changeScene("after_normal");
 	}
 	// Exステージクリア後
 	else if (this.isLastExStory()) {
+		// 進捗をリセット
+		this.core.save.resetExStageProgress();
+		this.core.save.save();
+
+		// 次のシーンへ
 		this.core.changeScene("after_ex");
 	}
 	// 次のステージへ

@@ -1,6 +1,7 @@
 'use strict';
 var base_class = require('./hakurei').storage.save;
 var util = require('./hakurei').util;
+var CONSTANT = require('./constant');
 
 var StorageSave = function(scene) {
 	base_class.apply(this, arguments);
@@ -26,7 +27,7 @@ StorageSave.prototype.getNormalStageProgress = function(){
 };
 // 通常ストーリーを進捗を削除
 StorageSave.prototype.resetNormalStageProgress = function(){
-	return this.del("normal_stage_progress");
+	return this.remove("normal_stage_progress");
 };
 
 // Ex ストーリーの進捗を +1
@@ -37,7 +38,7 @@ StorageSave.prototype.incrementExStageProgress = function(){
 		progress += 1;
 	}
 	else {
-		progress = 1;
+		progress = CONSTANT.EX_STORY_START_STAGE_NO;
 	}
 
 	this.set("ex_stage_progress", progress);
@@ -48,7 +49,7 @@ StorageSave.prototype.getExStageProgress = function(){
 };
 // Ex ストーリーを進捗を削除
 StorageSave.prototype.resetExStageProgress = function(){
-	return this.del("ex_stage_progress");
+	return this.remove("ex_stage_progress");
 };
 
 // 通常ストーリーを1度でもクリアしたことを設定
