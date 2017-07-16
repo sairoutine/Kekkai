@@ -43,6 +43,17 @@ StorageSave.prototype.getStageResult = function(stage_no){
 	return list[stage_no - 1];
 };
 
+// 最新のステージ実績を取得
+StorageSave.prototype.getLatestStageResult = function(){
+	var list = this.getStageResultList();
+
+	if (list.length === 0) {
+		return null;
+	}
+
+	return list[list.length - 1];
+};
+
 // 対象のステージ実績を更新
 StorageSave.prototype.updateStageResult = function(stage_no, time, exchange_num){
 	stage_no -= 1; // 配列なので 0 から

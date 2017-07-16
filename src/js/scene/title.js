@@ -12,12 +12,26 @@ var SHOW_TRANSITION_COUNT = 100;
 var SHOW_START_MESSAGE_INTERVAL = 50;
 
 var MENU = [
-	["Story Start", "reminiscence"],
-	["Ex Story Start", "ex_epigraph"],
-	["Select Stage", "select"],
-	["How To", "howto"],
-	//["Config", "config"],
-	["Music Room", "music"],
+	["Story Start", "reminiscence", function (core) {
+		core.changeScene("reminiscence");
+	}],
+	["Ex Story Start", "ex_epigraph", function (core) {
+		core.changeScene("ex_epigraph");
+	}],
+	["Select Stage", "select", function (core) {
+		core.changeScene("select");
+	}],
+	["How To", "howto", function (core) {
+		core.changeScene("howto");
+	}],
+	/*
+	["Config", "config", function (core) {
+		core.changeScene("config");
+	}],
+	*/
+	["Music Room", "music", function (core) {
+		core.changeScene("music");
+	}],
 ];
 
 var SceneTitle = function(core) {
@@ -34,8 +48,8 @@ SceneTitle.prototype.init = function(){
 	// Exステージ解放されているかどうか */
 	var is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
 
-	// stage 1 がクリアされているかどうか
-	var is_any_stage_cleared = this.core.save.getStageResult(1);
+	// いずれかのステージがクリアされているかどうか
+	var is_any_stage_cleared = this.core.save.getLatestStageResult() ? true : false;
 
 	// メニュー一覧
 	this.menu_list = [];
@@ -86,8 +100,9 @@ SceneTitle.prototype.beforeDraw = function(){
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
 
-		var scene_name = this.menu_list[this.index][1];
-		this.core.changeScene(scene_name);
+		// メニューに設定された関数を実行
+		var exec_func = this.menu_list[this.index][2];
+		exec_func(this.core);
 	}
 };
 
