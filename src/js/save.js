@@ -7,11 +7,55 @@ var StorageSave = function(scene) {
 };
 util.inherit(StorageSave, base_class);
 
-// 通常ストーリークリアしたことを設定
+// 通常ストーリーの進捗を +1
+StorageSave.prototype.incrementNormalStageProgress = function(){
+	var progress = this.getNormalStageProgress();
+
+	if (progress) {
+		progress += 1;
+	}
+	else {
+		progress = 1;
+	}
+
+	this.set("normal_stage_progress", progress);
+};
+// 通常ストーリーをどのステージまで進めているか取得
+StorageSave.prototype.getNormalStageProgress = function(){
+	return this.get("normal_stage_progress");
+};
+// 通常ストーリーを進捗を削除
+StorageSave.prototype.resetNormalStageProgress = function(){
+	return this.del("normal_stage_progress");
+};
+
+// Ex ストーリーの進捗を +1
+StorageSave.prototype.incrementExStageProgress = function(){
+	var progress = this.getExStageProgress();
+
+	if (progress) {
+		progress += 1;
+	}
+	else {
+		progress = 1;
+	}
+
+	this.set("ex_stage_progress", progress);
+};
+// Ex ストーリーをどのステージまで進めているか取得
+StorageSave.prototype.getExStageProgress = function(){
+	return this.get("ex_stage_progress");
+};
+// Ex ストーリーを進捗を削除
+StorageSave.prototype.resetExStageProgress = function(){
+	return this.del("ex_stage_progress");
+};
+
+// 通常ストーリーを1度でもクリアしたことを設定
 StorageSave.prototype.clearNormalStage = function(){
 	this.set("is_normal_stage_cleared", true);
 };
-// 通常ストーリークリアしたか否かを取得
+// 通常ストーリーを1度でもクリアしたか否かを取得
 StorageSave.prototype.getIsNormalStageCleared = function(){
 	return this.get("is_normal_stage_cleared");
 };
