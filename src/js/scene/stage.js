@@ -114,8 +114,23 @@ SceneStage.prototype.notifyRestart = function(){
 	this.core.changeScene("stage", this.stage_no, "play", false, this.is_from_select_scene);
 };
 SceneStage.prototype.notifyStageClear = function(){
-	// ステージクリアしたことをセーブ
+	// (ストーリー／セレクト両方) ステージ実績に更新があればセーブ
 	this.core.save.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);
+
+	// ストーリー中かつ
+	if (!this.is_from_select_scene) {
+		// 通常ストーリーならば
+		if(!this.isInExStory()) {
+			/// 通常ストーリー進捗を更新
+			this.core.save.incrementNormalStageProgress();
+		}
+		// Ex ストーリーならば
+		else {
+			/// Ex ストーリー進捗を更新
+			this.core.save.incrementExStageProgress();
+		}
+	}
+
 	this.core.save.save();
 
 	// セレクト画面からプレイしたなら
@@ -167,6 +182,11 @@ SceneStage.prototype.isLastNormalStory = function() {
 SceneStage.prototype.isLastExStory = function() {
 	return MAPS[this.stage_no + 1] ? false : true;
 };
+// Ex ストーリーのステージかどうか
+SceneStage.prototype.isInExStory = function() {
+	return this.stage_no >= CONSTANT.EX_STORY_START_STAGE_NO ? true : false;
+};
+
 
 // プレイヤー(1ステージにプレイヤーは1人の想定)
 SceneStage.prototype.player = function () {
