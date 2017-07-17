@@ -103,8 +103,7 @@ Game.prototype.setupDebug = function (dom) {
 
 	// ゲームデータ消去ボタン
 	this.debug_manager.addMenuButton("セーブクリア", function (game) {
-		// TODO: メモリ上のセーブは消えないので消す
-		game.save.delForDebug();
+		game.save.del();
 	});
 
 	// 通常ストーリー クリア ボタン
