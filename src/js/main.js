@@ -1,5 +1,6 @@
 'use strict';
 var Game = require('./game');
+var CONSTANT = require('./constant');
 
 var game;
 
@@ -12,6 +13,12 @@ window.onload = function() {
 	game.init();
 	// 各種イベントハンドラをバインド
 	game.setupEvents();
+
+	// デバッグ設定
+	if (CONSTANT.DEBUG.ON) {
+		var debugDOM = document.getElementById('debug');
+		game.setupDebug(debugDOM);
+	}
 
 	// ゲーム起動
 	game.startRun();
@@ -26,14 +33,6 @@ window.onerror = function (msg, file, line, column, err) {
 	*/ 
 	//window.alert(msg + "\n" + line + ":" + column);
 };
-/*
-window.runGame = function () {
-	game.startRun();
-};
-window.stopGame = function () {
-	game.stopRun();
-};
-*/
 window.changeFullScreen = function () {
 	game.fullscreen();
 };

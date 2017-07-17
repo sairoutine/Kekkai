@@ -76,6 +76,48 @@ Game.prototype.stopBGM = function () {
 	if (CONSTANT.DEBUG.SOUND_OFF) return;
 	return this.audio_loader.stopBGM.apply(this.audio_loader, arguments);
 };
+Game.prototype.setupDebug = function (dom) {
+	if (!CONSTANT.DEBUG.ON) return;
+
+	this.debug_manager.setOn(dom);
+
+	// テキスト追加
+	this.debug_manager.addMenuText("Zキーで決定。Xキーで位置入れ替え。矢印キーで移動。\nステージ上のアイテムを全て獲得するとクリア");
+
+	/*
+	// ゲームスタート ボタン
+	this.debug_manager.addMenuButton("Run", function (game) {
+		game.startRun();
+	});
+
+	// ゲームストップ ボタン
+	this.debug_manager.addMenuButton("Stop", function (game) {
+		game.stopRun();
+	});
+	*/
+
+	// フルスクリーン ボタン
+	this.debug_manager.addMenuButton("最大化", function (game) {
+		game.fullscreen();
+	});
+
+	// ゲームデータ消去ボタン
+	this.debug_manager.addMenuButton("セーブクリア", function (game) {
+		// TODO: メモリ上のセーブは消えないので消す
+		game.save.delForDebug();
+	});
+
+	// 通常ストーリー クリア ボタン
+	this.debug_manager.addMenuButton("通常ストーリークリア", function (game) {
+		game.save.clearNormalStageForDebug();
+	});
+
+	// Ex ストーリー クリア ボタン
+	this.debug_manager.addMenuButton("Ex ストーリークリア", function (game) {
+		game.save.clearExStageForDebug();
+	});
+};
+
 
 
 
