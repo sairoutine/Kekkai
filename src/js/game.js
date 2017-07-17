@@ -84,7 +84,6 @@ Game.prototype.setupDebug = function (dom) {
 	// テキスト追加
 	this.debug_manager.addMenuText("Zキーで決定。Xキーで位置入れ替え。矢印キーで移動。\nステージ上のアイテムを全て獲得するとクリア");
 
-	/*
 	// ゲームスタート ボタン
 	this.debug_manager.addMenuButton("Run", function (game) {
 		game.startRun();
@@ -94,7 +93,6 @@ Game.prototype.setupDebug = function (dom) {
 	this.debug_manager.addMenuButton("Stop", function (game) {
 		game.stopRun();
 	});
-	*/
 
 	// フルスクリーン ボタン
 	this.debug_manager.addMenuButton("最大化", function (game) {
