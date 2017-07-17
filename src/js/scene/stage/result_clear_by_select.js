@@ -5,6 +5,7 @@ var base_scene = require('../../hakurei').scene.base;
 var CONSTANT = require('../../hakurei').constant;
 var util = require('../../hakurei').util;
 var LogicScore = require('../../logic/score');
+var Message = require('../../logic/result_message/select');
 
 var SceneStageResultClearBySelect = function(core, parent) {
 	base_scene.apply(this, arguments);
@@ -14,6 +15,9 @@ util.inherit(SceneStageResultClearBySelect, base_scene);
 
 SceneStageResultClearBySelect.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
+
+	// 表示するメッセージを取得
+	this.message = this.getMessage();
 
 	this.move_frame_count0 = 0;
 	this.is_show_bg = false;
@@ -103,13 +107,7 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 	ctx.fillText("Score:", this.move_frame_count2, 320);
 
 	// スコア計算
-	var honor_num = LogicScore.calcHonor(
-		this.parent.getSubScene("play").frame_count,
-		this.parent.player().exchange_num,
-		// TODO: 各マップから取得する
-		100,
-		1
-	);
+	var honor_num = this.parent.calcHonor();
 
 	var honor_str = "";
 	for (var i = 0; i < honor_num; i++) {
@@ -120,18 +118,15 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 	ctx.fillText(honor_str, this.move_frame_count2 + 190, 320);
 	ctx.restore();
 
-
-
-
 	// キャラ表示
-	this._showRightChara("reimu_smile");
+	this._showRightChara(this.message.chara);
 
 	if (this.is_show_serif) {
 		// メッセージウィンドウ
 		this._showMessageWindow();
 
 		// メッセージ表示
-		this._showMessage("やるじゃない！");
+		this._showMessage(this.message.message);
 	}
 };
 
@@ -209,5 +204,28 @@ SceneStageResultClearBySelect.prototype._showMessage = function(message) {
 SceneStageResultClearBySelect.prototype.goToNextScene = function() {
 	this.parent.notifyResultClearEndBySelect();
 };
+
+// メッセージ取得
+SceneStageResultClearBySelect.prototype.getMessage = function() {
+	var honor_num = this.parent.calcHonor();
+
+	// 称号に該当するメッセージ一覧を取得
+	var message_list = Message[honor_num];
+
+	// ランダムに1つ取得
+	var message = message_list[Math.floor(Math.random() * message_list.length)];
+
+	return {
+		chara: message[0],
+		message: message[1],
+	};
+};
+
+
+
+
+
+
+
 
 module.exports = SceneStageResultClearBySelect;
