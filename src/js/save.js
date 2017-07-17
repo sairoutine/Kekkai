@@ -1,4 +1,7 @@
 'use strict';
+
+
+// TODO: createStageResultObject 実装したい
 var base_class = require('./hakurei').storage.save;
 var util = require('./hakurei').util;
 var CONSTANT = require('./constant');
@@ -67,17 +70,6 @@ StorageSave.prototype.getStageResultList = function(){
 
 	if(!list) list = [];
 
-	/* デバッグ
-	list = [];
-	for (var i = 0; i<40; i++) {
-		list.push({
-			stage_no: i+1,
-			time: 1,
-			exchange_num: 1,
-		});
-	}
-	*/
-
 	return list;
 };
 
@@ -127,8 +119,48 @@ StorageSave.prototype.updateStageResult = function(stage_no, time, exchange_num)
 	this.set("stage_result_list", list);
 };
 
+// 通常ストーリーの実績を全て解放
+StorageSave.prototype.clearNormalStageForDebug = function(){
+	var list = this.getStageResultList();
 
+	var last_stage_no = CONSTANT.EX_STORY_START_STAGE_NO - 1;
 
+	for (var i = 0; i < last_stage_no; i++) {
+		// 実績がないステージのみ解放
+		if(!list[i]) {
+			list[i] = {
+				stage_no: i+1,
+				time: 1,
+				exchange_num: 1,
+			};
+		}
+	}
+	this.set("stage_result_list", list);
 
+	// クリアフラグを立てる
+	this.clearNormalStage();
+	this.save();
+};
+
+// Exストーリーの実績を全て解放
+StorageSave.prototype.clearExStageForDebug = function(){
+	var list = this.getStageResultList();
+
+	var begin_stage_no = CONSTANT.EX_STORY_START_STAGE_NO;
+
+	for (var i = begin_stage_no - 1; i < 40; i++) { // TODO: 40固定なのを直す
+		// 実績がないステージのみ解放
+		if(!list[i]) {
+			list[i] = {
+				stage_no: i+1,
+				time: 1,
+				exchange_num: 1,
+			};
+		}
+	}
+	this.set("stage_result_list", list);
+
+	this.save();
+};
 
 module.exports = StorageSave;
