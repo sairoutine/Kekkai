@@ -33,7 +33,7 @@ SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 
 	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
-		this.parent.notifyResultClearEndBySelect();
+		this.goToNextScene();
 	}
 
 	// 何もしない
@@ -205,7 +205,9 @@ SceneStageResultClearBySelect.prototype._showMessage = function(message) {
 	ctx.restore();
 };
 
-
-
+// 次のシーンへ
+SceneStageResultClearBySelect.prototype.goToNextScene = function() {
+	this.parent.notifyResultClearEndBySelect();
+};
 
 module.exports = SceneStageResultClearBySelect;
