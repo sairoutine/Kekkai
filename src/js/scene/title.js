@@ -44,11 +44,11 @@ var MENU = [
 		// ステージセレクト画面へ
 		core.changeScene("select");
 	}],
+	/*
 	["How To", "howto", function (core) {
 		// 遊び方画面へ
 		core.changeScene("howto");
 	}],
-	/*
 	["Config", "config", function (core) {
 		core.changeScene("config");
 	}],
