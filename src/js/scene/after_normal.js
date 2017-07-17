@@ -17,10 +17,6 @@ util.inherit(SceneAfterNormal, base_scene);
 
 // 立ち絵＆セリフ終了後
 SceneAfterNormal.prototype.notifySerifEnd = function() {
-	// Exステージ解放 */
-	this.core.save.clearNormalStage();
-	this.core.save.save();
-
 	// タイトル画面へ
 	this.core.changeScene("title");
 };
