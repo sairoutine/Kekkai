@@ -110,9 +110,22 @@ SceneStage.prototype.notifyPlayerDie = function(){
 	// 当該ステージの最初から
 	this.notifyRestart();
 };
+// ポーズ画面から、restart
 SceneStage.prototype.notifyRestart = function(){
 	this.core.changeScene("stage", this.stage_no, "play", false, this.is_from_select_scene);
 };
+// ポーズ画面から、quit
+SceneStage.prototype.notifyQuit = function(){
+	// ストーリー中ならばタイトル画面へ
+	if (!this.is_from_select_scene) {
+		this.core.changeScene("title");
+	}
+	// セレクト画面からプレイしたならセレクト画面へ
+	else {
+		this.core.changeScene("select");
+	}
+};
+
 SceneStage.prototype.notifyStageClear = function(){
 	// (ストーリー／セレクト両方) ステージ実績に更新があればセーブ
 	this.core.save.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);

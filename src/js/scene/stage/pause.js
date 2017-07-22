@@ -58,7 +58,7 @@ SceneStagePause.prototype.beforeDraw = function(){
 		}
 		else if(this.selectIndex === 2) {
 			// Quit
-			this.core.changeScene("title");
+			this.parent.notifyQuit();
 		}
 	}
 };
