@@ -15,6 +15,8 @@ util.inherit(SceneExEpigraph, base_scene);
 
 SceneExEpigraph.prototype.init = function() {
 	base_scene.prototype.init.apply(this, arguments);
+
+	this.core.stopBGM();
 };
 
 SceneExEpigraph.prototype.beforeDraw = function() {
