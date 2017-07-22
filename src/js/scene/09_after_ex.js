@@ -23,15 +23,10 @@ util.inherit(SceneAfterEx, base_scene);
 SceneAfterEx.prototype.init = function() {
 	base_scene.prototype.init.apply(this, arguments);
 
-	this.index = 0;
 };
 
 SceneAfterEx.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	if(this.serif.progress === 1 && this.index === 0) {
-		this.index++;
-	}
 };
 
 
@@ -45,11 +40,6 @@ SceneAfterEx.prototype.notifySerifEnd = function() {
 // セリフスクリプト
 SceneAfterEx.prototype.serifScript = function() {
 	return serif_script;
-};
-
-// 背景画像名
-SceneAfterEx.prototype.background = function() {
-	return backgrounds[this.index];
 };
 
 // BGM

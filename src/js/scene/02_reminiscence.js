@@ -27,7 +27,7 @@ SceneReminiscence.prototype.serifScript = function() {
 
 // 背景画像名
 SceneReminiscence.prototype.background = function() {
-	return "shrine_noon";
+	return "reminiscence";
 };
 
 // BGM

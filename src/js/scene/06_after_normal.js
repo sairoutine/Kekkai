@@ -26,11 +26,6 @@ SceneAfterNormal.prototype.serifScript = function() {
 	return serif_script;
 };
 
-// 背景画像名
-SceneAfterNormal.prototype.background = function() {
-	return "shrine_night";
-};
-
 // BGM
 SceneAfterNormal.prototype.bgm = function() {
 	return "mute";

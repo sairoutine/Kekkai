@@ -28,7 +28,7 @@ ScenePrologue.prototype.serifScript = function() {
 
 // 背景画像名
 ScenePrologue.prototype.background = function() {
-	return "shrine_noon";
+	return "shrine_night";
 };
 
 module.exports = ScenePrologue;
