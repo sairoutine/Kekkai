@@ -368,4 +368,12 @@ SceneStage.prototype.getBGImageName = function() {
 	}
 };
 
+SceneStage.prototype.clearStageForDebug = function () {
+	// サブシーンがゲームの操作できるシーンならば
+	if(this.currentSubScene() instanceof SceneStagePlay) {
+		// 御札獲得数を強制的にMAXにする
+		this.reimu_item_num = this.max_item_num - this.yukari_item_num;
+	}
+};
+
 module.exports = SceneStage;

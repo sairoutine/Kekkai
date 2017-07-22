@@ -33,8 +33,6 @@ var SceneMusic = require('./scene/music');
 // 遊び方
 var SceneHowTo = require('./scene/howto');
 
-
-
 var Game = function(canvas) {
 	core.apply(this, arguments);
 };
@@ -80,6 +78,13 @@ Game.prototype.stopBGM = function () {
 	if (CONSTANT.DEBUG.SOUND_OFF) return;
 	return this.audio_loader.stopBGM.apply(this.audio_loader, arguments);
 };
+Game.prototype.clearStageForDebug = function () {
+	// 現在のシーンがステージシーンならば
+	if (this.currentScene() instanceof SceneStage) {
+		this.currentScene().clearStageForDebug();
+	}
+};
+
 Game.prototype.setupDebug = function (dom) {
 	if (!CONSTANT.DEBUG.ON) return;
 
@@ -103,6 +108,11 @@ Game.prototype.setupDebug = function (dom) {
 		game.fullscreen();
 	});
 
+	// Ex ストーリー クリア ボタン
+	this.debug_manager.addMenuButton("現在のステージをクリア", function (game) {
+		game.clearStageForDebug();
+	});
+
 	// ゲームデータ消去ボタン
 	this.debug_manager.addMenuButton("セーブクリア", function (game) {
 		game.save.del();
@@ -118,7 +128,6 @@ Game.prototype.setupDebug = function (dom) {
 		game.save.clearExStageForDebug();
 	});
 };
-
 
 
 
