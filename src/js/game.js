@@ -12,7 +12,7 @@ var SceneTitle        = require('./scene/01_title');
 // 回想シーン画面
 var SceneReminiscence = require('./scene/02_reminiscence');
 // 題字画面
-//var SceneReminiscence = require('./scene/03_logo');
+var SceneLogo         = require('./scene/03_logo');
 // プロローグ画面
 var ScenePrologue     = require('./scene/04_prologue');
 // ステージ画面
@@ -51,6 +51,7 @@ Game.prototype.init = function () {
 	this.addScene("title", new SceneTitle(this));
 	this.addScene("select", new SceneSelect(this));
 	this.addScene("reminiscence", new SceneReminiscence(this));
+	this.addScene("logo", new SceneLogo(this));
 	this.addScene("prologue", new ScenePrologue(this));
 	this.addScene("stage", new SceneStage(this));
 	this.addScene("after_normal", new SceneAfterNormal(this));

@@ -17,7 +17,7 @@ util.inherit(SceneReminiscence, base_scene);
 
 // 立ち絵＆セリフ終了後
 SceneReminiscence.prototype.notifySerifEnd = function() {
-	this.core.changeScene("prologue");
+	this.core.changeScene("logo");
 };
 
 // セリフスクリプト
@@ -34,11 +34,5 @@ SceneReminiscence.prototype.background = function() {
 SceneReminiscence.prototype.bgm = function() {
 	return "mute";
 };
-
-
-
-
-
-
 
 module.exports = SceneReminiscence;
