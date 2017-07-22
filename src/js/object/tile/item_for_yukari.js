@@ -21,7 +21,7 @@ Item.prototype.init = function(x, y) {
 Item.prototype.got = function() {
 	this.is_collision = false;
 
-	this.core.playSound("powerup");
+	this.core.playSound("got_item_ribon");
 
 	// start animation
 	this.start_got_animation_frame_count = this.frame_count;

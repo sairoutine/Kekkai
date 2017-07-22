@@ -74,10 +74,15 @@ AssetsConfig.sounds = {
 		path: "./sound/dead",
 		volume: 0.5,
 	},
-	powerup:    {
-		path: "./sound/powerup",
+	got_item_ohuda: {
+		path: "./sound/got_item_ohuda",
 		volume: 0.8,
 	},
+	got_item_ribon: {
+		path: "./sound/got_item_ribon",
+		volume: 0.8,
+	},
+
 };
 // bgm ファイルはogg と m4a の二種類を用意してください
 AssetsConfig.bgms = {
