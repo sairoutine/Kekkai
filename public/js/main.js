@@ -501,20 +501,24 @@ AssetsConfig.sounds = {
 		path: "./sound/dead",
 		volume: 0.5,
 	},
-	powerup:    {
-		path: "./sound/powerup",
+	got_item_ohuda: {
+		path: "./sound/got_item_ohuda",
 		volume: 0.8,
 	},
+	got_item_ribon: {
+		path: "./sound/got_item_ribon",
+		volume: 0.8,
+	},
+
 };
 // bgm ファイルはogg と m4a の二種類を用意してください
 AssetsConfig.bgms = {
-	stage_a: {
-		path: "./bgm/stage_a",
-		loopStart: 0*60 + 29 + 0.143,
-		loopEnd: 1*60 + 51 + 0.429,
-		title: "春色小径 ～ Colorful Path",
-		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
+	mute: {
+		path: "./bgm/mute",
+		title: "サンプル",
+		message: "サンプルメッセージ",
 	},
+
 	title: {
 		path: "./bgm/title",
 		loopStart: 0*60 + 10 + 0.312,
@@ -522,6 +526,15 @@ AssetsConfig.bgms = {
 		title: "永夜抄 ～ Eastern Night.",
 		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
 	},
+
+	stage_a: {
+		path: "./bgm/stage_a",
+		loopStart: 0*60 + 29 + 0.143,
+		loopEnd: 1*60 + 51 + 0.429,
+		title: "春色小径 ～ Colorful Path",
+		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
+	},
+
 };
 
 
@@ -606,10 +619,10 @@ module.exports = CONSTANT;
 },{"./debug_constant":7}],7:[function(require,module,exports){
 'use strict';
 var DEBUG = {
-	ON: false,
-	SOUND_OFF: true,
+	ON: true,
+	SOUND_OFF: false,
 	START_STAGE_NO: 30,
-	START_SCENE: "howto",
+	START_SCENE: "title",
 };
 
 module.exports = DEBUG;
@@ -623,34 +636,35 @@ var CONSTANT = require('./constant');
 var StorageSave = require('./save');
 
 // ローディング画面
-var SceneLoading = require('./scene/loading');
+var SceneLoading      = require('./scene/00_loading');
 // タイトル画面
-var SceneTitle = require('./scene/title');
-// ステージセレクト画面
-var SceneSelect = require('./scene/select');
+var SceneTitle        = require('./scene/01_title');
 // 回想シーン画面
-var SceneReminiscence = require('./scene/reminiscence');
+var SceneReminiscence = require('./scene/02_reminiscence');
+// 題字画面
+var SceneLogo         = require('./scene/03_logo');
 // プロローグ画面
-var ScenePrologue = require('./scene/prologue');
-var SceneStage = require('./scene/stage');
+var ScenePrologue     = require('./scene/04_prologue');
+// ステージ画面
+var SceneStage        = require('./scene/05_stage');
 // 通常ストーリー クリア後画面
-var SceneAfterNormal = require('./scene/after_normal');
+var SceneAfterNormal  = require('./scene/06_after_normal');
 // Ex エピグラフ画面
-var SceneExEpigraph = require('./scene/ex_epigraph');
+var SceneExEpigraph   = require('./scene/07_ex_epigraph');
 // Ex プロローグ画面
-var SceneExPrologue = require('./scene/ex_prologue');
+var SceneExPrologue   = require('./scene/08_ex_prologue');
 // Exストーリー クリア後画面
-var SceneAfterEx = require('./scene/after_ex');
+var SceneAfterEx      = require('./scene/09_after_ex');
 // スタッフロール
-var SceneStaffroll = require('./scene/staffroll');
+var SceneStaffroll    = require('./scene/10_staffroll');
 // エピローグ
-var SceneEpilogue = require('./scene/epilogue');
+var SceneEpilogue     = require('./scene/11_epilogue');
 // Music Room
-var SceneMusic = require('./scene/music');
+var SceneMusic        = require('./scene/music');
 // 遊び方
-var SceneHowTo = require('./scene/howto');
-
-
+var SceneHowTo        = require('./scene/howto');
+// ステージセレクト画面
+var SceneSelect       = require('./scene/select');
 
 var Game = function(canvas) {
 	core.apply(this, arguments);
@@ -667,6 +681,7 @@ Game.prototype.init = function () {
 	this.addScene("title", new SceneTitle(this));
 	this.addScene("select", new SceneSelect(this));
 	this.addScene("reminiscence", new SceneReminiscence(this));
+	this.addScene("logo", new SceneLogo(this));
 	this.addScene("prologue", new ScenePrologue(this));
 	this.addScene("stage", new SceneStage(this));
 	this.addScene("after_normal", new SceneAfterNormal(this));
@@ -689,10 +704,21 @@ Game.prototype.playBGM = function () {
 	if (CONSTANT.DEBUG.SOUND_OFF) return;
 	return this.audio_loader.playBGM.apply(this.audio_loader, arguments);
 };
+Game.prototype.changeBGM = function () {
+	if (CONSTANT.DEBUG.SOUND_OFF) return;
+	return this.audio_loader.changeBGM.apply(this.audio_loader, arguments);
+};
 Game.prototype.stopBGM = function () {
 	if (CONSTANT.DEBUG.SOUND_OFF) return;
 	return this.audio_loader.stopBGM.apply(this.audio_loader, arguments);
 };
+Game.prototype.clearStageForDebug = function () {
+	// 現在のシーンがステージシーンならば
+	if (this.currentScene() instanceof SceneStage) {
+		this.currentScene().clearStageForDebug();
+	}
+};
+
 Game.prototype.setupDebug = function (dom) {
 	if (!CONSTANT.DEBUG.ON) return;
 
@@ -716,6 +742,11 @@ Game.prototype.setupDebug = function (dom) {
 		game.fullscreen();
 	});
 
+	// Ex ストーリー クリア ボタン
+	this.debug_manager.addMenuButton("現在のステージをクリア", function (game) {
+		game.clearStageForDebug();
+	});
+
 	// ゲームデータ消去ボタン
 	this.debug_manager.addMenuButton("セーブクリア", function (game) {
 		game.save.del();
@@ -736,10 +767,9 @@ Game.prototype.setupDebug = function (dom) {
 
 
 
-
 module.exports = Game;
 
-},{"./constant":6,"./hakurei":9,"./save":168,"./scene/after_ex":169,"./scene/after_normal":170,"./scene/epilogue":171,"./scene/ex_epigraph":172,"./scene/ex_prologue":173,"./scene/howto":174,"./scene/loading":175,"./scene/music":216,"./scene/prologue":217,"./scene/reminiscence":218,"./scene/select":219,"./scene/staffroll":221,"./scene/stage":222,"./scene/title":230}],9:[function(require,module,exports){
+},{"./constant":6,"./hakurei":9,"./save":168,"./scene/00_loading":169,"./scene/01_title":170,"./scene/02_reminiscence":171,"./scene/03_logo":172,"./scene/04_prologue":173,"./scene/05_stage":174,"./scene/06_after_normal":175,"./scene/07_ex_epigraph":176,"./scene/08_ex_prologue":177,"./scene/09_after_ex":178,"./scene/10_staffroll":179,"./scene/11_epilogue":180,"./scene/howto":181,"./scene/music":222,"./scene/select":223}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -767,10 +797,11 @@ var AudioLoader = function() {
 		this.audio_context.createGain = this.audio_context.createGain || this.audio_context.createGainNode;
 	}
 
+	// playing bgm name
+	this._playing_bgm_name = null;
+
 	// playing AudioBufferSourceNode instance
 	this.audio_source = null;
-
-
 };
 AudioLoader.prototype.init = function() {
 	// TODO: cancel already loading bgms and sounds
@@ -784,6 +815,10 @@ AudioLoader.prototype.init = function() {
 	this.id = 0;
 
 	this.soundflag = 0x00;
+
+	this._playing_bgm_name = null;
+
+	this.audio_source = null;
 };
 
 AudioLoader.prototype.loadSound = function(name, path, volume) {
@@ -877,19 +912,32 @@ AudioLoader.prototype.playBGM = function(name) {
 	// stop playing bgm
 	self.stopBGM();
 
+	self._playing_bgm_name = name;
 	self.audio_source = self._createSourceNode(name);
 	self.audio_source.start(0);
+};
+
+// play if the bgm is not playing now
+AudioLoader.prototype.changeBGM = function(name) {
+	if (this._playing_bgm_name !== name) {
+		this.playBGM(name);
+	}
 };
 AudioLoader.prototype.stopBGM = function() {
 	var self = this;
 	if(self.isPlayingBGM()) {
 		self.audio_source.stop(0);
 		self.audio_source = null;
+		self._playing_bgm_name = null;
 	}
 };
 AudioLoader.prototype.isPlayingBGM = function() {
 	return this.audio_source ? true : false;
 };
+AudioLoader.prototype.currentPlayingBGM = function() {
+	return this._playing_bgm_name;
+};
+
 
 // create AudioBufferSourceNode instance
 AudioLoader.prototype._createSourceNode = function(name) {
@@ -12476,7 +12524,7 @@ Item.prototype.init = function(x, y) {
 Item.prototype.got = function() {
 	this.is_collision = false;
 
-	this.core.playSound("powerup");
+	this.core.playSound("got_item_ohuda");
 
 	// start animation
 	this.start_got_animation_frame_count = this.frame_count;
@@ -12556,7 +12604,7 @@ Item.prototype.init = function(x, y) {
 Item.prototype.got = function() {
 	this.is_collision = false;
 
-	this.core.playSound("powerup");
+	this.core.playSound("got_item_ribon");
 
 	// start animation
 	this.start_got_animation_frame_count = this.frame_count;
@@ -13827,410 +13875,6 @@ module.exports = StorageSave;
 },{"./constant":6,"./hakurei":9}],169:[function(require,module,exports){
 'use strict';
 
-/* Exストーリー クリア後画面 */
-
-var serif_script = require("../logic/serif/after_ex");
-
-var backgrounds = [
-	"shrine_night",
-	"shrine_noon",
-	"shrine_night",
-];
-
-var util = require('../hakurei').util;
-var CONSTANT = require('../constant');
-var base_scene = require('./serif_base');
-
-var SceneAfterEx = function(game) {
-	base_scene.apply(this, arguments);
-};
-
-util.inherit(SceneAfterEx, base_scene);
-
-SceneAfterEx.prototype.init = function() {
-	base_scene.prototype.init.apply(this, arguments);
-
-	this.index = 0;
-};
-
-SceneAfterEx.prototype.beforeDraw = function() {
-	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	if(this.serif.progress === 1 && this.index === 0) {
-		this.index++;
-	}
-};
-
-
-
-
-// 立ち絵＆セリフ終了後
-SceneAfterEx.prototype.notifySerifEnd = function() {
-	this.core.changeScene("staffroll");
-};
-
-// セリフスクリプト
-SceneAfterEx.prototype.serifScript = function() {
-	return serif_script;
-};
-
-// 背景画像名
-SceneAfterEx.prototype.background = function() {
-	return backgrounds[this.index];
-};
-module.exports = SceneAfterEx;
-
-},{"../constant":6,"../hakurei":9,"../logic/serif/after_ex":48,"./serif_base":220}],170:[function(require,module,exports){
-'use strict';
-
-/* 通常ストーリー クリア後画面 */
-
-var serif_script = require("../logic/serif/after_normal");
-
-
-var util = require('../hakurei').util;
-var CONSTANT = require('../constant');
-var base_scene = require('./serif_base');
-
-var SceneAfterNormal = function(game) {
-	base_scene.apply(this, arguments);
-};
-
-util.inherit(SceneAfterNormal, base_scene);
-
-// 立ち絵＆セリフ終了後
-SceneAfterNormal.prototype.notifySerifEnd = function() {
-	// タイトル画面へ
-	this.core.changeScene("title");
-};
-
-// セリフスクリプト
-SceneAfterNormal.prototype.serifScript = function() {
-	return serif_script;
-};
-
-// 背景画像名
-SceneAfterNormal.prototype.background = function() {
-	return "shrine_night";
-};
-module.exports = SceneAfterNormal;
-
-},{"../constant":6,"../hakurei":9,"../logic/serif/after_normal":49,"./serif_base":220}],171:[function(require,module,exports){
-'use strict';
-
-/* エピローグ画面 */
-
-var serif_script = require("../logic/serif/epilogue");
-
-
-var util = require('../hakurei').util;
-var CONSTANT = require('../constant');
-var base_scene = require('./serif_base');
-
-var ScenePrologue = function(game) {
-	base_scene.apply(this, arguments);
-};
-
-util.inherit(ScenePrologue, base_scene);
-
-// 立ち絵＆セリフ終了後
-ScenePrologue.prototype.notifySerifEnd = function() {
-	this.core.changeScene("title");
-};
-
-// セリフスクリプト
-ScenePrologue.prototype.serifScript = function() {
-	return serif_script;
-};
-
-// 背景画像名
-ScenePrologue.prototype.background = function() {
-	return "shrine_noon";
-};
-
-module.exports = ScenePrologue;
-
-},{"../constant":6,"../hakurei":9,"../logic/serif/epilogue":50,"./serif_base":220}],172:[function(require,module,exports){
-'use strict';
-
-/* Ex エピグラフ画面 */
-
-// メッセージ表示の遷移時間
-var TRANSITION_COUNT = 240;
-
-var base_scene = require('../hakurei').scene.base;
-var util = require('../hakurei').util;
-
-var SceneExEpigraph = function(core) {
-	base_scene.apply(this, arguments);
-};
-util.inherit(SceneExEpigraph, base_scene);
-
-SceneExEpigraph.prototype.init = function() {
-	base_scene.prototype.init.apply(this, arguments);
-};
-
-SceneExEpigraph.prototype.beforeDraw = function() {
-	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	// メッセージ表示終了
-	if(this.isTransitionEnd()) {
-		this.core.changeScene("ex_prologue");
-	}
-};
-SceneExEpigraph.prototype.draw = function(){
-	var ctx = this.core.ctx;
-	// 背景
-	ctx.save();
-	ctx.fillStyle = 'black';
-	ctx.fillRect(0, 0, this.core.width, this.core.height);
-	ctx.restore();
-
-	// 文字の透過度
-	var alpha = 0.0;
-	if(this.frame_count < TRANSITION_COUNT/3) {
-		alpha = this.frame_count / (TRANSITION_COUNT/3);
-	}
-	else if (TRANSITION_COUNT/3 <= this.frame_count && this.frame_count < TRANSITION_COUNT*2/3) {
-		alpha = 1.0;
-	}
-	else if (TRANSITION_COUNT*2/3 <= this.frame_count && this.frame_count < TRANSITION_COUNT) {
-		alpha = (TRANSITION_COUNT - this.frame_count) / (TRANSITION_COUNT/3);
-	}
-
-	// 文字
-	var message1 = "幻想郷は全てを受け入れるのよ。";
-	var message2 = "それはそれは残酷な話ですわ。";
-
-	var x = this.core.width/2 - 250;
-
-	ctx.save();
-	ctx.globalAlpha = alpha;
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.textAlign = 'left';
-	ctx.font = "30px 'Migu'";
-	ctx.fillText(message1, x, this.core.height/2);
-	ctx.fillText(message2, x, this.core.height/2 + 35);
-	ctx.restore();
-
-};
-
-SceneExEpigraph.prototype.isTransitionEnd = function(){
-	return TRANSITION_COUNT < this.frame_count;
-};
-
-module.exports = SceneExEpigraph;
-
-},{"../hakurei":9}],173:[function(require,module,exports){
-'use strict';
-
-/* Ex プロローグ画面 */
-
-var serif_script = require("../logic/serif/ex_prologue");
-
-
-var util = require('../hakurei').util;
-var CONSTANT = require('../constant');
-var base_scene = require('./serif_base');
-
-var ScenePrologue = function(game) {
-	base_scene.apply(this, arguments);
-};
-
-util.inherit(ScenePrologue, base_scene);
-
-// 立ち絵＆セリフ終了後
-ScenePrologue.prototype.notifySerifEnd = function() {
-	var stage_no = CONSTANT.EX_STORY_START_STAGE_NO;
-	this.core.changeScene("stage", stage_no, "talk", true);
-};
-
-// セリフスクリプト
-ScenePrologue.prototype.serifScript = function() {
-	return serif_script;
-};
-
-// 背景画像名
-ScenePrologue.prototype.background = function() {
-	return "shrine_noon";
-};
-
-module.exports = ScenePrologue;
-
-},{"../constant":6,"../hakurei":9,"../logic/serif/ex_prologue":51,"./serif_base":220}],174:[function(require,module,exports){
-'use strict';
-
-/* 遊び方 */
-
-var base_scene = require('../hakurei').scene.base;
-var util = require('../hakurei').util;
-var H_CONSTANT = require('../hakurei').constant;
-var CONSTANT = require('../constant');
-
-var HOWTOS = [
-	{
-		image: "thumbnail15",
-		messages: [
-			"主人公は霊夢",
-		],
-	},
-	{
-		image: "thumbnail15",
-		messages: [
-			"霊夢が動くと反対側の紫も動く",
-		],
-	},
-	{
-		image: "thumbnail15",
-		messages: [
-			"紫は壁や敵を無視できる",
-		],
-	},
-	{
-		image: "thumbnail15",
-		messages: [
-			"御札は霊夢しか獲得できない",
-		],
-	},
-	{
-		image: "thumbnail15",
-		messages: [
-			"リボンは紫しか獲得できない",
-		],
-	},
-	{
-		image: "thumbnail15",
-		messages: [
-			"Xキーで霊夢と紫の位置を",
-			"入れ替えて進もう",
-		],
-	},
-	{
-		image: "thumbnail15",
-		messages: [
-			"入れ替え回数には上限があるよ",
-		],
-	},
-	{
-		image: "thumbnail15",
-		messages: [
-			"ステージのアイテムを",
-			"すべて集めるとクリア！",
-		],
-	},
-
-];
-
-
-
-var SceneHowTo = function(core) {
-	base_scene.apply(this, arguments);
-};
-util.inherit(SceneHowTo, base_scene);
-
-SceneHowTo.prototype.init = function(){
-	base_scene.prototype.init.apply(this, arguments);
-	this.index = 0;
-};
-
-
-SceneHowTo.prototype.beforeDraw = function(){
-	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	// カーソルを下移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_RIGHT)) {
-		this.index++;
-
-		if(this.index >= HOWTOS.length) {
-			this.index = HOWTOS.length - 1;
-			// 終了
-			this.core.changeScene("title");
-		}
-	}
-	// カーソルを上移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_LEFT)) {
-		this.index--;
-
-		if(this.index < 0) {
-			this.index = 0;
-		}
-	}
-
-};
-
-// 画面更新
-SceneHowTo.prototype.draw = function(){
-	this.core.clearCanvas();
-	var ctx = this.core.ctx;
-
-	ctx.save();
-
-	var title_bg = this.core.image_loader.getImage('title_bg');
-	// 背景画像表示
-	ctx.drawImage(title_bg,
-					0,
-					0,
-					title_bg.width,
-					title_bg.height,
-					0,
-					0,
-					this.core.width,
-					this.core.height);
-
-	// 背景をちょっと暗めに表示
-	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.5; // 半透明
-	ctx.fillRect(0, 0, this.core.width, this.core.height);
-
-	ctx.restore();
-
-	ctx.font = "36px 'Migu'";
-	ctx.textAlign = 'left';
-
-	// メッセージ
-	this._drawText(HOWTOS[this.index].messages[0], 100, 500);
-	if (HOWTOS[this.index].messages[1]) {
-		this._drawText(HOWTOS[this.index].messages[1], 100, 540);
-	}
-
-	// 矢印
-	if (this.index !== 0) {
-		this._drawText("◀", 10, 250);
-	}
-	this._drawText("▶", this.core.width - 50, 250);
-
-	// 画像
-	var image = this.core.image_loader.getImage(HOWTOS[this.index].image);
-
-	// 背景画像表示
-	ctx.drawImage(image,
-					0,
-					0,
-					image.width,
-					image.height,
-					80,
-					20,
-					image.width*0.8,
-					image.height*0.8
-	);
-
-};
-
-SceneHowTo.prototype._drawText = function(text, x, y){
-	var ctx = this.core.ctx;
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.lineWidth = 4.0;
-	ctx.strokeText(text, x, y);
-
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.fillText(text, x, y);
-};
-
-module.exports = SceneHowTo;
-
-},{"../constant":6,"../hakurei":9}],175:[function(require,module,exports){
-'use strict';
-
 // ローディングシーン
 
 var base_scene = require('../hakurei').scene.base;
@@ -14332,1851 +13976,119 @@ SceneLoading.prototype.progress = function(){
 
 module.exports = SceneLoading;
 
-},{"../assets_config":5,"../constant":6,"../hakurei":9}],176:[function(require,module,exports){
+},{"../assets_config":5,"../constant":6,"../hakurei":9}],170:[function(require,module,exports){
 'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,7,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,N,0,0,0,0,0,0],
-	[0,A,B,B,B,B,B,C,6,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
-	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0],
-	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0],
-	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,0,A,B,C,0,0],
-	[0,0,0,0,A,C,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,A,B,C,0,0],
-	[0,0,0,0,A,C,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,A,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],177:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,Y,Y,Y,0,E,0,0,0,0,0,0,0,E,0,0,I,I,I,0,0,0,0],
-	[0,0,0,0,0,A,B,L,B,B,B,B,B,C,0,0,0,0,0,A,B,L,B,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,E,0,L,I,0,0,0,0,0,0,0,0,0,0,E,0,L,Y,0,0,0,0,0,0,0],
-	[0,0,0,0,A,B,B,B,B,L,B,C,0,0,0,0,0,0,A,B,B,B,B,L,B,C,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
-	[0,0,0,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
-	[0,0,0,0,0,0,Y,Y,0,L,0,0,0,0,0,0,0,0,I,I,0,0,0,L,0,0,0,0,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 1, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],178:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,I,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0],
-	[0,0,0,0,0,A,C,L,A,C,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,A,B,B,B,B,C,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,Y,Y,0,E,0,0,0,E,0,0,0,I,I,0,0,0,0,0,0,L,0,0,Y,Y,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 3, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],179:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,I,0,I,0,I,0,I,0,0,0,0,0,0,0,0,0,E,0,0],
-	[0,A,C,L,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0],
-	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,C,0,0],
-	[0,0,0,A,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,A,B,L,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,E,0,0,0,0,0,0,0,0,I,0,I,0,I,0,I,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 1, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],180:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,I,0,0,0],
-	[0,0,A,C,L,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,I,0,E,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0],
-	[0,0,0,E,L,0,0,0,I,0,0,0,0,0,I,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],	
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],181:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,I,I,I,0,0,E,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,K,K,K,K,K,K,K,K,K,K,B,B,B,B,B,B,B,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,P,0,0,0,0,0,0,0,0,0,0,0,0,B,B,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,N,0,I,I,I,0,0,0,0,0,0,0,0,B,B,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,K,K,B,B,B,B,B,B,K,K,B,B,B,B,B,B,B,B,C,0],
-	[0,0,A,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],182:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,E,0,0,E,0,0,E,0,0,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,Y,Y,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,I,I,0,0,0,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,I,I,I,I,0,0,0,L,0,0,0,0,0,0,0,0,Y,Y,0,E,0,0,0,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],183:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,A,B,C,0,A,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,C,0,A,B,C,0,0],
-	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
-	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
-	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
-	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,E,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
-	[0,0,0,B,0,0,0,B,B,0,A,B,B,B,B,B,B,B,C,L,0,B,B,0,0,0,B,0,0,0],
-	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
-	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
-	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,P,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
-	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
-	[0,0,0,B,0,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,0,B,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],184:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,E,0,0,0,I,I,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,I,I,0,0,0,0,0],
-	[0,0,A,B,B,B,B,B,B,C,0,B,L,A,B,B,C,L,B,0,A,B,B,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,Y,Y,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],185:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,Y,Y,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,E,0,0,0,0,0,0,0,L,0,0,0,0,0,0,Y,Y,Y,Y,0,0,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,L,B,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,Y,0,0,0,0,A,B,B,B,C,L,0,0,0,0,E,0,0,0,P,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,A,B,B,B,B,B,C,L,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],186:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,I,I,I,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,B,L,K,K,K,K,K,K,K,K,K,K,L,B,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,B,L,0,0,0,0,0,0,0,0,0,0,L,B,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,E,I,B,L,0,0,0,0,I,I,0,0,E,0,L,B,I,E,0,0,0,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 1, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],187:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,E,0,0,0,0,I,0,I,0,0,I,0,I,0,0,0,0,E,0,0,0,0,0,0],
-	[0,0,0,A,L,A,B,B,B,B,L,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,L,0,I,0,0,0,0,I,0,L,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,I,L,I,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0,I,0,I,0,0,0],
-	[0,0,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,L,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,K,K,C,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,0,0,0,E,0,0,0,0,0,I,0,I,I,0,I,0,0,0,0,0,E,0,L,0,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 1, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],188:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,Y,0,I,0,0,Y,0,I,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,A,L,C,0,0,A,L,C,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,I,I,I,I,0,E,L,0,0,0,0,L,E,0,I,I,I,I,0,0,0,0,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,K,K,B,B,B,B,B,B,B,C,L,A,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,I,0,0,0,0,0,0,0,E,I,0,0,0,0,I,E,0,0,0,0,0,L,0,I,0,0,0],
-	[0,0,A,B,B,B,B,L,B,B,B,B,B,B,K,K,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[B,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,B],
-	[B,0,0,0,0,0,0,L,0,0,0,0,0,0,I,I,I,I,0,0,0,0,0,0,0,0,0,0,0,B],
-	[B,K,K,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,K,K,B],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],189:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0],
-	[0,0,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0],
-	[0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,X,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,A,L,C,0,0,0,A,L,A,B,B,B,B,C,L,C,0,0,0,A,L,C,0,0,0,0],
-	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,E,E,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0],
-	[0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 5, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],190:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,B,K,K,K,K,K,K,K,B,B,B,B,B,B,K,K,K,L,K,K,K,B,0,0,0,0],
-	[B,0,Y,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,I,0,B],
-	[B,K,K,K,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,K,K,K,B],
-	[B,0,0,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,B],
-	[B,0,0,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,B],
-	[B,0,F,0,B,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,F,0,B],
-	[0,0,0,0,B,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,0],
-	[B,0,0,0,B,K,K,K,L,K,K,K,B,B,B,B,B,B,K,K,K,K,K,K,K,B,0,0,0,B],
-	[B,0,I,0,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,0,Y,0,B],
-	[B,K,K,K,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,K,K,K,B],
-	[B,0,0,0,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,0,0,0,B],
-	[0,0,0,0,B,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,B,0,0,0,0],
-	[0,0,0,0,B,0,0,0,L,0,0,0,E,0,I,I,0,0,0,0,0,0,0,0,0,B,0,0,0,0],
-	[0,0,0,0,A,K,K,K,K,K,K,K,A,B,B,B,B,C,K,K,K,K,K,K,K,C,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 3, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],191:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,I,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,L,A,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,I,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,I,0,I,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,L,A,B,B,B,B,C,L,C,0],
-	[0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0],
-	[0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,Y,0,Y,0,0,0,0,Y,0,Y,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,F,0,0,A,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,I,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,A,B,C,0,0,0,0,A,B,B,B,C,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,B,B,C,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 5, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],192:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
-	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
-	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
-	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
-	[A,0,0,0,F,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,F,0,0,0,C],
-	[A,0,0,0,0,0,0,0,0,0,0,0,A,K,K,K,K,C,0,0,0,0,0,0,0,0,0,0,0,C],
-	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
-	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
-	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
-	[A,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,C],
-	[A,P,L,A,C,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,A,C,L,0,C],
-	[A,0,L,A,C,0,0,0,0,0,0,0,L,A,B,B,C,L,0,0,0,0,0,0,0,A,C,L,0,C],
-	[A,C,L,A,C,K,K,K,K,K,K,K,A,B,B,B,B,C,K,K,K,K,K,K,K,A,C,L,A,C],
-	[A,0,L,A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,A,C,L,0,C],
-	[A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C],
-	[A,0,L,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,L,0,C],
-	[A,0,L,0,0,0,0,0,B,0,0,0,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0,L,0,C],
-	[A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C],
-	[A,0,L,0,0,0,0,0,E,0,E,0,0,0,X,0,0,0,0,0,E,0,E,0,0,0,0,L,0,C],
-	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 3, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],193:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,B,0,0,I,I,E,0,0,0,0,0,0,0,0,0,0,I,I,0,0,B,0,0,0,0,0],
-	[0,0,0,0,B,K,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,K,B,0,0,0,0,0],
-	[0,0,0,0,B,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,B,0,I,Y,0,0,0,0,0,0,E,0,0,L,0,0,0,0,Y,0,E,0,0,0,0,I,0,B,0],
-	[0,B,K,B,B,B,L,B,B,B,B,B,B,B,B,B,0,B,B,B,B,B,B,B,L,B,B,K,B,0],
-	[0,B,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
-	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,L,0,0,0,0,0],
-	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,B,0,I,0,0,L,0,I,0,B,0],
-	[0,B,0,I,0,0,L,0,0,I,0,B,0,0,0,0,0,0,0,B,K,B,B,B,B,B,B,K,B,0],
-	[0,B,K,A,B,B,B,B,B,C,K,B,0,0,0,0,0,0,0,B,0,0,0,0,0,0,0,0,B,0],
-	[0,B,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 3, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],194:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,I,0,0,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,I,0,0],
-	[0,B,K,K,K,K,A,L,C,K,K,K,K,K,C,0,A,K,K,K,K,A,L,C,K,K,K,B,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,I,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,B,K,0,0,0,L,0,0,0,0,0,0,I,0,I,E,0,0,E,0,L,0,0,0,0,0,I,0],
-	[0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,K,B,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,I,0,0,0,0,0,0,E,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0],
-	[0,B,0,0,0,A,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,0,B,0,0],
-	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
-	[0,0,0,0,0,0,L,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
-	[0,0,I,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,I,0],
-	[0,0,B,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,A,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],195:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,K,B,K,L,0,A,B,C,0,A,B,B,C,0,A,B,C,L,I,K,B,K,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,I,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,E,0,I,0,0,0,C,L,I,0,B,0,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,C,K,K,K,K,K,K,K,K,A,C,L,0,0,B,0,I,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,I,0,B,0,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,I,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,I,0,0,E,0,0,C,0,0,0,B,0,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,C,K,K,K,K,K,K,K,K,A,C,0,I,0,B,0,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,I,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,C,0,0,0,0,0,0,0,0,A,C,0,0,0,0,P,0,0,0,0],
-	[0,0,0,L,0,B,0,L,0,A,C,0,0,0,I,0,I,0,0,A,C,0,0,0,0,0,0,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 6, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],196:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,L,A,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,C,0,0,0,0],
-	[0,0,0,L,A,C,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,A,C,0,0,0,0],
-	[0,0,0,L,A,B,C,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,A,B,C,0,0,0,0],
-	[0,0,0,L,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0,0,0],
-	[0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,0,0,0],
-	[0,0,0,L,A,0,0,Y,0,0,0,0,0,0,I,0,0,I,0,0,0,0,I,0,0,C,L,0,0,0],
-	[0,0,0,L,A,B,B,B,B,K,B,B,B,B,B,B,B,B,B,B,K,B,B,B,B,C,L,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,A,K,K,B,B,K,K,C,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,A,0,0,B,B,0,0,C,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,A,0,0,B,B,0,0,C,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,D,D,B,B,D,D,B,B,B,B,B,B,B,B,B,B,C,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],197:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,L,A,0,I,0,I,0,0,0,A,C,0,0,0,I,0,I,0,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,K,K,K,K,K,K,K,A,C,K,K,K,K,K,K,K,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,0,I,0,0,E,0,I,0,0,I,0,E,0,0,I,0,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,0,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,L,0,0,0,0,0],
-	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,L,0,0,0,0,0],
-	[0,0,0,A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
-	[0,0,0,A,0,L,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
-	[0,0,0,A,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 5, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],198:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,Y,0,0,0,0,0,0,I,I,I,0,0,0,E,0,0,0,0,0,0,I,0,0,0,0,0],
-	[0,0,0,A,B,C,0,0,A,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,L,0,0,0,E,0,0,0,I,I,I,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,I,0,L,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0,0,0,0,0],
-	[0,0,A,B,B,B,C,K,K,K,K,K,K,K,K,K,A,L,B,B,B,B,B,B,C,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],199:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,A,C],
-	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
-	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
-	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
-	[A,C,0,0,0,L,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
-	[A,C,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,A,C],
-	[A,C,0,0,0,L,0,0,0,0,0,A,Y,0,0,0,0,Y,C,0,0,0,0,0,I,0,0,0,A,C],
-	[A,C,0,0,0,L,0,0,0,0,0,0,A,Y,0,0,Y,C,0,0,0,0,0,0,L,0,0,0,A,C],
-	[A,C,0,0,0,Y,0,0,0,0,0,0,0,A,K,K,C,0,0,0,0,0,0,0,L,0,0,0,A,C],
-	[A,C,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
-	[A,C,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
-	[A,C,0,0,0,L,0,0,0,A,0,0,0,0,I,I,0,0,0,0,C,0,0,0,Y,0,0,0,A,C],
-	[A,C,0,0,0,L,0,0,0,A,K,K,K,K,K,K,K,K,K,K,C,0,0,0,Y,0,0,0,A,C],
-	[A,C,0,0,0,L,0,0,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,L,0,0,0,A,C],
-	[A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
-	[A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
-	[A,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,C],
-	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
-	[A,C,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
-	[A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 6, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],200:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,I,E,E,0,0,L,0,I,E,E,0,0,L,0,I,E,E,0,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,P,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,A,B,C,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,I,0,0,0,0,L,0,0,0,0,0,0,L,0,I,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,L,F,I,0,0,0,0,A,B,C,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 6, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],201:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,I,0,I,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,I,0,I,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
-	[0,0,0,A,0,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,C,0,0,0,0,0,0,0],
-	[0,0,0,P,0,0,0,0,0,0,F,0,0,0,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,A,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,L,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
-	[0,0,0,E,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,L,E,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 5, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],202:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,F,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,F,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,F,0,I,0,L,A,B,B,C,L,0,I,0,F,0,0,0,0,0,0,0,0],
-	[0,0,P,0,F,0,F,0,L,A,B,C,L,0,0,0,0,L,A,B,C,L,0,F,0,F,0,0,0,0],
-	[0,0,0,0,L,A,L,C,L,0,0,0,L,0,0,0,0,L,0,0,0,L,A,L,C,L,0,0,0,0],
-	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
-	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,I,0,0],
-	[0,A,B,C,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,A,B,C,0],
-	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
-	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
-	[0,0,0,0,L,A,L,C,L,0,I,0,L,0,0,0,0,L,0,I,0,L,A,L,C,L,0,0,0,0],
-	[0,0,0,0,F,0,F,0,L,A,B,C,L,0,0,0,0,L,A,B,C,L,0,F,0,F,0,0,0,0],
-	[0,0,0,0,0,0,0,0,F,0,0,0,L,A,B,B,C,L,0,0,0,F,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,F,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,F,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],203:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,P,0,0,0,0,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
-	[0,0,A,B,B,L,C,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
-	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,Y,0,I,0,0],
-	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,A,L,C,0,0],
-	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,0,L,0,0,0],
-	[0,0,0,0,0,L,0,A,0,0,0,Y,Y,Y,0,0,I,I,I,0,0,0,0,C,0,0,L,0,0,0],
-	[0,0,0,0,0,L,0,A,C,K,K,K,K,K,K,K,K,K,K,K,K,K,A,C,0,0,L,0,0,0],
-	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,0,0,0,L,0,0,0,0,0,0,I,I,0,0,I,I,0,0,0,0,0,0,0,0,L,0,0,0],
-	[0,0,A,B,B,B,B,B,C,K,K,K,K,K,0,0,K,K,K,K,K,A,B,B,B,B,B,C,0,0],
-	[0,0,A,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
-	[0,0,A,0,0,I,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
-	[0,0,A,0,0,I,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
-	[0,0,A,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,I,0,0,C,0,0],
-	[0,0,A,K,K,K,K,K,C,0,0,0,0,0,F,F,0,0,0,0,0,A,K,K,K,K,K,C,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 5, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],204:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,K,K,K,K,K,K,K,A,C,0,0],
-	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,A,C,0,0],
-	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,A,C,0,0],
-	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
-	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
-	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
-	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,0,0,0,I,I,I,I,0,0,A,C,0,0],
-	[0,0,A,C,E,E,L,L,L,L,0,0,0,0,0,0,0,0,E,E,0,0,0,0,0,0,A,C,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,A,B,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],205:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,C,0],
-	[0,A,C,0,0,0,0,0,0,0,0,0,A,C,0,0,A,C,0,0,0,0,0,0,0,0,0,A,C,0],
-	[0,A,C,0,0,0,I,I,I,0,0,0,A,C,0,0,A,C,0,0,0,Y,Y,Y,0,0,0,A,C,0],
-	[0,0,A,K,L,K,K,K,K,K,K,K,C,0,0,0,0,A,K,K,K,K,K,K,K,L,K,C,0,0],
-	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
-	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
-	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
-	[0,0,A,E,L,0,I,0,I,0,0,0,C,0,0,0,0,A,0,0,0,I,0,I,0,L,0,C,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0],
-	[0,0,A,0,0,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,0,0,C,0,0],
-	[0,0,A,X,0,0,0,0,0,0,0,E,C,0,0,0,0,A,X,0,0,0,0,0,0,0,E,C,0,0],
-	[0,0,A,K,K,K,K,L,K,K,K,K,C,0,0,0,0,A,K,K,K,K,L,K,K,K,K,C,0,0],
-	[0,0,A,0,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
-	[0,0,A,0,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
-	[0,0,A,P,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
-	[0,0,A,0,Y,Y,0,L,0,Y,Y,0,C,0,0,0,0,A,0,I,I,0,L,0,I,I,0,C,0,0],
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,C,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],206:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,I,I,0,0,0,0,I,E,0,0,0,I,0,0,0,0,I,I,0,0,0,0,0,0],
-	[0,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,L,K,K,K,K,K,K,K,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,F,0,0,L,I,I,E,E,I,I,L,0,0,F,0,0,0,0,0,0,0,0],
-	[0,0,0,A,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,C,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,F,0,0,0,0,F,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,F,0,0,0,F,0,F,0,0,F,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[I,I,I,0,0,0,F,L,F,0,0,0,0,0,0,P,0,0,0,0,0,F,L,F,0,0,0,I,I,I],
-	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 1, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],207:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,A,C,F,A,C,0,0,0,0,0,A,C,F,A,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,L,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,I,0,0,Y,0,L,0,Y,0,0,I,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,I,0,0,A,B,L,B,C,0,0,I,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,X,0,0,0,0,L,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,L,0,0,0,A,B,C,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,P,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,X,0,0,0,0,X,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],208:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,A,B,B,B,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,I,I,I,I,I,I,I,I,I,I,I,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,I,I,I,I,I,I,I,I,I,I,I,E,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,E,0,I,I,I,X,I,I,I,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,Y,0,0,E,0,E,0,E,0,Y,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,A,C,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 1, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],209:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,L,0,0,A,B,B,C,0,0,L,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,Y,Y,Y,0,L,0,0,0,0,0,0,0,0,L,0,Y,Y,Y,0,0,0,0,0,0],
-	[0,0,0,A,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,I,I,I,E,E,E,E,E,E,E,E,E,E,E,E,I,I,I,0,0,0,0,0,0],
-	[0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],210:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,E,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,E,0,0,0,0],
-	[0,0,A,B,B,B,B,L,C,0,0,0,0,0,0,0,0,0,0,0,0,A,L,B,B,B,B,C,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,X,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,K,K,K,A,B,B,C,K,K,K,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,E,L,Y,Y,0,0,0,0,0,0,0,0,0,0,Y,Y,L,E,0,0,0,0,0,0],
-	[0,A,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,C,0],
-	[0,0,0,0,0,0,0,0,0,C,Y,0,Y,0,0,0,0,Y,0,Y,A,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,A,B,L,C,0,0,0,0,A,L,B,C,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,X,0,0,0,L,0,0,0,0,0,0,L,0,0,0,X,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 3, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],211:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,B,C,0,0,0,A,B,B,C,0,0,0,A,B,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,0,0,0,0],
-	[0,0,0,0,A,B,B,C,0,A,B,B,B,C,0,0,A,B,B,B,C,0,A,B,B,C,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 3, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],212:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,I,X,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
-	[0,0,0,A,B,C,0,0,0,0,0,0,E,0,0,I,I,I,0,0,E,0,0,0,A,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,L,B,B,B,C,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,A,K,K,K,K,K,K,A,B,L,B,B,C,K,K,K,K,K,K,C,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,I,X,I,0,0,0,0,0,A,B,B,B,B,B,C,0,0,0,0,0,0,I,X,I,0,0,0],
-	[0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 3, // 位置移動上限回数
-	is_vertical: true, // 交代が垂直かどうか
-};
-
-},{}],213:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,Y,E,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,A,B,B,B,B,C,L,L,A,B,B,B,B,C,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,Y,L,L,Y,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,A,C,L,A,B,B,C,L,A,C,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,I,I,I,0,0,0,L,0,0,0,0,L,0,0,0,I,I,I,0,0,0,0,0,0],
-	[0,0,A,K,K,K,A,B,C,0,0,0,L,0,0,0,P,L,0,0,0,A,B,C,K,K,K,C,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,A,C,L,L,A,C,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,I,0,0,0,0,0,0,0,0,0,0,0,Y,L,L,Y,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,A,L,A,B,B,B,B,C,L,C,0,0,0,0,0,0,0,0,B,0],
-	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,E,0,0,L,0,Y,Y,Y,Y,0,L,0,0,0,0,0,0,0,0,0,I,0],
-	[0,B,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],214:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,A,L,A,C,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,A,B,B,C,0],
-	[0,0,L,0,A,B,C,0,0,0,0,0,0,0,F,F,0,0,0,0,0,0,0,A,B,C,0,0,0,0],
-	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,L,0,0,0,0,Y,Y,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,L,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,Y,Y,Y,0,0,0,0,L,0,0],
-	[0,0,0,0,0,0,A,B,B,B,B,C,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
-	[0,0,L,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,L,0,0,0,0,0,0,0,0,0,E,E,E,E,E,E,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 4, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],215:[function(require,module,exports){
-'use strict';
-var A = 11;
-var B = 12;
-var C = 13;
-var D = 10;
-var E = 8;
-var F = 16;
-var I = 9;
-var L = 6;
-var N = -1;
-var P = 7;
-var K = 5;
-var Y = 14;
-var X = 15;
-
-var map = [
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,I,0,0,0,0,0,0,A,C,0,0,0,0,X,0,0,0,I,0,0,X,0,0],
-	[0,A,C,0,0,A,B,B,B,C,0,0,0,0,A,C,0,0,0,0,A,C,0,A,B,B,B,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,X,0,0,X,0,0,0,A,C,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,A,C,0,A,C,0,0,A,C,0,0,A,B,B,B,C,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,A,C,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,I,I,I,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,A,B,B,B,C,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,P,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,Y,Y,Y,0,0,0,0,0,I,X,0,0,0,A,C,0,0,0,0,I,X,0,0,X,0,0,I,0,0],
-	[0,A,B,C,0,A,B,B,B,B,B,C,0,0,A,C,0,0,0,0,A,C,0,A,B,B,B,B,C,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
-];
-  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
-
-module.exports = {
-	map: map, // マップ
-	exchange_num: 11, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-};
-
-},{}],216:[function(require,module,exports){
-'use strict';
-
-/* music room */
 
 var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
 var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
-var AssetsConfig = require('../assets_config');
 
-/* BGM 一覧を配列化 */
-var BGMS = [];
-for (var key in AssetsConfig.bgms) {
-	var data = AssetsConfig.bgms[key];
+// transition time ready to show canvas
+var SHOW_TRANSITION_COUNT = 100;
 
-	data.name = key;
-	BGMS.push(data);
-}
+// blink interval time
+var SHOW_START_MESSAGE_INTERVAL = 50;
 
-//12個
-// DEBUG用
+var MENU = [
+	["Story Start", "reminiscence", function (core) {
+		var progress_stage_no = core.save.getNormalStageProgress();
 
-for (var i = 0; i < 10; i++) {
-	BGMS.push(Object.assign({}, BGMS[0], {title: "サンプル"}));
-}
+		// 最初から
+		if (!progress_stage_no) {
+			// 回想シーン画面へ
+			core.changeScene("reminiscence");
+		}
+		// 続きから
+		else {
+			// 続きのステージから
+			core.changeScene("stage", progress_stage_no + 1, "talk", true);
+		}
+	}],
+	["Ex Story Start", "ex_epigraph", function (core) {
+		var progress_stage_no = core.save.getExStageProgress();
 
+		// 最初から
+		if (!progress_stage_no) {
+			// Ex エピグラフ画面へ
+			core.changeScene("ex_epigraph");
+		}
+		// 続きから
+		else {
+			// 続きのステージから
+			core.changeScene("stage", progress_stage_no + 1, "talk", true);
+		}
+	}],
+	["Select Stage", "select", function (core) {
+		// ステージセレクト画面へ
+		core.changeScene("select");
+	}],
+	/*
+	["How To", "howto", function (core) {
+		// 遊び方画面へ
+		core.changeScene("howto");
+	}],
+	["Config", "config", function (core) {
+		core.changeScene("config");
+	}],
+	*/
+	["Music Room", "music", function (core) {
+		// Music Room 画面へ
+		core.changeScene("music");
+	}],
+];
 
-var SceneMusic = function(core) {
+var SceneTitle = function(core) {
 	base_scene.apply(this, arguments);
 };
-util.inherit(SceneMusic, base_scene);
+util.inherit(SceneTitle, base_scene);
 
-SceneMusic.prototype.init = function(){
+SceneTitle.prototype.init = function(){
 	base_scene.prototype.init.apply(this, arguments);
 
 	// 今どれにカーソルがあるか
 	this.index = 0;
 
+	// Exステージ解放されているかどうか */
+	var is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
+
+	// いずれかのステージがクリアされているかどうか
+	var is_any_stage_cleared = this.core.save.getLatestStageResult() ? true : false;
+
+	// メニュー一覧
+	this.menu_list = [];
+	for(var i = 0, len = MENU.length; i < len; i++) {
+		var menu = MENU[i];
+
+		// 通常ストーリークリア後のみ、Ex Story を表示する
+		if(!is_normal_stage_cleared && menu[1] === "ex_epigraph") {
+			continue;
+		}
+		// stage 1クリア後のみ、ステージセレクトを表示する
+		else if (!is_any_stage_cleared && menu[1] === "select") {
+			continue;
+		}
+
+		this.menu_list.push(menu);
+	}
+
 	this.core.stopBGM();
 };
 
 
-SceneMusic.prototype.beforeDraw = function(){
+SceneTitle.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	// 戻る
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
-		this.core.changeScene("title");
+	if(this.frame_count === 60) {
+		this.core.playBGM("title");
 	}
 
 	// カーソルを下移動
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
 		this.index++;
 
-		if(this.index >= BGMS.length) {
-			this.index = BGMS.length - 1;
+		if(this.index >= this.menu_list.length) {
+			this.index = this.menu_list.length - 1;
 		}
 	}
 	// カーソルを上移動
@@ -16190,163 +14102,34 @@ SceneMusic.prototype.beforeDraw = function(){
 
 	// 決定
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		var bgm_name = BGMS[this.index].name;
-		this.core.playBGM(bgm_name);
+		this.core.playSound('select');
+
+		// メニューに設定された関数を実行
+		var exec_func = this.menu_list[this.index][2];
+		exec_func(this.core);
 	}
 };
 
 // 画面更新
-SceneMusic.prototype.draw = function(){
+SceneTitle.prototype.draw = function(){
 	this.core.clearCanvas();
 	var ctx = this.core.ctx;
 
 	ctx.save();
 
-	// 背景表示
-	this._showBackGround();
-
-	// キャラ表示
-	this._showRightChara();
-
-	// メッセージウィンドウを表示
-	this._showMessageWindow();
-
-	var cursor_x    = 50;
-	var text_x      = cursor_x + 30;
-	var y = 80;
-
-	// 文字表示
-	ctx.font = "18px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-
-	for(var i = 0, len = BGMS.length; i < len; i++) {
-		var bgm = BGMS[i];
-		var music_no = ( '00' + (i + 1) ).slice(-2); // 数字を2桁に揃える
-
-		if(this.index === i) {
-			// cursor 表示
-			this._drawText("▶", cursor_x, y);
-
-			// メッセージ表示
-			this._showMessage(bgm.message);
-		}
-		// 文字表示
-		this._drawText(music_no + ": " + bgm.title, text_x, y); // 1行表示
-
-		y+= 30;
+	// 切り替え効果
+	var alpha;
+	if( this.frame_count < SHOW_TRANSITION_COUNT ) {
+		alpha = this.frame_count / SHOW_TRANSITION_COUNT;
+	}
+	else {
+		alpha = 1.0;
 	}
 
-	ctx.restore();
 
-	// 操作方法説明
-	this._showHowTo();
-};
-
-SceneMusic.prototype._drawText = function(text, x, y){
-	var ctx = this.core.ctx;
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.lineWidth = 4.0;
-	ctx.strokeText(text, x, y);
-
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.fillText(text, x, y);
-};
-
-// 操作説明 表示
-SceneMusic.prototype._showHowTo = function() {
-	var ctx = this.core.ctx;
-	ctx.save();
-
-	var text = "Xキー：戻る";
-
-	ctx.font = "14px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-
-	this._drawText(text, 10, this.core.height - 10);
-	ctx.restore();
-};
-
-SceneMusic.prototype._showRightChara = function(){
-	var ctx = this.core.ctx;
-	ctx.save();
-
-	var x = 400;
-	var y = 65;
-
-	var right_image = this.core.image_loader.getImage("reimu_normal1");
-	ctx.drawImage(right_image,
-		x,
-		y,
-		right_image.width,
-		right_image.height
-	);
-
-	ctx.restore();
-};
-
-var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
-SceneMusic.prototype._showMessageWindow = function(){
-	var ctx = this.core.ctx;
-	// show message window
-	ctx.save();
-
-	var message_height = 100;
-
-	ctx.globalAlpha = 0.5;
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.fillRect(
-		MESSAGE_WINDOW_OUTLINE_MARGIN,
-		this.core.height - 125,
-		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
-		message_height
-	);
-
-	ctx.restore();
-};
-
-// セリフ表示
-SceneMusic.prototype._showMessage = function(message) {
-	var ctx = this.core.ctx;
-	ctx.save();
-
-	ctx.font = "18px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-
-	var x, y;
-	// セリフ表示
-	var lines = [message];
-	if (lines.length) {
-		// セリフテキストの y 座標初期位置
-		var message_height = 80;
-		y = this.core.height - 125 + 40;
-
-		for(var i = 0, len = lines.length; i < len; i++) {
-			ctx.fillStyle = 'rgb( 0, 0, 0 )';
-			ctx.lineWidth = 4.0;
-			ctx.strokeText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
-
-			ctx.fillStyle = 'white';
-			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
-
-			y+= 30;
-		}
-	}
-
-	ctx.restore();
-};
-
-
-
-
-SceneMusic.prototype._showBackGround = function(){
-	var ctx = this.core.ctx;
 	var title_bg = this.core.image_loader.getImage('title_bg');
-/*
 	// 背景画像表示
+	ctx.globalAlpha = alpha;
 	ctx.drawImage(title_bg,
 					0,
 					0,
@@ -16356,19 +14139,179 @@ SceneMusic.prototype._showBackGround = function(){
 					0,
 					this.core.width,
 					this.core.height);
-*/
-	// 背景をちょっと暗めに表示
-	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.6; // 半透明
-	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
+	// タイトルロゴ
+	var title = this.core.image_loader.getImage('title');
+	ctx.drawImage(title,
+					20,
+					-20,
+					title.width,
+					title.height);
+
+
+
+	var cursor_x    = this.core.width - 200;
+	var text_x      = cursor_x + 30;
+	var y = this.core.height/2 - 50;
+
+	// 文字背景 表示
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = 0.7; // 半透明
+	ctx.fillRect(cursor_x - 10, y - 100, this.core.width - cursor_x - 20, this.core.height - y + 70);
+
+	// 文字表示
 	ctx.globalAlpha = 1.0; // 半透明戻す
+	ctx.font = "18px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+
+	for(var i = 0, len = this.menu_list.length; i < len; i++) {
+		var menu = this.menu_list[i];
+
+		if(this.index === i) {
+			// cursor 表示
+			this._drawText("▶", cursor_x, y);
+		}
+		// 文字表示
+		this._drawText(menu[0], text_x, y); // 1行表示
+
+		y+= 40;
+	}
+
+	ctx.restore();
+
+
+};
+
+SceneTitle.prototype._drawText = function(text, x, y){
+	var ctx = this.core.ctx;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, x, y);
+
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText(text, x, y);
 };
 
 
-module.exports = SceneMusic;
 
-},{"../assets_config":5,"../constant":6,"../hakurei":9}],217:[function(require,module,exports){
+
+module.exports = SceneTitle;
+
+},{"../constant":6,"../hakurei":9}],171:[function(require,module,exports){
+'use strict';
+
+/* 回想シーン画面 */
+
+var serif_script = require("../logic/serif/reminiscence");
+
+
+var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
+var base_scene = require('./serif_base');
+
+var SceneReminiscence = function(game) {
+	base_scene.apply(this, arguments);
+};
+
+util.inherit(SceneReminiscence, base_scene);
+
+// 立ち絵＆セリフ終了後
+SceneReminiscence.prototype.notifySerifEnd = function() {
+	this.core.changeScene("logo");
+};
+
+// セリフスクリプト
+SceneReminiscence.prototype.serifScript = function() {
+	return serif_script;
+};
+
+// 背景画像名
+SceneReminiscence.prototype.background = function() {
+	return "shrine_noon";
+};
+
+// BGM
+SceneReminiscence.prototype.bgm = function() {
+	return "mute";
+};
+
+module.exports = SceneReminiscence;
+
+},{"../constant":6,"../hakurei":9,"../logic/serif/reminiscence":53,"./serif_base":224}],172:[function(require,module,exports){
+'use strict';
+
+/* 題字画面 */
+
+// メッセージ表示の遷移時間
+var TRANSITION_COUNT = 240;
+
+var base_scene = require('../hakurei').scene.base;
+var util = require('../hakurei').util;
+
+var SceneLogo = function(core) {
+	base_scene.apply(this, arguments);
+};
+util.inherit(SceneLogo, base_scene);
+
+SceneLogo.prototype.init = function() {
+	base_scene.prototype.init.apply(this, arguments);
+
+	this.core.stopBGM();
+};
+
+SceneLogo.prototype.beforeDraw = function() {
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// メッセージ表示終了
+	if(this.isTransitionEnd()) {
+		this.core.changeScene("prologue");
+	}
+};
+SceneLogo.prototype.draw = function(){
+	var ctx = this.core.ctx;
+	// 背景
+	ctx.save();
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+	ctx.restore();
+
+	// 文字の透過度
+	var alpha = 0.0;
+	if(this.frame_count < TRANSITION_COUNT/3) {
+		alpha = this.frame_count / (TRANSITION_COUNT/3);
+	}
+	else if (TRANSITION_COUNT/3 <= this.frame_count && this.frame_count < TRANSITION_COUNT*2/3) {
+		alpha = 1.0;
+	}
+	else if (TRANSITION_COUNT*2/3 <= this.frame_count && this.frame_count < TRANSITION_COUNT) {
+		alpha = (TRANSITION_COUNT - this.frame_count) / (TRANSITION_COUNT/3);
+	}
+
+	// タイトルロゴ
+	var title = this.core.image_loader.getImage('title');
+
+	var x = 20;
+	var y = this.core.height/2 - title.height/2;
+
+	ctx.save();
+	ctx.globalAlpha = alpha;
+	ctx.drawImage(title,
+					x,
+					y,
+					title.width,
+					title.height);
+	ctx.restore();
+};
+
+SceneLogo.prototype.isTransitionEnd = function(){
+	return TRANSITION_COUNT < this.frame_count;
+};
+
+module.exports = SceneLogo;
+
+},{"../hakurei":9}],173:[function(require,module,exports){
 'use strict';
 
 /* プロローグ画面 */
@@ -16401,709 +14344,13 @@ ScenePrologue.prototype.serifScript = function() {
 ScenePrologue.prototype.background = function() {
 	return "shrine_noon";
 };
-
+// BGM
+ScenePrologue.prototype.bgm = function() {
+	return "mute";
+};
 module.exports = ScenePrologue;
 
-},{"../constant":6,"../hakurei":9,"../logic/serif/prologue":52,"./serif_base":220}],218:[function(require,module,exports){
-'use strict';
-
-/* 回想シーン画面 */
-
-var serif_script = require("../logic/serif/reminiscence");
-
-
-var util = require('../hakurei').util;
-var CONSTANT = require('../constant');
-var base_scene = require('./serif_base');
-
-var SceneReminiscence = function(game) {
-	base_scene.apply(this, arguments);
-};
-
-util.inherit(SceneReminiscence, base_scene);
-
-// 立ち絵＆セリフ終了後
-SceneReminiscence.prototype.notifySerifEnd = function() {
-	this.core.changeScene("prologue");
-};
-
-// セリフスクリプト
-SceneReminiscence.prototype.serifScript = function() {
-	return serif_script;
-};
-
-// 背景画像名
-SceneReminiscence.prototype.background = function() {
-	return "shrine_noon";
-};
-
-module.exports = SceneReminiscence;
-
-},{"../constant":6,"../hakurei":9,"../logic/serif/reminiscence":53,"./serif_base":220}],219:[function(require,module,exports){
-'use strict';
-
-/* ステージセレクト画面 */
-
-
-var base_scene = require('../hakurei').scene.base;
-var util = require('../hakurei').util;
-var H_CONSTANT = require('../hakurei').constant;
-var CONSTANT = require('../constant');
-
-var StageConfig = require('../stage_config');
-var LogicScore = require('../logic/score');
-var LogicCreateMap = require('../logic/create_map');
-
-// 画面に何個までステージを表示するか
-var SHOW_STAGE_LIST_NUM = 20;
-
-var StageConfig = require('../stage_config');
-var MAPS = StageConfig.MAPS;
-
-
-var SceneSelect = function(core) {
-	base_scene.apply(this, arguments);
-};
-util.inherit(SceneSelect, base_scene);
-
-SceneSelect.prototype.init = function(selected_stage_no){
-	base_scene.prototype.init.apply(this, arguments);
-
-	// ステージ一覧
-	this.stage_list = this.core.save.getStageResultList();
-
-	// カーソル位置
-	if (selected_stage_no) {
-		this.selected_stage = selected_stage_no - 1; // selected_stage は 0 から始まるので
-	}
-	else {
-		this.selected_stage = 0;
-	}
-
-	// マップを更新
-	this.stage_objects = this.createMap();
-};
-SceneSelect.prototype.beforeDraw = function(){
-	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	// 決定
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		this.core.changeScene("stage", this.selected_stage + 1, "play", true, true); // 0 から selected_stage は始まるので +1
-	}
-	// 戻る
-	else if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
-		this.core.changeScene("title");
-	}
-
-	// カーソルを下移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
-		this.selected_stage++;
-
-		if(this.selected_stage >= this.stage_list.length) {
-			this.selected_stage = this.stage_list.length - 1;
-		}
-
-		// マップを更新
-		this.stage_objects = this.createMap();
-	}
-	// カーソルを上移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
-		this.selected_stage--;
-
-		if(this.selected_stage < 0) {
-			this.selected_stage = 0;
-		}
-
-		// マップを更新
-		this.stage_objects = this.createMap();
-	}
-
-
-};
-
-SceneSelect.prototype.createMap = function(){
-	var stage_objects = [];
-	var objects_by_tile_type = LogicCreateMap.exec(this, MAPS[this.selected_stage + 1].map, 12, 70, 0.8);
-
-	for (var key in objects_by_tile_type) {
-		// プレイヤーは描画しない
-		if (Number(key) === CONSTANT.PLAYER) {
-			continue;
-		}
-
-		stage_objects = stage_objects.concat(objects_by_tile_type[key]);
-	}
-
-	return stage_objects;
-};
-
-// 画面更新
-SceneSelect.prototype.draw = function(){
-	this.core.clearCanvas();
-	var ctx = this.core.ctx;
-
-	ctx.save();
-
-	var title_bg = this.core.image_loader.getImage('title_bg');
-
-	// 背景画像表示
-	ctx.drawImage(title_bg,
-					0,
-					0,
-					title_bg.width,
-					title_bg.height,
-					0,
-					0,
-					this.core.width,
-					this.core.height);
-
-	// 背景をちょっと暗めに表示
-	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.5; // 半透明
-	ctx.fillRect(0, 0, this.core.width, this.core.height);
-
-	// ステージ一覧背景 表示
-	ctx.globalAlpha = 1.0; // 半透明戻す
-	ctx.fillRect(this.core.width - 170, 0, 170, this.core.height);
-
-
-	var stage_list;   // 表示するステージ一覧
-	var index;        // カーソルの表示位置
-	var is_show_up;   // 上カーソルを表示するかどうか
-	var is_show_down; // 下カーソルを表示するかどうか
-	if (this.selected_stage <= SHOW_STAGE_LIST_NUM/2) {
-		stage_list = this.stage_list.slice(0, SHOW_STAGE_LIST_NUM);
-		index = this.selected_stage;
-		is_show_up   = false;
-		is_show_down = true;
-	}
-	else if (SHOW_STAGE_LIST_NUM/2 < this.selected_stage && this.selected_stage <= StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2) {
-		stage_list = this.stage_list.slice(this.selected_stage - SHOW_STAGE_LIST_NUM/2, SHOW_STAGE_LIST_NUM/2 + this.selected_stage);
-		index = SHOW_STAGE_LIST_NUM/2;
-		is_show_up   = true;
-		is_show_down = true;
-	}
-	else if (StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2 < this.selected_stage) {
-		stage_list = this.stage_list.slice(SHOW_STAGE_LIST_NUM, StageConfig.MAP_NUM);
-		index = this.selected_stage - (StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2) + SHOW_STAGE_LIST_NUM/2;
-		is_show_up   = true;
-		is_show_down = false;
-	}
-
-
-	// ステージ一覧 文字列
-	ctx.font = "18px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-
-	var i, len;
-	var x = (this.core.height - 24 * SHOW_STAGE_LIST_NUM)/2;
-
-	for(i = 0, len = stage_list.length; i < len; i++) {
-		var data = stage_list[i];
-		var stage_no = data.stage_no.toString();
-		stage_no = ( '00' + stage_no ).slice(-2); // 数字を2桁に揃える
-		var menu = "Stage " + stage_no;
-
-		if(i === index) {
-			// カーソル表示
-			this._drawText("▶", this.core.width - 150, x + 24*i);
-		}
-		// 文字表示
-		this._drawText(menu, this.core.width - 120, x + 24 * i); // 1行表示
-
-	}
-
-	if (is_show_up) {
-		ctx.fillText("▲", this.core.width - 100, 20);
-	}
-	if (is_show_down) {
-		ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
-	}
-
-	var stage_data = this.core.save.getStageResult(this.selected_stage + 1); // selected_stage は 0から始まるので +1
-
-	if (stage_data) {
-		var stage_no_string = ( '00' + stage_data.stage_no ).slice(-2); // 数字を2桁に揃える
-		// ステージ名表示
-		ctx.font = "36px 'Migu'";
-		ctx.textAlign = 'left';
-		this._drawText("Stage " + stage_no_string, 20, 50);
-
-		// ステージサムネイル 表示
-		// 横720px 縦480px
-		/*
-		var thumbnail = this.core.image_loader.getImage('thumbnail15');
-		ctx.drawImage(thumbnail,
-						25,
-						50,
-						30*24,
-						20*24,
-						10,
-						90,
-						30*24 *0.80,
-						20*24 *0.80);
-		*/
-
-		LogicCreateMap.drawBackground(ctx, this.core.image_loader.getImage("bg"), 12, 70, 0.8);
-		// ステージ描画
-		for (i = 0; i < this.stage_objects.length; i++) {
-			this.stage_objects[i].draw();
-		}
-
-		LogicCreateMap.drawFrames(this, 12, 70, 0.8);
-
-		var honor_num = LogicScore.calcHonor(
-			stage_data.time,
-			stage_data.exchange_num,
-			// TODO: 各マップから取得する
-			100,
-			1
-		);
-
-		var honor_str = "";
-		for (i = 0; i < honor_num; i++) {
-			honor_str = honor_str + "★";
-		}
-
-		// ステージスコア表示
-		ctx.font = "40px 'Migu'";
-		this._drawText(honor_str, this.core.width - 300, this.core.height - 50);
-	}
-
-	// 操作方法説明
-	this._showHowTo();
-
-	ctx.restore();
-};
-SceneSelect.prototype._drawText = function(text, x, y){
-	var ctx = this.core.ctx;
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.lineWidth = 4.0;
-	ctx.strokeText(text, x, y);
-
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.fillText(text, x, y);
-};
-
-// 操作説明 表示
-SceneSelect.prototype._showHowTo = function() {
-	var ctx = this.core.ctx;
-	ctx.save();
-
-	var text = "Xキー：戻る";
-
-	ctx.font = "14px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-
-	this._drawText(text, 10, this.core.height - 10);
-	ctx.restore();
-};
-
-
-
-
-
-module.exports = SceneSelect;
-
-},{"../constant":6,"../hakurei":9,"../logic/create_map":44,"../logic/score":47,"../stage_config":231}],220:[function(require,module,exports){
-'use strict';
-
-/* 立ち絵＆セリフ */
-var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
-var TALKER_MOVE_PX = 5;
-var SCALE = 1;
-
-var TRANSITION_COUNT = 100;
-
-// セリフウィンドウの縦の長さ
-var MESSAGE_WINDOW_HEIGHT = 100;
-
-
-var util = require('../hakurei').util;
-var CONSTANT = require('../constant');
-var H_CONSTANT = require('../hakurei').constant;
-var base_scene = require('../hakurei').scene.base;
-
-var SerifManager = require('../hakurei').serif_manager;
-
-var CreateDarkerImage = require('../logic/create_darker_image');
-
-var SceneSerifBase = function(game) {
-	base_scene.apply(this, arguments);
-
-	this.serif = new SerifManager();
-};
-
-util.inherit(SceneSerifBase, base_scene);
-
-SceneSerifBase.prototype.init = function(serif){
-	base_scene.prototype.init.apply(this, arguments);
-	this.serif.init(this.serifScript());
-
-	this.transition_count = 0;
-};
-
-SceneSerifBase.prototype.beforeDraw = function(){
-	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	if (this.isInTransition()) {
-		this.transition_count--;
-
-		// トランジションが終わればセリフ送り再開
-		if (this.transition_count === 0) {
-			this.serif.startPrintMessage();
-		}
-	}
-
-
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		if(this.serif.is_end()) {
-			this.notifySerifEnd();
-		}
-		else {
-			// トランジション中でなければ
-			if (!this.isInTransition()) {
-				// セリフを送る
-				this.serif.next();
-
-				if (this.serif.is_background_changed()) {
-					// トランジション開始
-					this.transition_count = TRANSITION_COUNT;
-
-					// トランジション中はセリフ送り中断
-					this.serif.cancelPrintMessage();
-				}
-			}
-			else {
-				// トランジション終了
-				this.transition_count = 0;
-				// トランジションが終わればセリフ送り再開
-				this.serif.startPrintMessage();
-			}
-		}
-	}
-
-	// スキップ
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
-		this.notifySerifEnd();
-	}
-};
-
-// 画面更新
-SceneSerifBase.prototype.draw = function(){
-	base_scene.prototype.draw.apply(this, arguments);
-	var ctx = this.core.ctx;
-
-	if (this.isInTransition()) {
-		// 背景表示
-		ctx.globalAlpha = (TRANSITION_COUNT - this.transition_count) / TRANSITION_COUNT;
-		this._showBackground();
-		ctx.globalAlpha = 1.0;
-	}
-	else {
-		// 背景表示
-		this._showBackground();
-
-		// キャラ表示
-		if(this.serif.right_image()) {
-			this._showRightChara();
-		}
-		if(this.serif.left_image()) {
-			this._showLeftChara();
-		}
-
-		// メッセージウィンドウ表示
-		this._showMessageWindow();
-
-		// メッセージ表示
-		this._showMessage();
-
-		// 操作説明 表示
-		this._showHowTo();
-
-	}
-};
-
-// 背景画像表示
-SceneSerifBase.prototype._showBackground = function(){
-	var ctx = this.core.ctx;
-	var background_name = this.serif.background_image() ? this.serif.background_image() : this.background();
-	var background = this.core.image_loader.getImage(background_name);
-	ctx.drawImage(background,
-					0,
-					0,
-					background.width,
-					background.height,
-					0,
-					0,
-					this.core.width,
-					this.core.height);
-};
-
-SceneSerifBase.prototype._showRightChara = function(){
-	var ctx = this.core.ctx;
-	ctx.save();
-
-	var x = 400;
-	var y = 65;
-
-	var right_image = this.core.image_loader.getImage(this.serif.right_image());
-	if(!this.serif.is_right_talking()) {
-		// 喋ってない方のキャラは暗くなる
-		right_image = CreateDarkerImage.exec(right_image);
-	}
-	else {
-		x -= TALKER_MOVE_PX;
-		y -= TALKER_MOVE_PX;
-	}
-
-
-	ctx.drawImage(right_image,
-		x,
-		y,
-		right_image.width  * SCALE,
-		right_image.height * SCALE
-	);
-
-	ctx.restore();
-};
-
-SceneSerifBase.prototype._showLeftChara = function(){
-	var ctx = this.core.ctx;
-	ctx.save();
-
-	var x = -50;
-	var y = 25;
-
-	var left_image = this.core.image_loader.getImage(this.serif.left_image());
-	if(!this.serif.is_left_talking()) {
-		// 喋ってない方のキャラは暗くなる
-		left_image = CreateDarkerImage.exec(left_image);
-	}
-	else {
-		x += TALKER_MOVE_PX;
-		y -= TALKER_MOVE_PX;
-	}
-
-
-	ctx.drawImage(left_image,
-		x,
-		y,
-		left_image.width  * SCALE,
-		left_image.height * SCALE
-	);
-
-	ctx.restore();
-};
-
-SceneSerifBase.prototype._showMessageWindow = function(){
-	var ctx = this.core.ctx;
-	// show message window
-	ctx.save();
-
-	ctx.globalAlpha = 0.5;
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.fillRect(
-		MESSAGE_WINDOW_OUTLINE_MARGIN,
-		this.core.height - 125,
-		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
-		MESSAGE_WINDOW_HEIGHT
-	);
-
-	ctx.restore();
-};
-
-// セリフ表示
-SceneSerifBase.prototype._showMessage = function() {
-	var ctx = this.core.ctx;
-	ctx.save();
-
-	ctx.font = "18px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-
-	var x, y;
-	// セリフ表示
-	var lines = this.serif.lines();
-	if (lines.length) {
-		// セリフテキストの y 座標初期位置
-		y = this.core.height - 125 + 40;
-
-		for(var i = 0, len = lines.length; i < len; i++) {
-			ctx.fillStyle = 'rgb( 0, 0, 0 )';
-			ctx.lineWidth = 4.0;
-			ctx.strokeText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
-
-			ctx.fillStyle = 'white';
-			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
-
-			y+= 30;
-		}
-	}
-
-	ctx.restore();
-};
-
-// 操作説明 表示
-SceneSerifBase.prototype._showHowTo = function() {
-	var ctx = this.core.ctx;
-	ctx.save();
-
-	var text = "Xキー：スキップ";
-
-	ctx.font = "14px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.lineWidth = 4.0;
-	ctx.strokeText(text, this.core.width - 130, this.core.height - 10);
-
-	ctx.fillStyle = 'white';
-	ctx.fillText(text, this.core.width - 130, this.core.height - 10);
-
-	ctx.restore();
-};
-
-
-
-
-// 立ち絵＆セリフ終了後
-SceneSerifBase.prototype.notifySerifEnd = function() {
-	throw new Error("notifySerifEnd method must be defined.");
-};
-
-// セリフスクリプト
-SceneSerifBase.prototype.serifScript = function() {
-	throw new Error("serifScript method must be defined.");
-};
-
-// 背景画像名
-SceneSerifBase.prototype.background = function() {
-	throw new Error("background method must be defined.");
-};
-
-SceneSerifBase.prototype.isInTransition = function() {
-	return this.transition_count ? true : false;
-};
-
-
-
-
-module.exports = SceneSerifBase;
-
-},{"../constant":6,"../hakurei":9,"../logic/create_darker_image":43}],221:[function(require,module,exports){
-'use strict';
-
-/* スタッフロール画面 */
-
-var serifs = [
-	["プログラマー","テストA"],
-	["ドット絵","テストB"],
-	["イラスト","テストC"],
-	["脚本・シナリオ・セリフ","テストD"],
-	["BGM","テストE"],
-];
-var RESULT_TRANSITION_COUNT = 320;
-
-
-var base_scene = require('../hakurei').scene.base;
-var util = require('../hakurei').util;
-var Reimu = require('../object/reimu_for_staffroll');
-
-var SceneStaffroll = function(core) {
-	base_scene.apply(this, arguments);
-};
-util.inherit(SceneStaffroll, base_scene);
-
-SceneStaffroll.prototype.init = function() {
-	base_scene.prototype.init.apply(this, arguments);
-
-	this.reimu = new Reimu(this);
-	this.reimu.init(this.core.width - 100, this.core.height - 100);
-	this.addObject(this.reimu);
-
-	this.serif_index = 0;
-
-	// スタッフロール終了中かどうか
-	this.is_ending = false;
-};
-
-SceneStaffroll.prototype.beforeDraw = function() {
-	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	if (this.frame_count > RESULT_TRANSITION_COUNT) {
-		this.frame_count = 0;
-
-		if (this.is_ending) {
-				this.core.changeScene("epilogue");
-		}
-		else {
-			// メッセージを全て表示し終わったなら
-			if(this.serif_index+1 === serifs.length){
-				this.is_ending = true;
-			}
-			else {
-				// 次のメッセージへ
-				this.serif_index++;
-			}
-		}
-	}
-};
-SceneStaffroll.prototype.draw = function(){
-	var ctx = this.core.ctx;
-	// 背景
-	ctx.save();
-	ctx.fillStyle = 'black';
-	ctx.fillRect(0, 0, this.core.width, this.core.height);
-	ctx.restore();
-
-	if (this.is_ending) {
-		this.reimu.x(this.reimu.x() - this.core.width/RESULT_TRANSITION_COUNT);
-	}
-	else {
-		// 文字の透過度
-		var alpha = 0.0;
-		if(this.frame_count < RESULT_TRANSITION_COUNT/4) {
-			alpha = this.frame_count / (RESULT_TRANSITION_COUNT/4);
-		}
-		else if (RESULT_TRANSITION_COUNT/4 <= this.frame_count && this.frame_count < RESULT_TRANSITION_COUNT*2/4) {
-			alpha = 1.0;
-		}
-		else if (RESULT_TRANSITION_COUNT*2/4 <= this.frame_count && this.frame_count < RESULT_TRANSITION_COUNT*3/4) {
-			alpha = (RESULT_TRANSITION_COUNT*3/4 - this.frame_count) / (RESULT_TRANSITION_COUNT/4);
-		}
-		else if (RESULT_TRANSITION_COUNT*3/4 <= this.frame_count && this.frame_count < RESULT_TRANSITION_COUNT) {
-			alpha = 0.0;
-		}
-
-		// 文字
-		var message1 = serifs[this.serif_index][0];
-		var message2 = serifs[this.serif_index][1];
-
-		var x = this.core.width/2 - 250;
-
-		ctx.save();
-		ctx.globalAlpha = alpha;
-		ctx.fillStyle = 'rgb( 255, 255, 255 )';
-		ctx.textAlign = 'left';
-		ctx.font = "30px 'Migu'";
-		ctx.fillText(message1, this.core.width/2 - 150, this.core.height/2 - 30);
-		ctx.fillText(message2, this.core.width/2 -  50, this.core.height/2 + 20);
-		ctx.restore();
-	}
-
-	// 霊夢歩く
-	base_scene.prototype.draw.apply(this, arguments);
-};
-
-
-module.exports = SceneStaffroll;
-
-},{"../hakurei":9,"../object/reimu_for_staffroll":138}],222:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/serif/prologue":52,"./serif_base":224}],174:[function(require,module,exports){
 'use strict';
 
 var util = require('../hakurei').util;
@@ -17216,9 +14463,22 @@ SceneStage.prototype.notifyPlayerDie = function(){
 	// 当該ステージの最初から
 	this.notifyRestart();
 };
+// ポーズ画面から、restart
 SceneStage.prototype.notifyRestart = function(){
 	this.core.changeScene("stage", this.stage_no, "play", false, this.is_from_select_scene);
 };
+// ポーズ画面から、quit
+SceneStage.prototype.notifyQuit = function(){
+	// ストーリー中ならばタイトル画面へ
+	if (!this.is_from_select_scene) {
+		this.core.changeScene("title");
+	}
+	// セレクト画面からプレイしたならセレクト画面へ
+	else {
+		this.core.changeScene("select");
+	}
+};
+
 SceneStage.prototype.notifyStageClear = function(){
 	// (ストーリー／セレクト両方) ステージ実績に更新があればセーブ
 	this.core.save.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);
@@ -17474,9 +14734,3156 @@ SceneStage.prototype.getBGImageName = function() {
 	}
 };
 
+SceneStage.prototype.clearStageForDebug = function () {
+	// サブシーンがゲームの操作できるシーンならば
+	if(this.currentSubScene() instanceof SceneStagePlay) {
+		// 御札獲得数を強制的にMAXにする
+		this.reimu_item_num = this.max_item_num - this.yukari_item_num;
+	}
+};
+
 module.exports = SceneStage;
 
-},{"../constant":6,"../hakurei":9,"../logic/create_map":44,"../logic/score":47,"../object/background_eye":136,"../stage_config":231,"./stage/after_talk":223,"./stage/before_talk":224,"./stage/pause":225,"./stage/play":226,"./stage/result_clear_by_select":227,"./stage/result_clear_by_story":228}],223:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/create_map":44,"../logic/score":47,"../object/background_eye":136,"../stage_config":232,"./stage/after_talk":225,"./stage/before_talk":226,"./stage/pause":227,"./stage/play":228,"./stage/result_clear_by_select":229,"./stage/result_clear_by_story":230}],175:[function(require,module,exports){
+'use strict';
+
+/* 通常ストーリー クリア後画面 */
+
+var serif_script = require("../logic/serif/after_normal");
+
+
+var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
+var base_scene = require('./serif_base');
+
+var SceneAfterNormal = function(game) {
+	base_scene.apply(this, arguments);
+};
+
+util.inherit(SceneAfterNormal, base_scene);
+
+// 立ち絵＆セリフ終了後
+SceneAfterNormal.prototype.notifySerifEnd = function() {
+	// タイトル画面へ
+	this.core.changeScene("title");
+};
+
+// セリフスクリプト
+SceneAfterNormal.prototype.serifScript = function() {
+	return serif_script;
+};
+
+// 背景画像名
+SceneAfterNormal.prototype.background = function() {
+	return "shrine_night";
+};
+
+// BGM
+SceneAfterNormal.prototype.bgm = function() {
+	return "mute";
+};
+
+
+
+module.exports = SceneAfterNormal;
+
+},{"../constant":6,"../hakurei":9,"../logic/serif/after_normal":49,"./serif_base":224}],176:[function(require,module,exports){
+'use strict';
+
+/* Ex エピグラフ画面 */
+
+// メッセージ表示の遷移時間
+var TRANSITION_COUNT = 240;
+
+var base_scene = require('../hakurei').scene.base;
+var util = require('../hakurei').util;
+
+var SceneExEpigraph = function(core) {
+	base_scene.apply(this, arguments);
+};
+util.inherit(SceneExEpigraph, base_scene);
+
+SceneExEpigraph.prototype.init = function() {
+	base_scene.prototype.init.apply(this, arguments);
+
+	this.core.stopBGM();
+};
+
+SceneExEpigraph.prototype.beforeDraw = function() {
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// メッセージ表示終了
+	if(this.isTransitionEnd()) {
+		this.core.changeScene("ex_prologue");
+	}
+};
+SceneExEpigraph.prototype.draw = function(){
+	var ctx = this.core.ctx;
+	// 背景
+	ctx.save();
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+	ctx.restore();
+
+	// 文字の透過度
+	var alpha = 0.0;
+	if(this.frame_count < TRANSITION_COUNT/3) {
+		alpha = this.frame_count / (TRANSITION_COUNT/3);
+	}
+	else if (TRANSITION_COUNT/3 <= this.frame_count && this.frame_count < TRANSITION_COUNT*2/3) {
+		alpha = 1.0;
+	}
+	else if (TRANSITION_COUNT*2/3 <= this.frame_count && this.frame_count < TRANSITION_COUNT) {
+		alpha = (TRANSITION_COUNT - this.frame_count) / (TRANSITION_COUNT/3);
+	}
+
+	// 文字
+	var message1 = "幻想郷は全てを受け入れるのよ。";
+	var message2 = "それはそれは残酷な話ですわ。";
+
+	var x = this.core.width/2 - 250;
+
+	ctx.save();
+	ctx.globalAlpha = alpha;
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.textAlign = 'left';
+	ctx.font = "30px 'Migu'";
+	ctx.fillText(message1, x, this.core.height/2);
+	ctx.fillText(message2, x, this.core.height/2 + 35);
+	ctx.restore();
+
+};
+
+SceneExEpigraph.prototype.isTransitionEnd = function(){
+	return TRANSITION_COUNT < this.frame_count;
+};
+
+module.exports = SceneExEpigraph;
+
+},{"../hakurei":9}],177:[function(require,module,exports){
+'use strict';
+
+/* Ex プロローグ画面 */
+
+var serif_script = require("../logic/serif/ex_prologue");
+
+
+var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
+var base_scene = require('./serif_base');
+
+var ScenePrologue = function(game) {
+	base_scene.apply(this, arguments);
+};
+
+util.inherit(ScenePrologue, base_scene);
+
+// 立ち絵＆セリフ終了後
+ScenePrologue.prototype.notifySerifEnd = function() {
+	var stage_no = CONSTANT.EX_STORY_START_STAGE_NO;
+	this.core.changeScene("stage", stage_no, "talk", true);
+};
+
+// セリフスクリプト
+ScenePrologue.prototype.serifScript = function() {
+	return serif_script;
+};
+
+// 背景画像名
+ScenePrologue.prototype.background = function() {
+	return "shrine_noon";
+};
+
+module.exports = ScenePrologue;
+
+},{"../constant":6,"../hakurei":9,"../logic/serif/ex_prologue":51,"./serif_base":224}],178:[function(require,module,exports){
+'use strict';
+
+/* Exストーリー クリア後画面 */
+
+var serif_script = require("../logic/serif/after_ex");
+
+var backgrounds = [
+	"shrine_night",
+	"shrine_noon",
+	"shrine_night",
+];
+
+var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
+var base_scene = require('./serif_base');
+
+var SceneAfterEx = function(game) {
+	base_scene.apply(this, arguments);
+};
+
+util.inherit(SceneAfterEx, base_scene);
+
+SceneAfterEx.prototype.init = function() {
+	base_scene.prototype.init.apply(this, arguments);
+
+	this.index = 0;
+};
+
+SceneAfterEx.prototype.beforeDraw = function() {
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if(this.serif.progress === 1 && this.index === 0) {
+		this.index++;
+	}
+};
+
+
+
+
+// 立ち絵＆セリフ終了後
+SceneAfterEx.prototype.notifySerifEnd = function() {
+	this.core.changeScene("staffroll");
+};
+
+// セリフスクリプト
+SceneAfterEx.prototype.serifScript = function() {
+	return serif_script;
+};
+
+// 背景画像名
+SceneAfterEx.prototype.background = function() {
+	return backgrounds[this.index];
+};
+
+// BGM
+SceneAfterEx.prototype.bgm = function() {
+	return "mute";
+};
+
+module.exports = SceneAfterEx;
+
+},{"../constant":6,"../hakurei":9,"../logic/serif/after_ex":48,"./serif_base":224}],179:[function(require,module,exports){
+'use strict';
+
+/* スタッフロール画面 */
+
+var serifs = [
+	["プログラマー","テストA"],
+	["ドット絵","テストB"],
+	["イラスト","テストC"],
+	["脚本・シナリオ・セリフ","テストD"],
+	["BGM","テストE"],
+];
+var RESULT_TRANSITION_COUNT = 320;
+
+
+var base_scene = require('../hakurei').scene.base;
+var util = require('../hakurei').util;
+var Reimu = require('../object/reimu_for_staffroll');
+
+var SceneStaffroll = function(core) {
+	base_scene.apply(this, arguments);
+};
+util.inherit(SceneStaffroll, base_scene);
+
+SceneStaffroll.prototype.init = function() {
+	base_scene.prototype.init.apply(this, arguments);
+
+	this.reimu = new Reimu(this);
+	this.reimu.init(this.core.width - 100, this.core.height - 100);
+	this.addObject(this.reimu);
+
+	this.serif_index = 0;
+
+	// スタッフロール終了中かどうか
+	this.is_ending = false;
+
+	this.core.playBGM("mute");
+};
+
+SceneStaffroll.prototype.beforeDraw = function() {
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if (this.frame_count > RESULT_TRANSITION_COUNT) {
+		this.frame_count = 0;
+
+		if (this.is_ending) {
+				this.core.changeScene("epilogue");
+		}
+		else {
+			// メッセージを全て表示し終わったなら
+			if(this.serif_index+1 === serifs.length){
+				this.is_ending = true;
+			}
+			else {
+				// 次のメッセージへ
+				this.serif_index++;
+			}
+		}
+	}
+};
+SceneStaffroll.prototype.draw = function(){
+	var ctx = this.core.ctx;
+	// 背景
+	ctx.save();
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+	ctx.restore();
+
+	if (this.is_ending) {
+		this.reimu.x(this.reimu.x() - this.core.width/RESULT_TRANSITION_COUNT);
+	}
+	else {
+		// 文字の透過度
+		var alpha = 0.0;
+		if(this.frame_count < RESULT_TRANSITION_COUNT/4) {
+			alpha = this.frame_count / (RESULT_TRANSITION_COUNT/4);
+		}
+		else if (RESULT_TRANSITION_COUNT/4 <= this.frame_count && this.frame_count < RESULT_TRANSITION_COUNT*2/4) {
+			alpha = 1.0;
+		}
+		else if (RESULT_TRANSITION_COUNT*2/4 <= this.frame_count && this.frame_count < RESULT_TRANSITION_COUNT*3/4) {
+			alpha = (RESULT_TRANSITION_COUNT*3/4 - this.frame_count) / (RESULT_TRANSITION_COUNT/4);
+		}
+		else if (RESULT_TRANSITION_COUNT*3/4 <= this.frame_count && this.frame_count < RESULT_TRANSITION_COUNT) {
+			alpha = 0.0;
+		}
+
+		// 文字
+		var message1 = serifs[this.serif_index][0];
+		var message2 = serifs[this.serif_index][1];
+
+		var x = this.core.width/2 - 250;
+
+		ctx.save();
+		ctx.globalAlpha = alpha;
+		ctx.fillStyle = 'rgb( 255, 255, 255 )';
+		ctx.textAlign = 'left';
+		ctx.font = "30px 'Migu'";
+		ctx.fillText(message1, this.core.width/2 - 150, this.core.height/2 - 30);
+		ctx.fillText(message2, this.core.width/2 -  50, this.core.height/2 + 20);
+		ctx.restore();
+	}
+
+	// 霊夢歩く
+	base_scene.prototype.draw.apply(this, arguments);
+};
+
+
+module.exports = SceneStaffroll;
+
+},{"../hakurei":9,"../object/reimu_for_staffroll":138}],180:[function(require,module,exports){
+'use strict';
+
+/* エピローグ画面 */
+
+var serif_script = require("../logic/serif/epilogue");
+
+
+var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
+var base_scene = require('./serif_base');
+
+var ScenePrologue = function(game) {
+	base_scene.apply(this, arguments);
+};
+
+util.inherit(ScenePrologue, base_scene);
+
+// 立ち絵＆セリフ終了後
+ScenePrologue.prototype.notifySerifEnd = function() {
+	this.core.changeScene("title");
+};
+
+// セリフスクリプト
+ScenePrologue.prototype.serifScript = function() {
+	return serif_script;
+};
+
+// 背景画像名
+ScenePrologue.prototype.background = function() {
+	return "shrine_noon";
+};
+
+// BGM
+ScenePrologue.prototype.bgm = function() {
+	return "mute";
+};
+
+module.exports = ScenePrologue;
+
+},{"../constant":6,"../hakurei":9,"../logic/serif/epilogue":50,"./serif_base":224}],181:[function(require,module,exports){
+'use strict';
+
+/* 遊び方 */
+
+var base_scene = require('../hakurei').scene.base;
+var util = require('../hakurei').util;
+var H_CONSTANT = require('../hakurei').constant;
+var CONSTANT = require('../constant');
+
+var HOWTOS = [
+	{
+		image: "thumbnail15",
+		messages: [
+			"主人公は霊夢",
+		],
+	},
+	{
+		image: "thumbnail15",
+		messages: [
+			"霊夢が動くと反対側の紫も動く",
+		],
+	},
+	{
+		image: "thumbnail15",
+		messages: [
+			"紫は壁や敵を無視できる",
+		],
+	},
+	{
+		image: "thumbnail15",
+		messages: [
+			"御札は霊夢しか獲得できない",
+		],
+	},
+	{
+		image: "thumbnail15",
+		messages: [
+			"リボンは紫しか獲得できない",
+		],
+	},
+	{
+		image: "thumbnail15",
+		messages: [
+			"Xキーで霊夢と紫の位置を",
+			"入れ替えて進もう",
+		],
+	},
+	{
+		image: "thumbnail15",
+		messages: [
+			"入れ替え回数には上限があるよ",
+		],
+	},
+	{
+		image: "thumbnail15",
+		messages: [
+			"ステージのアイテムを",
+			"すべて集めるとクリア！",
+		],
+	},
+
+];
+
+
+
+var SceneHowTo = function(core) {
+	base_scene.apply(this, arguments);
+};
+util.inherit(SceneHowTo, base_scene);
+
+SceneHowTo.prototype.init = function(){
+	base_scene.prototype.init.apply(this, arguments);
+	this.index = 0;
+};
+
+
+SceneHowTo.prototype.beforeDraw = function(){
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// カーソルを下移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_RIGHT)) {
+		this.index++;
+
+		if(this.index >= HOWTOS.length) {
+			this.index = HOWTOS.length - 1;
+			// 終了
+			this.core.changeScene("title");
+		}
+	}
+	// カーソルを上移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_LEFT)) {
+		this.index--;
+
+		if(this.index < 0) {
+			this.index = 0;
+		}
+	}
+
+};
+
+// 画面更新
+SceneHowTo.prototype.draw = function(){
+	this.core.clearCanvas();
+	var ctx = this.core.ctx;
+
+	ctx.save();
+
+	var title_bg = this.core.image_loader.getImage('title_bg');
+	// 背景画像表示
+	ctx.drawImage(title_bg,
+					0,
+					0,
+					title_bg.width,
+					title_bg.height,
+					0,
+					0,
+					this.core.width,
+					this.core.height);
+
+	// 背景をちょっと暗めに表示
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = 0.5; // 半透明
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+
+	ctx.restore();
+
+	ctx.font = "36px 'Migu'";
+	ctx.textAlign = 'left';
+
+	// メッセージ
+	this._drawText(HOWTOS[this.index].messages[0], 100, 500);
+	if (HOWTOS[this.index].messages[1]) {
+		this._drawText(HOWTOS[this.index].messages[1], 100, 540);
+	}
+
+	// 矢印
+	if (this.index !== 0) {
+		this._drawText("◀", 10, 250);
+	}
+	this._drawText("▶", this.core.width - 50, 250);
+
+	// 画像
+	var image = this.core.image_loader.getImage(HOWTOS[this.index].image);
+
+	// 背景画像表示
+	ctx.drawImage(image,
+					0,
+					0,
+					image.width,
+					image.height,
+					80,
+					20,
+					image.width*0.8,
+					image.height*0.8
+	);
+
+};
+
+SceneHowTo.prototype._drawText = function(text, x, y){
+	var ctx = this.core.ctx;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, x, y);
+
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText(text, x, y);
+};
+
+module.exports = SceneHowTo;
+
+},{"../constant":6,"../hakurei":9}],182:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,P,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,N,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,C,6,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0],
+	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0],
+	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,0,A,B,C,0,0],
+	[0,0,0,0,A,C,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,A,B,C,0,0],
+	[0,0,0,0,A,C,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,A,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],183:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,Y,Y,Y,0,E,0,0,0,0,0,0,0,E,0,0,I,I,I,0,0,0,0],
+	[0,0,0,0,0,A,B,L,B,B,B,B,B,C,0,0,0,0,0,A,B,L,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,E,0,L,I,0,0,0,0,0,0,0,0,0,0,E,0,L,Y,0,0,0,0,0,0,0],
+	[0,0,0,0,A,B,B,B,B,L,B,C,0,0,0,0,0,0,A,B,B,B,B,L,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,Y,Y,0,L,0,0,0,0,0,0,0,0,I,I,0,0,0,L,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],184:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,I,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0],
+	[0,0,0,0,0,A,C,L,A,C,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,A,B,B,B,B,C,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,Y,Y,0,E,0,0,0,E,0,0,0,I,I,0,0,0,0,0,0,L,0,0,Y,Y,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],185:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,I,0,I,0,I,0,I,0,0,0,0,0,0,0,0,0,E,0,0],
+	[0,A,C,L,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0],
+	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,C,0,0],
+	[0,0,0,A,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,A,B,L,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,E,0,0,0,0,0,0,0,0,I,0,I,0,I,0,I,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],186:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,I,0,0,0],
+	[0,0,A,C,L,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,I,0,E,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,E,L,0,0,0,I,0,0,0,0,0,I,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],	
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],187:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,I,I,0,0,E,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,K,K,K,K,K,K,K,K,K,K,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,P,0,0,0,0,0,0,0,0,0,0,0,0,B,B,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,N,0,I,I,I,0,0,0,0,0,0,0,0,B,B,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,K,K,B,B,B,B,B,B,K,K,B,B,B,B,B,B,B,B,C,0],
+	[0,0,A,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],188:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,E,0,0,E,0,0,E,0,0,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,Y,Y,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,I,I,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,I,I,I,I,0,0,0,L,0,0,0,0,0,0,0,0,Y,Y,0,E,0,0,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],189:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,C,0,A,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,C,0,A,B,C,0,0],
+	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
+	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
+	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,0,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
+	[0,0,0,B,0,Y,0,B,B,0,L,0,0,0,E,0,0,0,0,0,0,B,B,0,I,0,B,0,0,0],
+	[0,0,0,B,0,0,0,B,B,0,A,B,B,B,B,B,B,B,C,L,0,B,B,0,0,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,P,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,0,B,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],190:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,E,0,0,0,I,I,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,I,I,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,C,0,B,L,A,B,B,C,L,B,0,A,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,Y,Y,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],191:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,Y,Y,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,E,0,0,0,0,0,0,0,L,0,0,0,0,0,0,Y,Y,Y,Y,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,L,B,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,Y,0,0,0,0,A,B,B,B,C,L,0,0,0,0,E,0,0,0,P,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,A,B,B,B,B,B,C,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],192:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,I,I,I,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,B,L,K,K,K,K,K,K,K,K,K,K,L,B,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,B,L,0,0,0,0,0,0,0,0,0,0,L,B,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,E,I,B,L,0,0,0,0,I,I,0,0,E,0,L,B,I,E,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],193:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,E,0,0,0,0,I,0,I,0,0,I,0,I,0,0,0,0,E,0,0,0,0,0,0],
+	[0,0,0,A,L,A,B,B,B,B,L,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,L,0,I,0,0,0,0,I,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,L,I,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0,I,0,I,0,0,0],
+	[0,0,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,L,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,K,K,C,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,0,0,0,E,0,0,0,0,0,I,0,I,I,0,I,0,0,0,0,0,E,0,L,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],194:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,Y,0,I,0,0,Y,0,I,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,L,C,0,0,A,L,C,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,I,I,I,I,0,E,L,0,0,0,0,L,E,0,I,I,I,I,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,K,K,B,B,B,B,B,B,B,C,L,A,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,I,0,0,0,0,0,0,0,E,I,0,0,0,0,I,E,0,0,0,0,0,L,0,I,0,0,0],
+	[0,0,A,B,B,B,B,L,B,B,B,B,B,B,K,K,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[B,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,B],
+	[B,0,0,0,0,0,0,L,0,0,0,0,0,0,I,I,I,I,0,0,0,0,0,0,0,0,0,0,0,B],
+	[B,K,K,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,K,K,B],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],195:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0],
+	[0,0,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0],
+	[0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,X,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,A,L,C,0,0,0,A,L,A,B,B,B,B,C,L,C,0,0,0,A,L,C,0,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,L,0,0,E,E,0,0,L,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0],
+	[0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],196:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,B,K,K,K,K,K,K,K,B,B,B,B,B,B,K,K,K,L,K,K,K,B,0,0,0,0],
+	[B,0,Y,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,I,0,B],
+	[B,K,K,K,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,K,K,K,B],
+	[B,0,0,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,B],
+	[B,0,0,0,B,0,0,0,Y,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,B],
+	[B,0,F,0,B,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,F,0,B],
+	[0,0,0,0,B,0,0,0,0,0,0,0,B,B,B,B,B,B,0,0,0,L,0,0,0,B,0,0,0,0],
+	[B,0,0,0,B,K,K,K,L,K,K,K,B,B,B,B,B,B,K,K,K,K,K,K,K,B,0,0,0,B],
+	[B,0,I,0,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,0,Y,0,B],
+	[B,K,K,K,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,K,K,K,B],
+	[B,0,0,0,B,0,0,0,L,0,0,0,B,B,B,B,B,B,0,0,0,Y,0,0,0,B,0,0,0,B],
+	[0,0,0,0,B,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,B,0,0,0,0],
+	[0,0,0,0,B,0,0,0,L,0,0,0,E,0,I,I,0,0,0,0,0,0,0,0,0,B,0,0,0,0],
+	[0,0,0,0,A,K,K,K,K,K,K,K,A,B,B,B,B,C,K,K,K,K,K,K,K,C,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],197:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,I,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,L,A,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,I,0,I,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,L,A,B,B,B,B,C,L,C,0],
+	[0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,Y,0,Y,0,0,0,0,Y,0,Y,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,F,0,0,A,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,0,0,0,0,0,I,0,I,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,A,B,C,0,0,0,0,A,B,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,B,B,C,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],198:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,F,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,F,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,A,K,K,K,K,C,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,C],
+	[A,P,L,A,C,0,0,0,0,0,0,0,0,0,I,I,0,0,0,0,0,0,0,0,0,A,C,L,0,C],
+	[A,0,L,A,C,0,0,0,0,0,0,0,L,A,B,B,C,L,0,0,0,0,0,0,0,A,C,L,0,C],
+	[A,C,L,A,C,K,K,K,K,K,K,K,A,B,B,B,B,C,K,K,K,K,K,K,K,A,C,L,A,C],
+	[A,0,L,A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,A,C,L,0,C],
+	[A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C],
+	[A,0,L,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,L,0,C],
+	[A,0,L,0,0,0,0,0,B,0,0,0,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0,L,0,C],
+	[A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C],
+	[A,0,L,0,0,0,0,0,E,0,E,0,0,0,X,0,0,0,0,0,E,0,E,0,0,0,0,L,0,C],
+	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],199:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,B,0,0,I,I,E,0,0,0,0,0,0,0,0,0,0,I,I,0,0,B,0,0,0,0,0],
+	[0,0,0,0,B,K,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,K,B,0,0,0,0,0],
+	[0,0,0,0,B,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,B,0,I,Y,0,0,0,0,0,0,E,0,0,L,0,0,0,0,Y,0,E,0,0,0,0,I,0,B,0],
+	[0,B,K,B,B,B,L,B,B,B,B,B,B,B,B,B,0,B,B,B,B,B,B,B,L,B,B,K,B,0],
+	[0,B,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0],
+	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,L,0,0,0,0,0],
+	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,B,0,I,0,0,L,0,I,0,B,0],
+	[0,B,0,I,0,0,L,0,0,I,0,B,0,0,0,0,0,0,0,B,K,B,B,B,B,B,B,K,B,0],
+	[0,B,K,A,B,B,B,B,B,C,K,B,0,0,0,0,0,0,0,B,0,0,0,0,0,0,0,0,B,0],
+	[0,B,0,0,0,0,0,0,0,0,0,B,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],200:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,I,0,0,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,I,0,0],
+	[0,B,K,K,K,K,A,L,C,K,K,K,K,K,C,0,A,K,K,K,K,A,L,C,K,K,K,B,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,I,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,B,K,0,0,0,L,0,0,0,0,0,0,I,0,I,E,0,0,E,0,L,0,0,0,0,0,I,0],
+	[0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,K,B,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,I,0,0,0,0,0,0,E,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0],
+	[0,B,0,0,0,A,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,0,B,0,0],
+	[0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,L,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,I,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,I,0],
+	[0,0,B,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,A,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],201:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,K,B,K,L,0,A,B,C,0,A,B,B,C,0,A,B,C,L,I,K,B,K,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,I,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,E,0,I,0,0,0,C,L,I,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,C,K,K,K,K,K,K,K,K,A,C,L,0,0,B,0,I,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,L,0,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,I,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,I,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,I,0,0,E,0,0,C,0,0,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,C,K,K,K,K,K,K,K,K,A,C,0,I,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,I,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,B,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,C,0,0,0,0,0,0,0,0,A,C,0,0,0,0,P,0,0,0,0],
+	[0,0,0,L,0,B,0,L,0,A,C,0,0,0,I,0,I,0,0,A,C,0,0,0,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 6, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],202:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,L,A,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,C,0,0,0,0],
+	[0,0,0,L,A,C,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,A,C,0,0,0,0],
+	[0,0,0,L,A,B,C,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,A,B,C,0,0,0,0],
+	[0,0,0,L,A,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,C,0,0,0,0],
+	[0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,0,0,0],
+	[0,0,0,L,A,0,0,Y,0,0,0,0,0,0,I,0,0,I,0,0,0,0,I,0,0,C,L,0,0,0],
+	[0,0,0,L,A,B,B,B,B,K,B,B,B,B,B,B,B,B,B,B,K,B,B,B,B,C,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,K,K,B,B,K,K,C,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,0,0,B,B,0,0,C,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,A,0,0,B,B,0,0,C,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,D,D,B,B,D,D,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],203:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,I,0,I,0,0,0,A,C,0,0,0,I,0,I,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,K,K,K,K,K,K,K,A,C,K,K,K,K,K,K,K,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,I,0,0,E,0,I,0,0,I,0,E,0,0,I,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,L,0,0,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,L,0,0,0,0,0],
+	[0,0,0,A,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
+	[0,0,0,A,0,L,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
+	[0,0,0,A,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,C,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],204:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,Y,0,0,0,0,0,0,I,I,I,0,0,0,E,0,0,0,0,0,0,I,0,0,0,0,0],
+	[0,0,0,A,B,C,0,0,A,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,L,0,0,0,E,0,0,0,I,I,I,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,I,0,L,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,C,K,K,K,K,K,K,K,K,K,A,L,B,B,B,B,B,B,C,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],205:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,A,C],
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,A,Y,0,0,0,0,Y,C,0,0,0,0,0,I,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,0,A,Y,0,0,Y,C,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,Y,0,0,0,0,0,0,0,A,K,K,C,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,A,0,0,0,0,I,I,0,0,0,0,C,0,0,0,Y,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,A,K,K,K,K,K,K,K,K,K,K,C,0,0,0,Y,0,0,0,A,C],
+	[A,C,0,0,0,L,0,0,0,A,0,0,0,0,0,0,0,0,0,0,C,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,A,C],
+	[A,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,C],
+	[A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C],
+	[A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 6, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],206:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,I,E,E,0,0,L,0,I,E,E,0,0,L,0,I,E,E,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,P,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,A,B,C,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,I,0,0,0,0,L,0,0,0,0,0,0,L,0,I,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,L,F,I,0,0,0,0,A,B,C,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 6, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],207:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,0,I,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,I,0,I,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
+	[0,0,0,A,0,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,C,0,0,0,0,0,0,0],
+	[0,0,0,P,0,0,0,0,0,0,F,0,0,0,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,L,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,A,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,L,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0],
+	[0,0,0,E,I,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,L,E,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],208:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,F,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,F,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,F,0,I,0,L,A,B,B,C,L,0,I,0,F,0,0,0,0,0,0,0,0],
+	[0,0,0,0,F,0,F,0,L,A,B,C,L,0,0,0,0,L,A,B,C,L,0,F,0,F,0,0,0,0],
+	[0,0,0,0,L,A,L,C,L,0,0,0,L,0,0,0,0,L,0,0,0,L,A,L,C,L,0,0,0,0],
+	[0,0,P,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
+	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,I,0,0],
+	[0,A,B,C,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,A,B,C,0],
+	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
+	[0,0,0,0,L,0,L,0,L,0,0,0,L,0,0,0,0,L,0,0,0,L,0,L,0,L,0,0,0,0],
+	[0,0,0,0,L,A,L,C,L,0,I,0,L,0,0,0,0,L,0,I,0,L,A,L,C,L,0,0,0,0],
+	[0,0,0,0,F,0,F,0,L,A,B,C,L,0,0,0,0,L,A,B,C,L,0,F,0,F,0,0,0,0],
+	[0,0,0,0,0,0,0,0,F,0,0,0,L,A,B,B,C,L,0,0,0,F,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,F,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,F,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],209:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,P,0,0,0,0,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
+	[0,0,A,B,B,L,C,A,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,C,0,0,0,0,0,0],
+	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,Y,0,I,0,0],
+	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,A,L,C,0,0],
+	[0,0,0,0,0,L,0,A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,A,0,0,0,Y,Y,Y,0,0,I,I,I,0,0,0,0,C,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,A,C,K,K,K,K,K,K,K,K,K,K,K,K,K,A,C,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,0,0,0,L,0,0,0,0,0,0,I,I,0,0,I,I,0,0,0,0,0,0,0,0,L,0,0,0],
+	[0,0,A,B,B,B,B,B,C,K,K,K,K,K,0,0,K,K,K,K,K,A,B,B,B,B,B,C,0,0],
+	[0,0,A,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
+	[0,0,A,0,0,I,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
+	[0,0,A,0,0,I,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,0,0,0,C,0,0],
+	[0,0,A,0,0,0,0,0,C,0,0,0,0,0,0,0,0,0,0,0,0,A,0,0,I,0,0,C,0,0],
+	[0,0,A,K,K,K,K,K,C,0,0,0,0,0,F,F,0,0,0,0,0,A,K,K,K,K,K,C,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 5, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],210:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,K,K,K,K,K,K,K,A,C,0,0],
+	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,A,C,0,0],
+	[0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,A,C,0,0],
+	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
+	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
+	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,A,C,0,I,I,I,I,0,0,A,C,0,0],
+	[0,0,A,C,0,0,L,L,L,L,0,0,0,0,0,0,0,0,0,0,I,I,I,I,0,0,A,C,0,0],
+	[0,0,A,C,E,0,L,L,L,L,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,B,B,A,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],211:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[0,A,C,0,0,0,0,0,0,0,0,0,A,C,0,0,A,C,0,0,0,0,0,0,0,0,0,A,C,0],
+	[0,A,C,0,0,0,I,I,I,0,0,0,A,C,0,0,A,C,0,0,0,Y,Y,Y,0,0,0,A,C,0],
+	[0,0,A,K,L,K,K,K,K,K,K,K,C,0,0,0,0,A,K,K,K,K,K,K,K,L,K,C,0,0],
+	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
+	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
+	[0,0,A,0,L,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,L,0,C,0,0],
+	[0,0,A,E,L,0,I,0,I,0,0,0,C,0,0,0,0,A,0,0,0,I,0,I,0,L,0,C,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0],
+	[0,0,A,0,0,0,0,0,0,0,0,0,C,0,0,0,0,A,0,0,0,0,0,0,0,0,0,C,0,0],
+	[0,0,A,X,0,0,0,0,0,0,0,E,C,0,0,0,0,A,X,0,0,0,0,0,0,0,E,C,0,0],
+	[0,0,A,K,K,K,K,L,K,K,K,K,C,0,0,0,0,A,K,K,K,K,L,K,K,K,K,C,0,0],
+	[0,0,A,0,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
+	[0,0,A,0,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
+	[0,0,A,P,0,0,0,L,0,0,0,0,C,0,0,0,0,A,0,0,0,0,L,0,0,0,0,C,0,0],
+	[0,0,A,0,Y,Y,0,L,0,Y,Y,0,C,0,0,0,0,A,0,I,I,0,L,0,I,I,0,C,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,C,0,0,A,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],212:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,I,I,0,0,0,0,I,E,0,0,0,I,0,0,0,0,I,I,0,0,0,0,0,C],
+	[A,0,0,A,K,K,K,K,K,K,K,L,K,K,K,K,K,K,L,K,K,K,K,K,K,K,C,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,0,F,0,0,L,I,I,E,E,I,I,L,0,0,F,0,0,0,0,0,0,0,C],
+	[A,0,0,A,B,B,B,L,B,B,B,B,B,B,B,B,B,B,B,B,B,B,L,B,B,B,C,0,0,C],
+	[A,0,0,0,0,0,0,L,0,0,0,0,F,0,0,0,0,F,0,0,0,0,L,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,L,0,0,F,0,0,0,F,0,F,0,0,F,0,0,L,0,0,0,0,0,0,C],
+	[A,0,0,0,0,0,0,L,0,0,0,0,0,0,0,P,0,0,0,0,0,0,L,0,0,0,0,0,0,C],
+	[A,I,I,I,0,0,F,L,F,0,0,0,0,0,0,0,0,0,0,0,0,F,L,F,0,0,I,I,I,C],
+	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],213:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,A,C,F,A,C,0,0,0,0,0,A,C,F,A,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,L,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,0,0,Y,0,L,0,Y,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,0,0,A,B,L,B,C,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,X,0,0,0,0,L,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,L,0,0,0,A,B,C,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,P,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,X,0,0,0,0,X,0,0,0,0,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],214:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,A,B,B,B,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,I,I,I,I,I,I,I,I,I,I,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,I,I,I,I,I,I,I,I,I,I,I,E,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,E,0,I,I,I,X,I,I,I,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,K,K,A,B,C,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,Y,0,0,E,0,E,0,E,0,Y,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,B,C,K,K,K,K,K,A,C,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 1, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],215:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,L,0,0,A,B,B,C,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,Y,Y,Y,0,L,0,0,0,0,0,0,0,0,L,0,Y,Y,Y,0,0,0,0,0,0],
+	[0,0,0,A,B,B,B,B,B,B,L,B,B,B,B,B,B,B,B,L,B,B,B,B,B,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,I,I,I,E,E,E,E,E,E,E,E,E,E,E,E,I,I,I,0,0,0,0,0,0],
+	[0,0,0,A,B,C,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,A,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],216:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,E,0,0,0,Y,0,0,0,0,0,0,0,0,0,0,0,0,Y,0,0,0,E,0,0,0,0],
+	[0,0,A,B,B,B,B,L,C,0,0,0,0,0,0,0,0,0,0,0,0,A,L,B,B,B,B,C,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,X,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,K,K,K,A,B,B,C,K,K,K,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,E,L,Y,Y,0,0,0,0,0,0,0,0,0,0,Y,Y,L,E,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,C,Y,0,Y,0,0,0,0,Y,0,Y,A,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,A,B,L,C,0,0,0,0,A,L,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,X,0,0,0,L,0,0,0,0,0,0,L,0,0,0,X,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],217:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,A,B,B,C,0,0,0,A,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,F,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,E,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,E,0,0,0,0,0,0,0],
+	[0,0,0,0,A,B,B,C,0,A,B,B,B,C,0,0,A,B,B,B,C,0,A,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],218:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,X,I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0],
+	[0,0,0,A,B,C,0,0,0,0,0,0,E,0,0,I,I,I,0,0,E,0,0,0,A,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,L,B,B,B,C,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,A,K,K,K,K,K,K,A,B,L,B,B,C,K,K,K,K,K,K,C,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,I,X,I,0,0,0,0,0,A,B,B,B,B,B,C,0,0,0,0,0,0,I,X,I,0,0,0],
+	[0,0,0,A,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 3, // 位置移動上限回数
+	is_vertical: true, // 交代が垂直かどうか
+};
+
+},{}],219:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,Y,0,0,0,0,0,0,0,0,Y,E,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,A,B,B,B,B,C,L,L,A,B,B,B,B,C,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,Y,L,L,Y,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,C,L,A,B,B,C,L,A,C,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,I,I,I,0,0,0,L,0,0,0,0,L,0,0,0,I,I,I,0,0,0,0,0,0],
+	[0,0,A,K,K,K,A,B,C,0,0,0,L,0,0,0,P,L,0,0,0,A,B,C,K,K,K,C,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,A,C,L,L,A,C,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,I,0,0,0,0,0,0,0,0,0,0,0,Y,L,L,Y,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,A,L,A,B,B,B,B,C,L,C,0,0,0,0,0,0,0,0,B,0],
+	[0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,E,0,0,L,0,Y,Y,Y,Y,0,L,0,0,0,0,0,0,0,0,0,I,0],
+	[0,B,0,0,0,0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 2, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],220:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,A,L,A,C,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,A,B,B,C,0],
+	[0,0,L,0,A,B,C,0,0,0,0,0,0,0,F,F,0,0,0,0,0,0,0,A,B,C,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,Y,Y,Y,Y,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,Y,Y,Y,Y,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,A,B,B,B,B,C,0,P,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,L,0,0,0,0,0,0,0,0,0,E,E,E,E,E,E,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 4, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],221:[function(require,module,exports){
+'use strict';
+var A = 11;
+var B = 12;
+var C = 13;
+var D = 10;
+var E = 8;
+var F = 16;
+var I = 9;
+var L = 6;
+var N = -1;
+var P = 7;
+var K = 5;
+var Y = 14;
+var X = 15;
+
+var map = [
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,I,0,0,0,0,0,0,A,C,0,0,0,0,X,0,0,0,I,0,0,X,0,0],
+	[0,A,C,0,0,A,B,B,B,C,0,0,0,0,A,C,0,0,0,0,A,C,0,A,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,X,0,0,X,0,0,0,A,C,0,0,0,0,0,0,I,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,A,C,0,A,C,0,0,A,C,0,0,A,B,B,B,C,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+	[A,B,B,B,B,B,B,B,B,B,B,B,B,B,A,C,B,B,B,B,B,B,B,B,B,B,B,B,B,C],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,I,I,I,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,A,B,B,B,C,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,P,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,Y,Y,Y,0,0,0,0,0,I,X,0,0,0,A,C,0,0,0,0,I,X,0,0,X,0,0,I,0,0],
+	[0,A,B,C,0,A,B,B,B,B,B,C,0,0,A,C,0,0,0,0,A,C,0,A,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,C,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,A,C,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
+];
+  //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
+
+module.exports = {
+	map: map, // マップ
+	exchange_num: 11, // 位置移動上限回数
+	is_vertical: false, // 交代が垂直かどうか
+};
+
+},{}],222:[function(require,module,exports){
+'use strict';
+
+/* music room */
+
+var base_scene = require('../hakurei').scene.base;
+var util = require('../hakurei').util;
+var H_CONSTANT = require('../hakurei').constant;
+var CONSTANT = require('../constant');
+var AssetsConfig = require('../assets_config');
+
+/* BGM 一覧を配列化 */
+var BGMS = [];
+for (var key in AssetsConfig.bgms) {
+	var data = AssetsConfig.bgms[key];
+
+	data.name = key;
+	BGMS.push(data);
+}
+
+//12個
+// DEBUG用
+
+for (var i = 0; i < 10; i++) {
+	BGMS.push(Object.assign({}, BGMS[0], {title: "サンプル"}));
+}
+
+
+var SceneMusic = function(core) {
+	base_scene.apply(this, arguments);
+};
+util.inherit(SceneMusic, base_scene);
+
+SceneMusic.prototype.init = function(){
+	base_scene.prototype.init.apply(this, arguments);
+
+	// 今どれにカーソルがあるか
+	this.index = 0;
+
+	this.core.stopBGM();
+};
+
+
+SceneMusic.prototype.beforeDraw = function(){
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// 戻る
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
+		this.core.changeScene("title");
+	}
+
+	// カーソルを下移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+		this.index++;
+
+		if(this.index >= BGMS.length) {
+			this.index = BGMS.length - 1;
+		}
+	}
+	// カーソルを上移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+		this.index--;
+
+		if(this.index < 0) {
+			this.index = 0;
+		}
+	}
+
+	// 決定
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
+		var bgm_name = BGMS[this.index].name;
+		this.core.playBGM(bgm_name);
+	}
+};
+
+// 画面更新
+SceneMusic.prototype.draw = function(){
+	this.core.clearCanvas();
+	var ctx = this.core.ctx;
+
+	ctx.save();
+
+	// 背景表示
+	this._showBackGround();
+
+	// キャラ表示
+	this._showRightChara();
+
+	// メッセージウィンドウを表示
+	this._showMessageWindow();
+
+	var cursor_x    = 50;
+	var text_x      = cursor_x + 30;
+	var y = 80;
+
+	// 文字表示
+	ctx.font = "18px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+
+	for(var i = 0, len = BGMS.length; i < len; i++) {
+		var bgm = BGMS[i];
+		var music_no = ( '00' + (i + 1) ).slice(-2); // 数字を2桁に揃える
+
+		if(this.index === i) {
+			// cursor 表示
+			this._drawText("▶", cursor_x, y);
+
+			// メッセージ表示
+			this._showMessage(bgm.message);
+		}
+		// 文字表示
+		this._drawText(music_no + ": " + bgm.title, text_x, y); // 1行表示
+
+		y+= 30;
+	}
+
+	ctx.restore();
+
+	// 操作方法説明
+	this._showHowTo();
+};
+
+SceneMusic.prototype._drawText = function(text, x, y){
+	var ctx = this.core.ctx;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, x, y);
+
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText(text, x, y);
+};
+
+// 操作説明 表示
+SceneMusic.prototype._showHowTo = function() {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var text = "Xキー：戻る";
+
+	ctx.font = "14px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	this._drawText(text, 10, this.core.height - 10);
+	ctx.restore();
+};
+
+SceneMusic.prototype._showRightChara = function(){
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var x = 400;
+	var y = 65;
+
+	var right_image = this.core.image_loader.getImage("reimu_normal1");
+	ctx.drawImage(right_image,
+		x,
+		y,
+		right_image.width,
+		right_image.height
+	);
+
+	ctx.restore();
+};
+
+var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
+SceneMusic.prototype._showMessageWindow = function(){
+	var ctx = this.core.ctx;
+	// show message window
+	ctx.save();
+
+	var message_height = 100;
+
+	ctx.globalAlpha = 0.5;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.fillRect(
+		MESSAGE_WINDOW_OUTLINE_MARGIN,
+		this.core.height - 125,
+		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
+		message_height
+	);
+
+	ctx.restore();
+};
+
+// セリフ表示
+SceneMusic.prototype._showMessage = function(message) {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	ctx.font = "18px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	var x, y;
+	// セリフ表示
+	var lines = [message];
+	if (lines.length) {
+		// セリフテキストの y 座標初期位置
+		var message_height = 80;
+		y = this.core.height - 125 + 40;
+
+		for(var i = 0, len = lines.length; i < len; i++) {
+			ctx.fillStyle = 'rgb( 0, 0, 0 )';
+			ctx.lineWidth = 4.0;
+			ctx.strokeText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
+
+			ctx.fillStyle = 'white';
+			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
+
+			y+= 30;
+		}
+	}
+
+	ctx.restore();
+};
+
+
+
+
+SceneMusic.prototype._showBackGround = function(){
+	var ctx = this.core.ctx;
+	var title_bg = this.core.image_loader.getImage('title_bg');
+/*
+	// 背景画像表示
+	ctx.drawImage(title_bg,
+					0,
+					0,
+					title_bg.width,
+					title_bg.height,
+					0,
+					0,
+					this.core.width,
+					this.core.height);
+*/
+	// 背景をちょっと暗めに表示
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = 0.6; // 半透明
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+
+	ctx.globalAlpha = 1.0; // 半透明戻す
+};
+
+
+module.exports = SceneMusic;
+
+},{"../assets_config":5,"../constant":6,"../hakurei":9}],223:[function(require,module,exports){
+'use strict';
+
+/* ステージセレクト画面 */
+
+
+var base_scene = require('../hakurei').scene.base;
+var util = require('../hakurei').util;
+var H_CONSTANT = require('../hakurei').constant;
+var CONSTANT = require('../constant');
+
+var StageConfig = require('../stage_config');
+var LogicScore = require('../logic/score');
+var LogicCreateMap = require('../logic/create_map');
+
+// 画面に何個までステージを表示するか
+var SHOW_STAGE_LIST_NUM = 20;
+
+var StageConfig = require('../stage_config');
+var MAPS = StageConfig.MAPS;
+
+
+var SceneSelect = function(core) {
+	base_scene.apply(this, arguments);
+};
+util.inherit(SceneSelect, base_scene);
+
+SceneSelect.prototype.init = function(selected_stage_no){
+	base_scene.prototype.init.apply(this, arguments);
+
+	// ステージ一覧
+	this.stage_list = this.core.save.getStageResultList();
+
+	// カーソル位置
+	if (selected_stage_no) {
+		this.selected_stage = selected_stage_no - 1; // selected_stage は 0 から始まるので
+	}
+	else {
+		this.selected_stage = 0;
+	}
+
+	// マップを更新
+	this.stage_objects = this.createMap();
+
+	this.core.changeBGM("title");
+};
+SceneSelect.prototype.beforeDraw = function(){
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// 決定
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
+		this.core.changeScene("stage", this.selected_stage + 1, "play", true, true); // 0 から selected_stage は始まるので +1
+	}
+	// 戻る
+	else if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
+		this.core.changeScene("title");
+	}
+
+	// カーソルを下移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+		this.selected_stage++;
+
+		if(this.selected_stage >= this.stage_list.length) {
+			this.selected_stage = this.stage_list.length - 1;
+		}
+
+		// マップを更新
+		this.stage_objects = this.createMap();
+	}
+	// カーソルを上移動
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+		this.selected_stage--;
+
+		if(this.selected_stage < 0) {
+			this.selected_stage = 0;
+		}
+
+		// マップを更新
+		this.stage_objects = this.createMap();
+	}
+
+
+};
+
+SceneSelect.prototype.createMap = function(){
+	var stage_objects = [];
+	var objects_by_tile_type = LogicCreateMap.exec(this, MAPS[this.selected_stage + 1].map, 12, 70, 0.8);
+
+	for (var key in objects_by_tile_type) {
+		// プレイヤーは描画しない
+		if (Number(key) === CONSTANT.PLAYER) {
+			continue;
+		}
+
+		stage_objects = stage_objects.concat(objects_by_tile_type[key]);
+	}
+
+	return stage_objects;
+};
+
+// 画面更新
+SceneSelect.prototype.draw = function(){
+	this.core.clearCanvas();
+	var ctx = this.core.ctx;
+
+	ctx.save();
+
+	var title_bg = this.core.image_loader.getImage('title_bg');
+
+	// 背景画像表示
+	ctx.drawImage(title_bg,
+					0,
+					0,
+					title_bg.width,
+					title_bg.height,
+					0,
+					0,
+					this.core.width,
+					this.core.height);
+
+	// 背景をちょっと暗めに表示
+	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
+	ctx.globalAlpha = 0.5; // 半透明
+	ctx.fillRect(0, 0, this.core.width, this.core.height);
+
+	// ステージ一覧背景 表示
+	ctx.globalAlpha = 1.0; // 半透明戻す
+	ctx.fillRect(this.core.width - 170, 0, 170, this.core.height);
+
+
+	var stage_list;   // 表示するステージ一覧
+	var index;        // カーソルの表示位置
+	var is_show_up;   // 上カーソルを表示するかどうか
+	var is_show_down; // 下カーソルを表示するかどうか
+	if (this.selected_stage <= SHOW_STAGE_LIST_NUM/2) {
+		stage_list = this.stage_list.slice(0, SHOW_STAGE_LIST_NUM);
+		index = this.selected_stage;
+		is_show_up   = false;
+		is_show_down = true;
+	}
+	else if (SHOW_STAGE_LIST_NUM/2 < this.selected_stage && this.selected_stage <= StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2) {
+		stage_list = this.stage_list.slice(this.selected_stage - SHOW_STAGE_LIST_NUM/2, SHOW_STAGE_LIST_NUM/2 + this.selected_stage);
+		index = SHOW_STAGE_LIST_NUM/2;
+		is_show_up   = true;
+		is_show_down = true;
+	}
+	else if (StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2 < this.selected_stage) {
+		stage_list = this.stage_list.slice(SHOW_STAGE_LIST_NUM, StageConfig.MAP_NUM);
+		index = this.selected_stage - (StageConfig.MAP_NUM - SHOW_STAGE_LIST_NUM/2) + SHOW_STAGE_LIST_NUM/2;
+		is_show_up   = true;
+		is_show_down = false;
+	}
+
+
+	// ステージ一覧 文字列
+	ctx.font = "18px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+
+	var i, len;
+	var x = (this.core.height - 24 * SHOW_STAGE_LIST_NUM)/2;
+
+	for(i = 0, len = stage_list.length; i < len; i++) {
+		var data = stage_list[i];
+		var stage_no = data.stage_no.toString();
+		stage_no = ( '00' + stage_no ).slice(-2); // 数字を2桁に揃える
+		var menu = "Stage " + stage_no;
+
+		if(i === index) {
+			// カーソル表示
+			this._drawText("▶", this.core.width - 150, x + 24*i);
+		}
+		// 文字表示
+		this._drawText(menu, this.core.width - 120, x + 24 * i); // 1行表示
+
+	}
+
+	if (is_show_up) {
+		ctx.fillText("▲", this.core.width - 100, 20);
+	}
+	if (is_show_down) {
+		ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
+	}
+
+	var stage_data = this.core.save.getStageResult(this.selected_stage + 1); // selected_stage は 0から始まるので +1
+
+	if (stage_data) {
+		var stage_no_string = ( '00' + stage_data.stage_no ).slice(-2); // 数字を2桁に揃える
+		// ステージ名表示
+		ctx.font = "36px 'Migu'";
+		ctx.textAlign = 'left';
+		this._drawText("Stage " + stage_no_string, 20, 50);
+
+		// ステージサムネイル 表示
+		// 横720px 縦480px
+		/*
+		var thumbnail = this.core.image_loader.getImage('thumbnail15');
+		ctx.drawImage(thumbnail,
+						25,
+						50,
+						30*24,
+						20*24,
+						10,
+						90,
+						30*24 *0.80,
+						20*24 *0.80);
+		*/
+
+		LogicCreateMap.drawBackground(ctx, this.core.image_loader.getImage("bg"), 12, 70, 0.8);
+		// ステージ描画
+		for (i = 0; i < this.stage_objects.length; i++) {
+			this.stage_objects[i].draw();
+		}
+
+		LogicCreateMap.drawFrames(this, 12, 70, 0.8);
+
+		var honor_num = LogicScore.calcHonor(
+			stage_data.time,
+			stage_data.exchange_num,
+			// TODO: 各マップから取得する
+			100,
+			1
+		);
+
+		var honor_str = "";
+		for (i = 0; i < honor_num; i++) {
+			honor_str = honor_str + "★";
+		}
+
+		// ステージスコア表示
+		ctx.font = "40px 'Migu'";
+		this._drawText(honor_str, this.core.width - 300, this.core.height - 50);
+	}
+
+	// 操作方法説明
+	this._showHowTo();
+
+	ctx.restore();
+};
+SceneSelect.prototype._drawText = function(text, x, y){
+	var ctx = this.core.ctx;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, x, y);
+
+	ctx.fillStyle = 'rgb( 255, 255, 255 )';
+	ctx.fillText(text, x, y);
+};
+
+// 操作説明 表示
+SceneSelect.prototype._showHowTo = function() {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var text = "Xキー：戻る";
+
+	ctx.font = "14px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	this._drawText(text, 10, this.core.height - 10);
+	ctx.restore();
+};
+
+
+
+
+
+module.exports = SceneSelect;
+
+},{"../constant":6,"../hakurei":9,"../logic/create_map":44,"../logic/score":47,"../stage_config":232}],224:[function(require,module,exports){
+'use strict';
+
+/* 立ち絵＆セリフ */
+var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
+var TALKER_MOVE_PX = 5;
+var SCALE = 1;
+
+var TRANSITION_COUNT = 100;
+
+// セリフウィンドウの縦の長さ
+var MESSAGE_WINDOW_HEIGHT = 100;
+
+
+var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
+var H_CONSTANT = require('../hakurei').constant;
+var base_scene = require('../hakurei').scene.base;
+
+var SerifManager = require('../hakurei').serif_manager;
+
+var CreateDarkerImage = require('../logic/create_darker_image');
+
+var SceneSerifBase = function(game) {
+	base_scene.apply(this, arguments);
+
+	this.serif = new SerifManager();
+};
+
+util.inherit(SceneSerifBase, base_scene);
+
+SceneSerifBase.prototype.init = function(serif){
+	base_scene.prototype.init.apply(this, arguments);
+	this.serif.init(this.serifScript());
+
+	this.transition_count = 0;
+
+	if (this.bgm()) {
+		this.core.playBGM(this.bgm());
+	}
+};
+
+SceneSerifBase.prototype.beforeDraw = function(){
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if (this.isInTransition()) {
+		this.transition_count--;
+
+		// トランジションが終わればセリフ送り再開
+		if (this.transition_count === 0) {
+			this.serif.startPrintMessage();
+		}
+	}
+
+
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
+		if(this.serif.is_end()) {
+			this.notifySerifEnd();
+		}
+		else {
+			// トランジション中でなければ
+			if (!this.isInTransition()) {
+				// セリフを送る
+				this.serif.next();
+
+				if (this.serif.is_background_changed()) {
+					// トランジション開始
+					this.transition_count = TRANSITION_COUNT;
+
+					// トランジション中はセリフ送り中断
+					this.serif.cancelPrintMessage();
+				}
+			}
+			else {
+				// トランジション終了
+				this.transition_count = 0;
+				// トランジションが終わればセリフ送り再開
+				this.serif.startPrintMessage();
+			}
+		}
+	}
+
+	// スキップ
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
+		this.notifySerifEnd();
+	}
+};
+
+// 画面更新
+SceneSerifBase.prototype.draw = function(){
+	base_scene.prototype.draw.apply(this, arguments);
+	var ctx = this.core.ctx;
+
+	if (this.isInTransition()) {
+		// 背景表示
+		ctx.globalAlpha = (TRANSITION_COUNT - this.transition_count) / TRANSITION_COUNT;
+		this._showBackground();
+		ctx.globalAlpha = 1.0;
+	}
+	else {
+		// 背景表示
+		this._showBackground();
+
+		// キャラ表示
+		if(this.serif.right_image()) {
+			this._showRightChara();
+		}
+		if(this.serif.left_image()) {
+			this._showLeftChara();
+		}
+
+		// メッセージウィンドウ表示
+		this._showMessageWindow();
+
+		// メッセージ表示
+		this._showMessage();
+
+		// 操作説明 表示
+		this._showHowTo();
+
+	}
+};
+
+// 背景画像表示
+SceneSerifBase.prototype._showBackground = function(){
+	var ctx = this.core.ctx;
+	var background_name = this.serif.background_image() ? this.serif.background_image() : this.background();
+	var background = this.core.image_loader.getImage(background_name);
+	ctx.drawImage(background,
+					0,
+					0,
+					background.width,
+					background.height,
+					0,
+					0,
+					this.core.width,
+					this.core.height);
+};
+
+SceneSerifBase.prototype._showRightChara = function(){
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var x = 400;
+	var y = 65;
+
+	var right_image = this.core.image_loader.getImage(this.serif.right_image());
+	if(!this.serif.is_right_talking()) {
+		// 喋ってない方のキャラは暗くなる
+		right_image = CreateDarkerImage.exec(right_image);
+	}
+	else {
+		x -= TALKER_MOVE_PX;
+		y -= TALKER_MOVE_PX;
+	}
+
+
+	ctx.drawImage(right_image,
+		x,
+		y,
+		right_image.width  * SCALE,
+		right_image.height * SCALE
+	);
+
+	ctx.restore();
+};
+
+SceneSerifBase.prototype._showLeftChara = function(){
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var x = -50;
+	var y = 25;
+
+	var left_image = this.core.image_loader.getImage(this.serif.left_image());
+	if(!this.serif.is_left_talking()) {
+		// 喋ってない方のキャラは暗くなる
+		left_image = CreateDarkerImage.exec(left_image);
+	}
+	else {
+		x += TALKER_MOVE_PX;
+		y -= TALKER_MOVE_PX;
+	}
+
+
+	ctx.drawImage(left_image,
+		x,
+		y,
+		left_image.width  * SCALE,
+		left_image.height * SCALE
+	);
+
+	ctx.restore();
+};
+
+SceneSerifBase.prototype._showMessageWindow = function(){
+	var ctx = this.core.ctx;
+	// show message window
+	ctx.save();
+
+	ctx.globalAlpha = 0.5;
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.fillRect(
+		MESSAGE_WINDOW_OUTLINE_MARGIN,
+		this.core.height - 125,
+		this.core.width - MESSAGE_WINDOW_OUTLINE_MARGIN * 2,
+		MESSAGE_WINDOW_HEIGHT
+	);
+
+	ctx.restore();
+};
+
+// セリフ表示
+SceneSerifBase.prototype._showMessage = function() {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	ctx.font = "18px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	var x, y;
+	// セリフ表示
+	var lines = this.serif.lines();
+	if (lines.length) {
+		// セリフテキストの y 座標初期位置
+		y = this.core.height - 125 + 40;
+
+		for(var i = 0, len = lines.length; i < len; i++) {
+			ctx.fillStyle = 'rgb( 0, 0, 0 )';
+			ctx.lineWidth = 4.0;
+			ctx.strokeText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
+
+			ctx.fillStyle = 'white';
+			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
+
+			y+= 30;
+		}
+	}
+
+	ctx.restore();
+};
+
+// 操作説明 表示
+SceneSerifBase.prototype._showHowTo = function() {
+	var ctx = this.core.ctx;
+	ctx.save();
+
+	var text = "Xキー：スキップ";
+
+	ctx.font = "14px 'Migu'";
+	ctx.textAlign = 'left';
+	ctx.textBaseAlign = 'middle';
+
+	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.lineWidth = 4.0;
+	ctx.strokeText(text, this.core.width - 130, this.core.height - 10);
+
+	ctx.fillStyle = 'white';
+	ctx.fillText(text, this.core.width - 130, this.core.height - 10);
+
+	ctx.restore();
+};
+
+
+
+
+// 立ち絵＆セリフ終了後
+SceneSerifBase.prototype.notifySerifEnd = function() {
+	throw new Error("notifySerifEnd method must be defined.");
+};
+
+// セリフスクリプト
+SceneSerifBase.prototype.serifScript = function() {
+	throw new Error("serifScript method must be defined.");
+};
+
+// 背景画像名
+SceneSerifBase.prototype.background = function() {
+	throw new Error("background method must be defined.");
+};
+// BGM
+SceneSerifBase.prototype.bgm = function() {
+};
+
+
+
+
+SceneSerifBase.prototype.isInTransition = function() {
+	return this.transition_count ? true : false;
+};
+
+
+
+
+module.exports = SceneSerifBase;
+
+},{"../constant":6,"../hakurei":9,"../logic/create_darker_image":43}],225:[function(require,module,exports){
 'use strict';
 // ステージクリア後のセリフ
 
@@ -17500,7 +17907,7 @@ SceneAfterTalk.prototype.notifyTalkEnd = function () {
 
 module.exports = SceneAfterTalk;
 
-},{"../../hakurei":9,"./talk_base":229}],224:[function(require,module,exports){
+},{"../../hakurei":9,"./talk_base":231}],226:[function(require,module,exports){
 'use strict';
 // ステージ開始前のセリフ
 
@@ -17519,7 +17926,7 @@ SceneBeforeTalk.prototype.notifyTalkEnd = function () {
 
 module.exports = SceneBeforeTalk;
 
-},{"../../hakurei":9,"./talk_base":229}],225:[function(require,module,exports){
+},{"../../hakurei":9,"./talk_base":231}],227:[function(require,module,exports){
 'use strict';
 // ポーズ画面
 
@@ -17580,7 +17987,7 @@ SceneStagePause.prototype.beforeDraw = function(){
 		}
 		else if(this.selectIndex === 2) {
 			// Quit
-			this.core.changeScene("title");
+			this.parent.notifyQuit();
 		}
 	}
 };
@@ -17632,7 +18039,7 @@ SceneStagePause.prototype.draw = function(){
 };
 module.exports = SceneStagePause;
 
-},{"../../hakurei":9}],226:[function(require,module,exports){
+},{"../../hakurei":9}],228:[function(require,module,exports){
 'use strict';
 
 var base_scene = require('../../hakurei').scene.base;
@@ -17711,7 +18118,7 @@ SceneStagePlay.prototype.draw = function() {
 
 module.exports = SceneStagePlay;
 
-},{"../../hakurei":9}],227:[function(require,module,exports){
+},{"../../hakurei":9}],229:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 
@@ -17944,7 +18351,7 @@ SceneStageResultClearBySelect.prototype.getMessage = function() {
 
 module.exports = SceneStageResultClearBySelect;
 
-},{"../../hakurei":9,"../../logic/result_message/select":45,"../../logic/score":47}],228:[function(require,module,exports){
+},{"../../hakurei":9,"../../logic/result_message/select":45,"../../logic/score":47}],230:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 // ステージセレクトと一緒なので継承して実装
@@ -17987,7 +18394,7 @@ SceneStageResultClear.prototype.getMessage = function() {
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":9,"../../logic/result_message/story":46,"./result_clear_by_select":227}],229:[function(require,module,exports){
+},{"../../hakurei":9,"../../logic/result_message/story":46,"./result_clear_by_select":229}],231:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
@@ -18230,230 +18637,7 @@ SceneStageTalk.prototype.notifyTalkEnd = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":9,"../../logic/create_darker_image":43}],230:[function(require,module,exports){
-'use strict';
-
-var base_scene = require('../hakurei').scene.base;
-var util = require('../hakurei').util;
-var H_CONSTANT = require('../hakurei').constant;
-var CONSTANT = require('../constant');
-
-// transition time ready to show canvas
-var SHOW_TRANSITION_COUNT = 100;
-
-// blink interval time
-var SHOW_START_MESSAGE_INTERVAL = 50;
-
-var MENU = [
-	["Story Start", "reminiscence", function (core) {
-		var progress_stage_no = core.save.getNormalStageProgress();
-
-		// 最初から
-		if (!progress_stage_no) {
-			// 回想シーン画面へ
-			core.changeScene("reminiscence");
-		}
-		// 続きから
-		else {
-			// 続きのステージから
-			core.changeScene("stage", progress_stage_no + 1, "talk", true);
-		}
-	}],
-	["Ex Story Start", "ex_epigraph", function (core) {
-		var progress_stage_no = core.save.getExStageProgress();
-
-		// 最初から
-		if (!progress_stage_no) {
-			// Ex エピグラフ画面へ
-			core.changeScene("ex_epigraph");
-		}
-		// 続きから
-		else {
-			// 続きのステージから
-			core.changeScene("stage", progress_stage_no + 1, "talk", true);
-		}
-	}],
-	["Select Stage", "select", function (core) {
-		// ステージセレクト画面へ
-		core.changeScene("select");
-	}],
-	/*
-	["How To", "howto", function (core) {
-		// 遊び方画面へ
-		core.changeScene("howto");
-	}],
-	["Config", "config", function (core) {
-		core.changeScene("config");
-	}],
-	*/
-	["Music Room", "music", function (core) {
-		// Music Room 画面へ
-		core.changeScene("music");
-	}],
-];
-
-var SceneTitle = function(core) {
-	base_scene.apply(this, arguments);
-};
-util.inherit(SceneTitle, base_scene);
-
-SceneTitle.prototype.init = function(){
-	base_scene.prototype.init.apply(this, arguments);
-
-	// 今どれにカーソルがあるか
-	this.index = 0;
-
-	// Exステージ解放されているかどうか */
-	var is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
-
-	// いずれかのステージがクリアされているかどうか
-	var is_any_stage_cleared = this.core.save.getLatestStageResult() ? true : false;
-
-	// メニュー一覧
-	this.menu_list = [];
-	for(var i = 0, len = MENU.length; i < len; i++) {
-		var menu = MENU[i];
-
-		// 通常ストーリークリア後のみ、Ex Story を表示する
-		if(!is_normal_stage_cleared && menu[1] === "ex_epigraph") {
-			continue;
-		}
-		// stage 1クリア後のみ、ステージセレクトを表示する
-		else if (!is_any_stage_cleared && menu[1] === "select") {
-			continue;
-		}
-
-		this.menu_list.push(menu);
-	}
-
-	this.core.stopBGM();
-};
-
-
-SceneTitle.prototype.beforeDraw = function(){
-	base_scene.prototype.beforeDraw.apply(this, arguments);
-
-	if(this.frame_count === 60) {
-		this.core.playBGM("title");
-	}
-
-	// カーソルを下移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
-		this.index++;
-
-		if(this.index >= this.menu_list.length) {
-			this.index = this.menu_list.length - 1;
-		}
-	}
-	// カーソルを上移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
-		this.index--;
-
-		if(this.index < 0) {
-			this.index = 0;
-		}
-	}
-
-	// 決定
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		this.core.playSound('select');
-
-		// メニューに設定された関数を実行
-		var exec_func = this.menu_list[this.index][2];
-		exec_func(this.core);
-	}
-};
-
-// 画面更新
-SceneTitle.prototype.draw = function(){
-	this.core.clearCanvas();
-	var ctx = this.core.ctx;
-
-	ctx.save();
-
-	// 切り替え効果
-	var alpha;
-	if( this.frame_count < SHOW_TRANSITION_COUNT ) {
-		alpha = this.frame_count / SHOW_TRANSITION_COUNT;
-	}
-	else {
-		alpha = 1.0;
-	}
-
-
-	var title_bg = this.core.image_loader.getImage('title_bg');
-	// 背景画像表示
-	ctx.globalAlpha = alpha;
-	ctx.drawImage(title_bg,
-					0,
-					0,
-					title_bg.width,
-					title_bg.height,
-					0,
-					0,
-					this.core.width,
-					this.core.height);
-
-	// タイトルロゴ
-	var title = this.core.image_loader.getImage('title');
-	ctx.drawImage(title,
-					20,
-					-20,
-					title.width,
-					title.height);
-
-
-
-	var cursor_x    = this.core.width - 200;
-	var text_x      = cursor_x + 30;
-	var y = this.core.height/2 - 50;
-
-	// 文字背景 表示
-	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.7; // 半透明
-	ctx.fillRect(cursor_x - 10, y - 100, this.core.width - cursor_x - 20, this.core.height - y + 70);
-
-	// 文字表示
-	ctx.globalAlpha = 1.0; // 半透明戻す
-	ctx.font = "18px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-
-	for(var i = 0, len = this.menu_list.length; i < len; i++) {
-		var menu = this.menu_list[i];
-
-		if(this.index === i) {
-			// cursor 表示
-			this._drawText("▶", cursor_x, y);
-		}
-		// 文字表示
-		this._drawText(menu[0], text_x, y); // 1行表示
-
-		y+= 40;
-	}
-
-	ctx.restore();
-
-
-};
-
-SceneTitle.prototype._drawText = function(text, x, y){
-	var ctx = this.core.ctx;
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
-	ctx.lineWidth = 4.0;
-	ctx.strokeText(text, x, y);
-
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.fillText(text, x, y);
-};
-
-
-
-
-module.exports = SceneTitle;
-
-},{"../constant":6,"../hakurei":9}],231:[function(require,module,exports){
+},{"../../hakurei":9,"../../logic/create_darker_image":43}],232:[function(require,module,exports){
 'use strict';
 
 // ステージマップ一覧
@@ -18644,4 +18828,4 @@ module.exports = {
 	EYES_NUM: EYES_NUM,
 };
 
-},{"./logic/serif/stage01/after":54,"./logic/serif/stage01/before":55,"./logic/serif/stage02/after":56,"./logic/serif/stage02/before":57,"./logic/serif/stage03/after":58,"./logic/serif/stage03/before":59,"./logic/serif/stage04/after":60,"./logic/serif/stage04/before":61,"./logic/serif/stage05/after":62,"./logic/serif/stage05/before":63,"./logic/serif/stage06/after":64,"./logic/serif/stage06/before":65,"./logic/serif/stage07/after":66,"./logic/serif/stage07/before":67,"./logic/serif/stage08/after":68,"./logic/serif/stage08/before":69,"./logic/serif/stage09/after":70,"./logic/serif/stage09/before":71,"./logic/serif/stage10/after":72,"./logic/serif/stage10/before":73,"./logic/serif/stage11/after":74,"./logic/serif/stage11/before":75,"./logic/serif/stage12/after":76,"./logic/serif/stage12/before":77,"./logic/serif/stage13/after":78,"./logic/serif/stage13/before":79,"./logic/serif/stage14/after":80,"./logic/serif/stage14/before":81,"./logic/serif/stage15/after":82,"./logic/serif/stage15/before":83,"./logic/serif/stage16/after":84,"./logic/serif/stage16/before":85,"./logic/serif/stage17/after":86,"./logic/serif/stage17/before":87,"./logic/serif/stage18/after":88,"./logic/serif/stage18/before":89,"./logic/serif/stage19/after":90,"./logic/serif/stage19/before":91,"./logic/serif/stage20/after":92,"./logic/serif/stage20/before":93,"./logic/serif/stage21/after":94,"./logic/serif/stage21/before":95,"./logic/serif/stage22/after":96,"./logic/serif/stage22/before":97,"./logic/serif/stage23/after":98,"./logic/serif/stage23/before":99,"./logic/serif/stage24/after":100,"./logic/serif/stage24/before":101,"./logic/serif/stage25/after":102,"./logic/serif/stage25/before":103,"./logic/serif/stage26/after":104,"./logic/serif/stage26/before":105,"./logic/serif/stage27/after":106,"./logic/serif/stage27/before":107,"./logic/serif/stage28/after":108,"./logic/serif/stage28/before":109,"./logic/serif/stage29/after":110,"./logic/serif/stage29/before":111,"./logic/serif/stage30/after":112,"./logic/serif/stage30/before":113,"./logic/serif/stage31/after":114,"./logic/serif/stage31/before":115,"./logic/serif/stage32/after":116,"./logic/serif/stage32/before":117,"./logic/serif/stage33/after":118,"./logic/serif/stage33/before":119,"./logic/serif/stage34/after":120,"./logic/serif/stage34/before":121,"./logic/serif/stage35/after":122,"./logic/serif/stage35/before":123,"./logic/serif/stage36/after":124,"./logic/serif/stage36/before":125,"./logic/serif/stage37/after":126,"./logic/serif/stage37/before":127,"./logic/serif/stage38/after":128,"./logic/serif/stage38/before":129,"./logic/serif/stage39/after":130,"./logic/serif/stage39/before":131,"./logic/serif/stage40/after":132,"./logic/serif/stage40/before":133,"./scene/map/stage01":176,"./scene/map/stage02":177,"./scene/map/stage03":178,"./scene/map/stage04":179,"./scene/map/stage05":180,"./scene/map/stage06":181,"./scene/map/stage07":182,"./scene/map/stage08":183,"./scene/map/stage09":184,"./scene/map/stage10":185,"./scene/map/stage11":186,"./scene/map/stage12":187,"./scene/map/stage13":188,"./scene/map/stage14":189,"./scene/map/stage15":190,"./scene/map/stage16":191,"./scene/map/stage17":192,"./scene/map/stage18":193,"./scene/map/stage19":194,"./scene/map/stage20":195,"./scene/map/stage21":196,"./scene/map/stage22":197,"./scene/map/stage23":198,"./scene/map/stage24":199,"./scene/map/stage25":200,"./scene/map/stage26":201,"./scene/map/stage27":202,"./scene/map/stage28":203,"./scene/map/stage29":204,"./scene/map/stage30":205,"./scene/map/stage31":206,"./scene/map/stage32":207,"./scene/map/stage33":208,"./scene/map/stage34":209,"./scene/map/stage35":210,"./scene/map/stage36":211,"./scene/map/stage37":212,"./scene/map/stage38":213,"./scene/map/stage39":214,"./scene/map/stage40":215}]},{},[134]);
+},{"./logic/serif/stage01/after":54,"./logic/serif/stage01/before":55,"./logic/serif/stage02/after":56,"./logic/serif/stage02/before":57,"./logic/serif/stage03/after":58,"./logic/serif/stage03/before":59,"./logic/serif/stage04/after":60,"./logic/serif/stage04/before":61,"./logic/serif/stage05/after":62,"./logic/serif/stage05/before":63,"./logic/serif/stage06/after":64,"./logic/serif/stage06/before":65,"./logic/serif/stage07/after":66,"./logic/serif/stage07/before":67,"./logic/serif/stage08/after":68,"./logic/serif/stage08/before":69,"./logic/serif/stage09/after":70,"./logic/serif/stage09/before":71,"./logic/serif/stage10/after":72,"./logic/serif/stage10/before":73,"./logic/serif/stage11/after":74,"./logic/serif/stage11/before":75,"./logic/serif/stage12/after":76,"./logic/serif/stage12/before":77,"./logic/serif/stage13/after":78,"./logic/serif/stage13/before":79,"./logic/serif/stage14/after":80,"./logic/serif/stage14/before":81,"./logic/serif/stage15/after":82,"./logic/serif/stage15/before":83,"./logic/serif/stage16/after":84,"./logic/serif/stage16/before":85,"./logic/serif/stage17/after":86,"./logic/serif/stage17/before":87,"./logic/serif/stage18/after":88,"./logic/serif/stage18/before":89,"./logic/serif/stage19/after":90,"./logic/serif/stage19/before":91,"./logic/serif/stage20/after":92,"./logic/serif/stage20/before":93,"./logic/serif/stage21/after":94,"./logic/serif/stage21/before":95,"./logic/serif/stage22/after":96,"./logic/serif/stage22/before":97,"./logic/serif/stage23/after":98,"./logic/serif/stage23/before":99,"./logic/serif/stage24/after":100,"./logic/serif/stage24/before":101,"./logic/serif/stage25/after":102,"./logic/serif/stage25/before":103,"./logic/serif/stage26/after":104,"./logic/serif/stage26/before":105,"./logic/serif/stage27/after":106,"./logic/serif/stage27/before":107,"./logic/serif/stage28/after":108,"./logic/serif/stage28/before":109,"./logic/serif/stage29/after":110,"./logic/serif/stage29/before":111,"./logic/serif/stage30/after":112,"./logic/serif/stage30/before":113,"./logic/serif/stage31/after":114,"./logic/serif/stage31/before":115,"./logic/serif/stage32/after":116,"./logic/serif/stage32/before":117,"./logic/serif/stage33/after":118,"./logic/serif/stage33/before":119,"./logic/serif/stage34/after":120,"./logic/serif/stage34/before":121,"./logic/serif/stage35/after":122,"./logic/serif/stage35/before":123,"./logic/serif/stage36/after":124,"./logic/serif/stage36/before":125,"./logic/serif/stage37/after":126,"./logic/serif/stage37/before":127,"./logic/serif/stage38/after":128,"./logic/serif/stage38/before":129,"./logic/serif/stage39/after":130,"./logic/serif/stage39/before":131,"./logic/serif/stage40/after":132,"./logic/serif/stage40/before":133,"./scene/map/stage01":182,"./scene/map/stage02":183,"./scene/map/stage03":184,"./scene/map/stage04":185,"./scene/map/stage05":186,"./scene/map/stage06":187,"./scene/map/stage07":188,"./scene/map/stage08":189,"./scene/map/stage09":190,"./scene/map/stage10":191,"./scene/map/stage11":192,"./scene/map/stage12":193,"./scene/map/stage13":194,"./scene/map/stage14":195,"./scene/map/stage15":196,"./scene/map/stage16":197,"./scene/map/stage17":198,"./scene/map/stage18":199,"./scene/map/stage19":200,"./scene/map/stage20":201,"./scene/map/stage21":202,"./scene/map/stage22":203,"./scene/map/stage23":204,"./scene/map/stage24":205,"./scene/map/stage25":206,"./scene/map/stage26":207,"./scene/map/stage27":208,"./scene/map/stage28":209,"./scene/map/stage29":210,"./scene/map/stage30":211,"./scene/map/stage31":212,"./scene/map/stage32":213,"./scene/map/stage33":214,"./scene/map/stage34":215,"./scene/map/stage35":216,"./scene/map/stage36":217,"./scene/map/stage37":218,"./scene/map/stage38":219,"./scene/map/stage39":220,"./scene/map/stage40":221}]},{},[134]);
