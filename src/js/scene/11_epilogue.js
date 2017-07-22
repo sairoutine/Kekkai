@@ -30,4 +30,9 @@ ScenePrologue.prototype.background = function() {
 	return "shrine_noon";
 };
 
+// BGM
+ScenePrologue.prototype.bgm = function() {
+	return "mute";
+};
+
 module.exports = ScenePrologue;

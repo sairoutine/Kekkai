@@ -51,4 +51,10 @@ SceneAfterEx.prototype.serifScript = function() {
 SceneAfterEx.prototype.background = function() {
 	return backgrounds[this.index];
 };
+
+// BGM
+SceneAfterEx.prototype.bgm = function() {
+	return "mute";
+};
+
 module.exports = SceneAfterEx;

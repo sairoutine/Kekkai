@@ -32,6 +32,8 @@ SceneStaffroll.prototype.init = function() {
 
 	// スタッフロール終了中かどうか
 	this.is_ending = false;
+
+	this.core.playBGM("mute");
 };
 
 SceneStaffroll.prototype.beforeDraw = function() {
