@@ -7,6 +7,9 @@ AssetsConfig.images = {
 	// タイトル背景
 	title_bg:      "./image/title_bg.png",
 
+	// 回想シーン背景
+	reminiscence:   "./image/reminiscence.jpg",
+
 	// プロローグ背景
 	shrine_noon:   "./image/shrine_noon.jpg",
 
@@ -26,6 +29,15 @@ AssetsConfig.images = {
 	mari_bg:       "./image/mari_bg.png",
 	// ノーマルステージクリア後背景
 	shrine_night:   "./image/shrine_night.jpg",
+
+	after_ex1:   "./image/after_ex1.jpg",
+	after_ex2:   "./image/after_ex2.jpg",
+	after_ex3:   "./image/after_ex3.jpg",
+	after_ex4:   "./image/after_ex4.jpg",
+
+	epilogue1:   "./image/epilogue1.jpg",
+	epilogue2:   "./image/epilogue2.jpg",
+	epilogue3:   "./image/epilogue3.jpg",
 
 	yajirushi:      "./image/yajirushi.png",
 
