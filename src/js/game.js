@@ -6,32 +6,35 @@ var CONSTANT = require('./constant');
 var StorageSave = require('./save');
 
 // ローディング画面
-var SceneLoading = require('./scene/loading');
+var SceneLoading      = require('./scene/00_loading');
 // タイトル画面
-var SceneTitle = require('./scene/title');
-// ステージセレクト画面
-var SceneSelect = require('./scene/select');
+var SceneTitle        = require('./scene/01_title');
 // 回想シーン画面
-var SceneReminiscence = require('./scene/reminiscence');
+var SceneReminiscence = require('./scene/02_reminiscence');
+// 題字画面
+//var SceneReminiscence = require('./scene/03_logo');
 // プロローグ画面
-var ScenePrologue = require('./scene/prologue');
-var SceneStage = require('./scene/stage');
+var ScenePrologue     = require('./scene/04_prologue');
+// ステージ画面
+var SceneStage        = require('./scene/05_stage');
 // 通常ストーリー クリア後画面
-var SceneAfterNormal = require('./scene/after_normal');
+var SceneAfterNormal  = require('./scene/06_after_normal');
 // Ex エピグラフ画面
-var SceneExEpigraph = require('./scene/ex_epigraph');
+var SceneExEpigraph   = require('./scene/07_ex_epigraph');
 // Ex プロローグ画面
-var SceneExPrologue = require('./scene/ex_prologue');
+var SceneExPrologue   = require('./scene/08_ex_prologue');
 // Exストーリー クリア後画面
-var SceneAfterEx = require('./scene/after_ex');
+var SceneAfterEx      = require('./scene/09_after_ex');
 // スタッフロール
-var SceneStaffroll = require('./scene/staffroll');
+var SceneStaffroll    = require('./scene/10_staffroll');
 // エピローグ
-var SceneEpilogue = require('./scene/epilogue');
+var SceneEpilogue     = require('./scene/11_epilogue');
 // Music Room
-var SceneMusic = require('./scene/music');
+var SceneMusic        = require('./scene/music');
 // 遊び方
-var SceneHowTo = require('./scene/howto');
+var SceneHowTo        = require('./scene/howto');
+// ステージセレクト画面
+var SceneSelect       = require('./scene/select');
 
 var Game = function(canvas) {
 	core.apply(this, arguments);
