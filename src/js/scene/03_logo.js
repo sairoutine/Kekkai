@@ -47,21 +47,20 @@ SceneLogo.prototype.draw = function(){
 		alpha = (TRANSITION_COUNT - this.frame_count) / (TRANSITION_COUNT/3);
 	}
 
-	// 文字
-	var message1 = "幻想郷は全てを受け入れるのよ。";
-	var message2 = "それはそれは残酷な話ですわ。";
+	// タイトルロゴ
+	var title = this.core.image_loader.getImage('title');
 
-	var x = this.core.width/2 - 250;
+	var x = 20;
+	var y = this.core.height/2 - title.height/2;
 
 	ctx.save();
 	ctx.globalAlpha = alpha;
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-	ctx.textAlign = 'left';
-	ctx.font = "30px 'Migu'";
-	ctx.fillText(message1, x, this.core.height/2);
-	ctx.fillText(message2, x, this.core.height/2 + 35);
+	ctx.drawImage(title,
+					x,
+					y,
+					title.width,
+					title.height);
 	ctx.restore();
-
 };
 
 SceneLogo.prototype.isTransitionEnd = function(){
