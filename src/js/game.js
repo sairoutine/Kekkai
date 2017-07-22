@@ -72,6 +72,10 @@ Game.prototype.playBGM = function () {
 	if (CONSTANT.DEBUG.SOUND_OFF) return;
 	return this.audio_loader.playBGM.apply(this.audio_loader, arguments);
 };
+Game.prototype.changeBGM = function () {
+	if (CONSTANT.DEBUG.SOUND_OFF) return;
+	return this.audio_loader.changeBGM.apply(this.audio_loader, arguments);
+};
 Game.prototype.stopBGM = function () {
 	if (CONSTANT.DEBUG.SOUND_OFF) return;
 	return this.audio_loader.stopBGM.apply(this.audio_loader, arguments);

@@ -40,6 +40,8 @@ SceneSelect.prototype.init = function(selected_stage_no){
 
 	// マップを更新
 	this.stage_objects = this.createMap();
+
+	this.core.changeBGM("title");
 };
 SceneSelect.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
