@@ -64,6 +64,19 @@ StorageSave.prototype.getIsNormalStageCleared = function(){
 	return this.get("is_normal_stage_cleared");
 };
 
+// Exストーリーを1度でもクリアしたことを設定
+StorageSave.prototype.clearExStage = function(){
+	this.set("is_ex_stage_cleared", true);
+};
+// Exストーリーを1度でもクリアしたか否かを取得
+StorageSave.prototype.getIsExStageCleared = function(){
+	return this.get("is_ex_stage_cleared");
+};
+
+
+
+
+
 // ステージ実績の一覧を取得
 StorageSave.prototype.getStageResultList = function(){
 	var list = this.get("stage_result_list");
@@ -159,6 +172,9 @@ StorageSave.prototype.clearExStageForDebug = function(){
 		}
 	}
 	this.set("stage_result_list", list);
+
+	// クリアフラグを立てる
+	this.clearExStage();
 
 	this.save();
 };

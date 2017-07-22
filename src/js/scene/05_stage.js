@@ -142,7 +142,7 @@ SceneStage.prototype.notifyStageClear = function(){
 				// 進捗をリセット
 				this.core.save.resetNormalStageProgress();
 
-				// Exステージ解放
+				// Ex ストーリー解放
 				this.core.save.clearNormalStage();
 			}
 
@@ -152,10 +152,13 @@ SceneStage.prototype.notifyStageClear = function(){
 			/// Ex ストーリー進捗を更新
 			this.core.save.incrementExStageProgress();
 
-			// Exステージの最後ならば
+			// Ex ストーリーの最後ならば
 			if (this.isLastExStory()) {
 				// 進捗をリセット
 				this.core.save.resetExStageProgress();
+
+				// Ex ストーリー クリア フラグON
+				this.core.save.clearExStage();
 			}
 		}
 	}
