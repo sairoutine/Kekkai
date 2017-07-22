@@ -81,13 +81,12 @@ AssetsConfig.sounds = {
 };
 // bgm ファイルはogg と m4a の二種類を用意してください
 AssetsConfig.bgms = {
-	stage_a: {
-		path: "./bgm/stage_a",
-		loopStart: 0*60 + 29 + 0.143,
-		loopEnd: 1*60 + 51 + 0.429,
-		title: "春色小径 ～ Colorful Path",
-		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
+	mute: {
+		path: "./bgm/mute",
+		title: "サンプル",
+		message: "サンプルメッセージ",
 	},
+
 	title: {
 		path: "./bgm/title",
 		loopStart: 0*60 + 10 + 0.312,
@@ -95,6 +94,15 @@ AssetsConfig.bgms = {
 		title: "永夜抄 ～ Eastern Night.",
 		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
 	},
+
+	stage_a: {
+		path: "./bgm/stage_a",
+		loopStart: 0*60 + 29 + 0.143,
+		loopEnd: 1*60 + 51 + 0.429,
+		title: "春色小径 ～ Colorful Path",
+		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
+	},
+
 };
 
 
