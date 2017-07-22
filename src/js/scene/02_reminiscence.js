@@ -30,4 +30,15 @@ SceneReminiscence.prototype.background = function() {
 	return "shrine_noon";
 };
 
+// BGM
+SceneReminiscence.prototype.bgm = function() {
+	return "mute";
+};
+
+
+
+
+
+
+
 module.exports = SceneReminiscence;

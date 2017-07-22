@@ -33,6 +33,10 @@ SceneSerifBase.prototype.init = function(serif){
 	this.serif.init(this.serifScript());
 
 	this.transition_count = 0;
+
+	if (this.bgm()) {
+		this.core.playBGM(this.bgm());
+	}
 };
 
 SceneSerifBase.prototype.beforeDraw = function(){
@@ -274,6 +278,12 @@ SceneSerifBase.prototype.serifScript = function() {
 SceneSerifBase.prototype.background = function() {
 	throw new Error("background method must be defined.");
 };
+// BGM
+SceneSerifBase.prototype.bgm = function() {
+};
+
+
+
 
 SceneSerifBase.prototype.isInTransition = function() {
 	return this.transition_count ? true : false;
