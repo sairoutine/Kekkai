@@ -30,4 +30,12 @@ SceneAfterNormal.prototype.serifScript = function() {
 SceneAfterNormal.prototype.background = function() {
 	return "shrine_night";
 };
+
+// BGM
+SceneAfterNormal.prototype.bgm = function() {
+	return "mute";
+};
+
+
+
 module.exports = SceneAfterNormal;
