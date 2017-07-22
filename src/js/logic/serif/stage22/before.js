@@ -3,4 +3,5 @@
 // セリフ
 var Serif= [
 ];
+
 module.exports = Serif;
