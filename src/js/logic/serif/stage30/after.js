@@ -9,9 +9,9 @@ var Serif= [
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"えっ？　どうして？"},
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":"さっきも言ったでしょ？　ここは“博麗大結界”と“幻と実体の境界”の境目。\nそして私は、この地で番人をしなきゃいけないの"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"でも、さっき帰り道は用意してるって……"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"“２人分”とは言っていないわ"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"だから、ね――"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"紫っ！？"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"“２人分”とは言っていないわ"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"だから、ね――"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"紫っ！？"},
 ];
 
 
