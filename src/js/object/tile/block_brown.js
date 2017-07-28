@@ -24,7 +24,7 @@ BlockGreen.prototype.init = function(x, y) {
 };
 
 BlockGreen.prototype.spriteIndices = function(){
-	return [{x: 3, y: 0}];
+	return [{x: 1, y: 0}];
 };
 
 BlockGreen.prototype.beforeDraw = function() {
@@ -37,7 +37,12 @@ BlockGreen.prototype.beforeDraw = function() {
 	}
 };
 
-
+BlockGreen.prototype.draw = function() {
+	var ctx = this.core.ctx;
+	ctx.globalAlpha = 0.5;
+	base_object.prototype.draw.apply(this, arguments);
+	ctx.globalAlpha = 1.0;
+};
 
 
 BlockGreen.prototype.fall = function(){
