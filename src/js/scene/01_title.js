@@ -94,6 +94,9 @@ SceneTitle.prototype.init = function(){
 	}
 
 	this.core.stopBGM();
+
+	// フェードインする
+	this.setFadeIn(SHOW_TRANSITION_COUNT);
 };
 
 
@@ -138,16 +141,6 @@ SceneTitle.prototype.draw = function(){
 
 	ctx.save();
 
-	// 切り替え効果
-	var alpha;
-	if( this.frame_count < SHOW_TRANSITION_COUNT ) {
-		alpha = this.frame_count / SHOW_TRANSITION_COUNT;
-	}
-	else {
-		alpha = 1.0;
-	}
-
-
 	var title_bg;
 	// 通常ストーリーのみクリアしていれば、背景を霊夢1人 ver に
 	if(this.core.save.getIsNormalStageCleared() && !this.core.save.getIsExStageCleared()) {
@@ -158,7 +151,6 @@ SceneTitle.prototype.draw = function(){
 	}
 
 	// 背景画像表示
-	ctx.globalAlpha = alpha;
 	ctx.drawImage(title_bg,
 					0,
 					0,
