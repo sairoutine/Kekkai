@@ -214,6 +214,15 @@ SceneSerifBase.prototype._showMessage = function() {
 	var ctx = this.core.ctx;
 	ctx.save();
 
+	// セリフの色
+	var font_color = this.serif.font_color();
+	if(font_color) {
+		font_color = util.hexToRGBString(font_color);
+	}
+	else {
+		font_color = 'rgb(255, 255, 255)';
+	}
+
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
@@ -230,7 +239,7 @@ SceneSerifBase.prototype._showMessage = function() {
 			ctx.lineWidth = 4.0;
 			ctx.strokeText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
 
-			ctx.fillStyle = 'white';
+			ctx.fillStyle = font_color;
 			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
 
 			y+= 30;
