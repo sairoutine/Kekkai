@@ -435,10 +435,10 @@ AssetsConfig.images = {
 	title_bg:      "./image/title_bg.png",
 
 	// 回想シーン背景
-	reminiscence:   "./image/reminiscence.jpg",
+	reminiscence:   "./image/reminiscence.png",
 
 	// プロローグ背景
-	shrine_noon:   "./image/shrine_noon.jpg",
+	shrine_noon:   "./image/shrine_noon.png",
 
 	// ステージ画面背景
 	stage_bg01:      "./image/stage_bg01.png",
@@ -631,9 +631,8 @@ module.exports = CONSTANT;
 },{"./debug_constant":7}],7:[function(require,module,exports){
 'use strict';
 var DEBUG = {
-	ON: true,
-	SOUND_OFF: false,
-	START_STAGE_NO: 30,
+	ON: false,
+	SOUND_OFF: true,
 	START_SCENE: "title",
 };
 
@@ -10369,6 +10368,8 @@ var SerifManager = function () {
 	this._is_background_changed = false;
 	this.background = null;
 
+	this._font_color = null;
+
 	this.char_list = "";
 	this.char_idx = 0;
 
@@ -10396,6 +10397,8 @@ SerifManager.prototype.init = function (script) {
 	this._is_background_changed = false;
 	this.background = null;
 
+	this._font_color = null;
+
 	this.char_list = "";
 	this.char_idx = 0;
 
@@ -10422,6 +10425,8 @@ SerifManager.prototype.next = function () {
 	this._showChara(script);
 
 	this._showBackground(script);
+
+	this._setFont(script);
 
 	if(script.serif) {
 		this._printMessage(script.serif);
@@ -10456,6 +10461,10 @@ SerifManager.prototype._showChara = function(script) {
 			this.right_exp = script.exp;
 		}
 	}
+};
+
+SerifManager.prototype._setFont = function(script) {
+	this._font_color  = script.font_color;
 };
 
 SerifManager.prototype._printMessage = function (message) {
@@ -10543,6 +10552,9 @@ SerifManager.prototype.is_right_talking = function () {
 };
 SerifManager.prototype.background_image = function () {
 	return this.background;
+};
+SerifManager.prototype.font_color = function () {
+	return this._font_color;
 };
 SerifManager.prototype.is_background_changed = function () {
 	return this._is_background_changed;
@@ -11261,18 +11273,18 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"background": "shrine_night", "pos":"right","exp":"normal1","chara":"reimu","serif":"ここは……ウチの神社！？"},
-	{"background": "shrine_night", "pos":"right","exp":"normal1","chara":"reimu","serif":"まさか――始めからこうなることを分かっていて、\n私だけを送り飛ばしたんじゃ……！？"},
-	{"background": "shrine_night", "pos":"right","exp":"normal1","chara":"reimu","serif":"あ……"},
+	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"ここは……ウチの神社！？"},
+	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"まさか――始めからこうなることを分かっていて、\n私だけを送り飛ばしたんじゃ……！？"},
+	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"あ……"},
 	{"background": "shrine_night", "pos":"right","exp":null,"chara":null,"serif":null},
 	{"background": "reminiscence", "pos":null,"exp":null,"chara":null,"serif":"私がいつまで霊夢のそばにいられるか分からないでしょ？"},
 	{"background": "reminiscence", "pos":null,"exp":null,"chara":null,"serif":"そんなことあり得るの？　紫の方がずっと長生きするのに"},
 	{"background": "reminiscence", "pos":null,"exp":null,"chara":null,"serif":"さぁ、どうかしら"},
 	{"background": "reminiscence", "pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。幻想郷は全てを受け入れるのよ。それはそれは残酷な話ですわ"},
-	{"background": "shrine_night", "pos":"right","exp":"normal1","chara":"reimu","serif":"――紫は今、おそらく博麗大結界と幻と実体の境界との狭間にいるはず……"},
-	{"background": "shrine_night", "pos":"right","exp":"normal1","chara":"reimu","serif":"けれど――、境界を操る能力を持たない私には、\nその境目にすら行くことが出来ない……"},
-	{"background": "shrine_night", "pos":"right","exp":"normal1","chara":"reimu","serif":"なら――、これも受け入れなくちゃいけないのね……"},
-	{"background": "shrine_night", "pos":"right","exp":"normal1","chara":"reimu","serif":"紫――――。"},
+	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"――紫は今、おそらく博麗大結界と幻と実体の境界との狭間にいるはず……"},
+	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"けれど――、境界を操る能力を持たない私には、\nその境目にすら行くことが出来ない……"},
+	{"background": "shrine_night", "pos":"right","exp":"cry","chara":"reimu","serif":"なら――、これも受け入れなくちゃいけないのね……"},
+	{"background": "shrine_night", "pos":"right","exp":"cry","chara":"reimu","serif":"紫――――。"},
 ];
 module.exports = Serif;
 
@@ -11296,21 +11308,19 @@ var Serif= [
 
 	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……あ、やば"},
 	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ってあれ？　この辺に筆を落としたはずなんだけれど……"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"――ったく、貴女は昔から何も変わってないのね"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ダメじゃない、筆を落としちゃ。ちゃんと握りなさいって習わなかった？"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"って、なに泣いてるのよ。貴女らしくもない。せっかくの可愛い顔が台無しじゃない"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……うっさい！　待たせ過ぎたアンタが悪い！"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"だって仕方がないじゃない。貴女の心に全然スキマが生まれないせいで、\n通って来ようにもまるで通れなかったんだもの"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"火間虫入道のしすぎで太りでもしたんじゃないの？"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"久しぶりの再会だっていうのにー。ひどいわー"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ひどいのはアンタの方よ！　女を泣かすなんて極刑よ極刑！"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"あら、女って言えるほどの歳になったのかしら？\n見たところ、その両胸の果実はずいぶんとまだ固そうだけれども"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"あーもう、うっさい！　アンタが来ると調子が狂う"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……でも、まぁ……その…………"},
-
-
-	{"background":"title_bg","pos":null,"exp":null,"chara":null,"serif":"…………おかえりなさい、紫"},
-	{"background":"title_bg","pos":null,"exp":null,"chara":null,"serif":"ええ。ただいま、霊夢"},
+	{"font_color": "#8b5fbf", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"――ったく、貴女は昔から何も変わってないのね"},
+	{"font_color": "#8b5fbf", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ダメじゃない、筆を落としちゃ。ちゃんと握りなさいって習わなかった？"},
+	{"font_color": "#8b5fbf", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"って、なに泣いてるのよ。貴女らしくもない。せっかくの可愛い顔が台無しじゃない"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……うっさい！　待たせ過ぎたアンタが悪い！"},
+	{"font_color": "#8b5fbf", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"だって仕方がないじゃない。貴女の心に全然スキマが生まれないせいで、\n通って来ようにもまるで通れなかったんだもの"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"火間虫入道のしすぎで太りでもしたんじゃないの？"},
+	{"font_color": "#8b5fbf", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"久しぶりの再会だっていうのにー。ひどいわー"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ひどいのはアンタの方よ！　女を泣かすなんて極刑よ極刑！"},
+	{"font_color": "#8b5fbf", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"あら、女って言えるほどの歳になったのかしら？\n見たところ、その両胸の果実はずいぶんとまだ固そうだけれども"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"あーもう、うっさい！　アンタが来ると調子が狂う"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……でも、まぁ……その…………"},
+	{"font_color": null, "background":"title_bg","pos":null,"exp":null,"chara":null,"serif":"…………おかえりなさい、紫"},
+	{"font_color": null, "background":"title_bg","pos":null,"exp":null,"chara":null,"serif":"ええ。ただいま、霊夢"},
 ];
 
 module.exports = Serif;
@@ -11333,22 +11343,22 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"あー、ったく暑い！\nもう晩夏だっていうのに、どうしてこうも暑いのよ！"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"せめてあの氷精みたいに、そばにいるだけで\n温度を下げてくれるような冷気を帯びた奴がいれば良いのに……"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"あら、呼んだかしら？"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"アンタは呼んでない！"},
+	{"pos":"right","exp":"angry1","chara":"reimu","serif":"あー、ったく暑い！\nもう晩夏だっていうのに、どうしてこうも暑いのよ！"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"せめてあの氷精みたいに、そばにいるだけで\n温度を下げてくれるような冷気を帯びた奴がいれば良いのに……"},
+	{"pos":"left","exp":"smile","chara":"yukari","serif":"あら、呼んだかしら？"},
+	{"pos":"right","exp":"angry2","chara":"reimu","serif":"アンタは呼んでない！"},
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":"そう？ 私の手にかかれば、例えばこんな感じで\n貴女の背中をつつーっとなぞれば……"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"な、何してんのよ！？"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"いやー、こうすれば少しは涼しくなるかなーって"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"アンタのそれは冷気じゃなくて寒気！気色悪いからやめて！"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"っもう、相変わらずつれないのね。他にもとっておきの案を持ってきたって言うのに"},
+	{"pos":"right","exp":"angry2","chara":"reimu","serif":"な、何してんのよ！？"},
+	{"pos":"left","exp":"ecstasy2","chara":"yukari","serif":"いやー、こうすれば少しは涼しくなるかなーって"},
+	{"pos":"right","exp":"angry2","chara":"reimu","serif":"アンタのそれは冷気じゃなくて寒気！気色悪いからやめて！"},
+	{"pos":"left","exp":"disappointed","chara":"yukari","serif":"っもう、相変わらずつれないのね。他にもとっておきの案を持ってきたって言うのに"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"……アンタが出してきた案の中で、今までロクなものがなかったじゃない"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"まぁまぁそう言わずに。今回は暑がりな霊夢のために、\nとびっきりのスペシャルコースを用意しといたから"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"それじゃ、早速行くわよ"},
+	{"pos":"left","exp":"normal3","chara":"yukari","serif":"まぁまぁそう言わずに。今回は暑がりな霊夢のために、\nとびっきりのスペシャルコースを用意しといたから"},
+	{"pos":"left","exp":"smile","chara":"yukari","serif":"それじゃ、早速行くわよ"},
 
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"行くって、一体何をしに行く気よ"},
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":"決まっているじゃない、霊夢"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"納涼の定番、肝試しよ"},
+	{"pos":"left","exp":"smile","chara":"yukari","serif":"納涼の定番、肝試しよ"},
 ];
 module.exports = Serif;
 
@@ -11382,16 +11392,13 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"confused","chara":"reimu","fukidashi":"normal","serif":"いたた..."},
-	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"あらあら"},
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あ、ゆかり"},
-	{"pos":"right","exp":"angry2","chara":"reimu","fukidashi":"normal","serif":"またアンタのしわざね"},
-	{"pos":"left","exp":"smile","chara":"yukari","fukidashi":"normal","serif":"暇そうにしてたから♪"},
+	{"pos":"right","exp":"confused","chara":"reimu","fukidashi":"normal","serif":"きゃっ"},
+	{"pos":"left","exp":"smile","chara":"yukari","fukidashi":"normal","serif":"肝試しの会場へようこそ"},
+	{"pos":"right","exp":"angry2","chara":"reimu","fukidashi":"normal","serif":"すいぶん丁重な送迎してくれるじゃない"},
 	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"ほら、見て"},
 	{"pos":"right","exp":"angry2","chara":"reimu","fukidashi":"normal","serif":"なによ"},
-	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"御札が落ちてるわ"},
-	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"御札を全部拾うと帰れるわよ"},
-	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"どういう理屈よ"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"御札が落ちてるわ"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"せっかくなので、御札を集めていきましょう"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"わたしじゃ取れない場所にあるじゃない"},
 	{"pos":"left","exp":"normal2","chara":"yukari","fukidashi":"normal","serif":"手伝ってあげるわよ"},
 	{"pos":"left","exp":"normal2","chara":"yukari","fukidashi":"normal","serif":"X キーで私と霊夢の位置を入れかえることができるわ"},
@@ -11415,7 +11422,7 @@ var Serif= [
 	{"pos":"left","exp":"yarare","chara":"yukari","fukidashi":"normal","serif": "いたいっ！"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あれ、なによ"},
 	{"pos":"left","exp":"normal4","chara":"yukari","fukidashi":"normal","serif":"オバケみたいね"},
-	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"触れちゃダメよ"},
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"触れちゃダメよ"},
 	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"はいはい"},
 	{"pos":"left","exp":"smile","chara":"yukari","fukidashi":"normal","serif":"わたしはオバケに触れても大丈夫だから"},
 	{"pos":"right","exp":"angry1","chara":"reimu","fukidashi":"normal","serif":"アンタだけずるくない！？"},
@@ -11425,8 +11432,23 @@ module.exports = Serif;
 },{}],58:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],59:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],60:[function(require,module,exports){
+'use strict';
+
+// セリフ
+var Serif= [
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"リボンが落ちてるわ"},
+	{"pos":"left","exp":"normal4","chara":"yukari","fukidashi":"normal","serif":"あら、わたしのリボン"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"なんでこんなところに落ちてるのよ"},
+	{"pos":"left","exp":"laugh","chara":"yukari","fukidashi":"normal","serif":"どうりでここ最近、リボンの数が足りないと思ったわー"},
+	{"pos":"right","exp":"confused","chara":"reimu","fukidashi":"normal","serif":"アンタ、何個リボン持ってるのよ"},
+
+
+	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"霊夢が御札を集めて、私がリボンを集めましょう"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"リボンはわたしじゃ拾えないのね"},
+];
+module.exports = Serif;
+
+},{}],60:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],61:[function(require,module,exports){
 'use strict';
@@ -11451,8 +11473,8 @@ arguments[4][54][0].apply(exports,arguments)
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あれ、ゆかりー？どこー？"},
-	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"なーに、れいむ？"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あれ、ゆかり？どこー？"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"なーに、霊夢？"},
 	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"アンタさっきと違う位置にいない？"},
 	{"pos":"left","exp":"normal4","chara":"yukari","fukidashi":"normal","serif":"このステージでは上下の反対側にいるみたいね"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"ふぅん"},
@@ -11466,8 +11488,22 @@ arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],68:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],69:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],70:[function(require,module,exports){
+'use strict';
+
+// セリフ
+var Serif= [
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":null},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"霊夢、見て"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あら、点滅している不思議な御札があるわ"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"取ると私の位置がかわるわ"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"どういうこと？"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"霊夢の左右の反対側に私がいるときに取ると、\n霊夢の上下の反対側に私がいるようになるの"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"その逆で、霊夢の上下の反対側にいるときは、\n霊夢の左右の反対側になるわ"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"紫が左右の反対にいるのか、上下の反対にいるのかが入れ替わるわけね"},
+];
+module.exports = Serif;
+
+},{}],70:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],71:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
@@ -11482,16 +11518,37 @@ arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],76:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],77:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],78:[function(require,module,exports){
+'use strict';
+
+// セリフ
+var Serif= [
+	{"pos":"left","exp":"normal1","chara":"yukari","serif":null},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"結構先が長いのね"},
+	{"pos":"left","exp":"normal1","chara":"yukari","serif":"少しは涼しくなったかしら"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"アンタたち妖怪のほうが、よっぽど怖いわね"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"つれないわねぇ..."},
+];
+module.exports = Serif;
+
+},{}],78:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],79:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],80:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],81:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],82:[function(require,module,exports){
+'use strict';
+
+// セリフ
+var Serif= [
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":null},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"また点滅する御札があるわね"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"取ると紫の場所が、変わるんでしょ"},
+	{"pos":"left","exp":"smile","chara":"yukari","fukidashi":"normal","serif":"そのとおりよ♪"},
+];
+module.exports = Serif;
+
+},{}],82:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
 },{"dup":54}],83:[function(require,module,exports){
 arguments[4][54][0].apply(exports,arguments)
@@ -11503,13 +11560,13 @@ arguments[4][54][0].apply(exports,arguments)
 // セリフ
 var Serif= [
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":null},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"ねぇ、紫"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"ねぇ、紫"},
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":"うん？ なあに？"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"もしかしてだけれども、ここってまさか、\nアンタがお得意のスキマ空間じゃないわよね？"},
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":"どうかしら"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"どうかしらってどういう意味よ"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"そのまんまの意味よ。そうとも言えるし、そうじゃないとも言えるわ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"……？"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"どうかしらってどういう意味よ"},
+	{"pos":"left","exp":"normal3","chara":"yukari","serif":"そのまんまの意味よ。そうとも言えるし、そうじゃないとも言えるわ"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"……？"},
 ];
 module.exports = Serif;
 
@@ -11525,14 +11582,14 @@ arguments[4][54][0].apply(exports,arguments)
 // セリフ
 var Serif= [
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":null},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"答えてよ紫。ここは一体どこなの？\nアンタは私に、一体何をやらせようとしているのよ？"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"……そうね、前者の問いかけに関して言えば、\n霊夢が言う通り、ここはスキマ空間ということになるかしら"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"やっぱりそうだったのね。進むごとに見覚えのある目玉が\n増えていくからおかしいと思ったわ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"どうしてそう、大事なことを黙っていたのよ？"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"答えてよ紫。ここは一体どこなの？\nアンタは私に、一体何をやらせようとしているのよ？"},
+	{"pos":"left","exp":"normal4","chara":"yukari","serif":"……そうね、前者の問いかけに関して言えば、\n霊夢が言う通り、ここはスキマ空間ということになるかしら"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"やっぱりそうだったのね。進むごとに見覚えのある目玉が\n増えていくからおかしいと思ったわ"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"どうしてそう、大事なことを黙っていたのよ？"},
 
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"……好きで黙っていたわけじゃないわ"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"ただ……、少しでも霊夢といつも通りでいたかったからよ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"一体、何を言って――"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"……好きで黙っていたわけじゃないわ"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"ただ……、少しでも霊夢といつも通りでいたかったからよ"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"一体、何を言って――"},
 ];
 module.exports = Serif;
 
@@ -11543,13 +11600,13 @@ arguments[4][54][0].apply(exports,arguments)
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":null},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":null},
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":"始めから決まっていたことなのよ。\n元々私は、この幻想郷にいていいはずの妖怪じゃないから"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"……どういうこと？"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"幻想郷は２つの結界で成り立っているの。\n１つは貴女が管理している結界――幻想郷を取り囲むようにして張られた“博麗大結界”"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"そしてもう１つの結界が、その博麗大結界の外側を\nさらに取り囲むようして張られた結界――私が管理している“幻と実体の境界”"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"ここはね、霊夢。そんな“博麗大結界”と“幻と実体の境界”との境目に生まれた、\n幻になりえども幻想郷入りは叶わなかった有象無象が集う、“スキマ”の淵源よ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"なっ！？"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"……どういうこと？"},
+	{"pos":"left","exp":"angry","chara":"yukari","serif":"幻想郷は２つの結界で成り立っているの。\n１つは貴女が管理している結界――幻想郷を取り囲むようにして張られた“博麗大結界”"},
+	{"pos":"left","exp":"angry","chara":"yukari","serif":"そしてもう１つの結界が、その博麗大結界の外側を\nさらに取り囲むようして張られた結界――私が管理している“幻と実体の境界”"},
+	{"pos":"left","exp":"angry","chara":"yukari","serif":"ここはね、霊夢。そんな“博麗大結界”と“幻と実体の境界”との境目に生まれた、\n幻になりえども幻想郷入りは叶わなかった有象無象が集う、“スキマ”の淵源よ"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"なっ！？"},
 ];
 
 module.exports = Serif;
@@ -11561,13 +11618,13 @@ arguments[4][54][0].apply(exports,arguments)
 
 // セリフ
 var Serif= [
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":null},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"まさか……この空間が、アンタが本来住むべき世界だってこと！？"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"ええ、そうよ。そして私の本当の役目は、\n結界の緩衝地帯であるこの空間を維持する為の、言わば“番人”"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"もっとも、これだけ結界が綻んでしまったら、\nもう番人と名乗る資格はないだろうけれどもね"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"結界が……綻ぶ……？？"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"……今の言葉でようやく分かったわ。この肝試しの本当の意味が"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"散り散りになったアンタのリボン……それに、この古びた霊符の数々……"},
+	{"pos":"left","exp":"angry","chara":"yukari","serif":null},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"まさか……この空間が、アンタが本来住むべき世界だってこと！？"},
+	{"pos":"left","exp":"angry","chara":"yukari","serif":"ええ、そうよ。そして私の本当の役目は、\n結界の緩衝地帯であるこの空間を維持する為の、言わば“番人”"},
+	{"pos":"left","exp":"laugh","chara":"yukari","serif":"もっとも、これだけ結界が綻んでしまったら、\nもう番人と名乗る資格はないだろうけれどもね"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"結界が……綻ぶ……？？"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"……今の言葉でようやく分かったわ。この肝試しの本当の意味が"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"散り散りになったアンタのリボン……それに、この古びた霊符の数々……"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"肝試しというのはあくまでも建前で、\n本当はこれらを回収して結界を修復し直すのが、今回の真の目的だったというわけね！"},
 ];
 
@@ -11580,17 +11637,17 @@ arguments[4][54][0].apply(exports,arguments)
 
 // セリフ
 var Serif= [
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":null},
+	{"pos":"left","exp":"laugh","chara":"yukari","serif":null},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"どうしてこんなになるまで放っておいたのよ、アンタらしくもない"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"…………"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"それだけ好きだったのよ、この幻想郷が"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"色めく春も、茹だる夏も、枯れゆく秋も、凍える冬も。\n幻想郷の息づかいの、その全てが"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"…………"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"それだけ好きだったのよ、この幻想郷が"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"色めく春も、茹だる夏も、枯れゆく秋も、凍える冬も。\n幻想郷の息づかいの、その全てが"},
 
 
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"流石に妖力が衰える冬だけは、\nこっちの世界に戻っていたのだけれども"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"流石に妖力が衰える冬だけは、\nこっちの世界に戻っていたのだけれども"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"それで冬だけは冬眠と称して、決して幻想郷には姿を見せようとしなかったのね"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"ええ、そうよ。でも、それももうお終い"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"これ以上私が幻想郷に留まり続けたら、幻想郷そのものがこの空間と\n溶けて混ざってしまう。それだけは避けなくちゃいけないのよ、何としてもね"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"ええ、そうよ。でも、それももうお終い"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"これ以上私が幻想郷に留まり続けたら、幻想郷そのものがこの空間と\n溶けて混ざってしまう。それだけは避けなくちゃいけないのよ、何としてもね"},
 ];
 
 module.exports = Serif;
@@ -11663,11 +11720,11 @@ var Serif= [
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":null},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"ねぇ、あと何か所くらい残っているのかしら？"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"そろそろ疲れてきたんだけれども"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"そうねぇ、ここを含めてあと3つってところかしら"},
+	{"pos":"left","exp":"normal4","chara":"yukari","serif":"そうねぇ、ここを含めてあと3つってところかしら"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"はぁ……、早く帰って水風呂でさっぱりしたいわね"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"あら、久しぶりに一緒に入る？\n昔みたいに頭の先から爪先までくまなく洗ってあげるわ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"ゼッタイに嫌"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"恥ずかしがらなくて良いのにー"},
+	{"pos":"left","exp":"smile","chara":"yukari","serif":"あら、久しぶりに一緒に入る？\n昔みたいに頭の先から爪先までくまなく洗ってあげるわ"},
+	{"pos":"right","exp":"angry1","chara":"reimu","serif":"ゼッタイに嫌"},
+	{"pos":"left","exp":"ecstasy1","chara":"yukari","serif":"恥ずかしがらなくて良いのにー"},
 ];
 module.exports = Serif;
 
@@ -11687,9 +11744,9 @@ var Serif= [
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"えっ？　どうして？"},
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":"さっきも言ったでしょ？　ここは“博麗大結界”と“幻と実体の境界”の境目。\nそして私は、この地で番人をしなきゃいけないの"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"でも、さっき帰り道は用意してるって……"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"“２人分”とは言っていないわ"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"だから、ね――"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"紫っ！？"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"“２人分”とは言っていないわ"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"だから、ね――"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"紫っ！？"},
 ];
 
 
@@ -11702,10 +11759,10 @@ module.exports = Serif;
 var Serif= [
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":null},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"長かった肝試しも、残すところこれで最後ってところかしら"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"ええ、そうね"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"どう？　楽しかったでしょ？"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"全然"},
-	{"pos":"left","exp":"normal1","chara":"yukari","serif":"最後までつれないのねぇ"},
+	{"pos":"left","exp":"normal3","chara":"yukari","serif":"ええ、そうね"},
+	{"pos":"left","exp":"normal3","chara":"yukari","serif":"どう？　楽しかったでしょ？"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"全然"},
+	{"pos":"left","exp":"normal2","chara":"yukari","serif":"最後までつれないのねぇ"},
 ];
 
 module.exports = Serif;
@@ -11801,9 +11858,9 @@ arguments[4][54][0].apply(exports,arguments)
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"そろそろ私も辛くなってきたわね。油断したら一瞬で意識を持っていかれそうだわ"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"そうなる前に早く見つけ出さないと……！"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"一体どこにいるのよ、紫！"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"そろそろ私も辛くなってきたわね。油断したら一瞬で意識を持っていかれそうだわ"},
+	{"pos":"right","exp":"normal2","chara":"reimu","serif":"そうなる前に早く見つけ出さないと……！"},
+	{"pos":"right","exp":"angry1","chara":"reimu","serif":"一体どこにいるのよ、紫！"},
 ];
 
 module.exports = Serif;
@@ -15617,18 +15674,18 @@ var Y = 14;
 var map = [
 	[0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,P,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,P,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,N,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,B,C,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,A,B,B,B,B,B,C,6,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
 	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0],
 	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0],
-	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,9,0,0,0,A,B,C,0,0],
+	[0,0,0,0,A,C,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,A,B,C,0,0],
 	[0,0,0,0,A,C,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,A,B,C,0,0],
 	[0,0,0,0,A,C,0,A,B,C,0,0,0,0,0,0,0,0,0,0,A,B,C,0,0,A,B,C,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,9,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,I,0,0,0,0,I,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0],
 	[0,0,A,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,C,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -15663,22 +15720,22 @@ var map = [
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,Y,Y,Y,0,E,0,0,0,0,0,0,0,E,0,0,I,I,I,0,0,0,0],
+	[0,0,0,0,0,0,0,0,I,I,I,0,0,0,0,0,0,0,0,0,0,0,0,I,I,I,0,0,0,0],
 	[0,0,0,0,0,A,B,L,B,B,B,B,B,C,0,0,0,0,0,A,B,L,B,B,B,B,B,C,0,0],
 	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,E,0,L,I,0,0,0,0,0,0,0,0,0,0,E,0,L,Y,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,L,0,0,E,0,0,0,0,0,0,0,0,E,0,L,0,0,0,0,0,0,0,0],
 	[0,0,0,0,A,B,B,B,B,L,B,C,0,0,0,0,0,0,A,B,B,B,B,L,B,C,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
-	[0,0,0,0,0,P,0,0,0,L,0,0,0,0,0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
-	[0,0,0,0,0,0,Y,Y,0,L,0,0,0,0,0,0,0,0,I,I,0,0,0,L,0,0,0,0,0,0],
-	[0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,P,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,L,0,0,0,0,0,0,0,0,0,I,I,0,0,L,0,0,0,0,0,0],
+	[0,0,0,0,0,0,A,B,B,B,B,B,B,B,B,C,0,0,A,B,B,B,B,B,B,B,B,B,C,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D,D],
 ];
   //[B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B],
@@ -15917,6 +15974,7 @@ var N = -1;
 var P = 7;
 var K = 5;
 var Y = 14;
+var X = 15;
 
 var map = [
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -15933,7 +15991,7 @@ var map = [
 	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
 	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
 	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,P,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
-	[0,0,0,B,0,I,0,B,B,0,0,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
+	[0,0,0,B,0,I,0,B,B,0,X,0,0,0,0,0,0,0,0,L,0,B,B,0,Y,0,B,0,0,0],
 	[0,0,0,B,0,0,0,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,B,0,0,0,B,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -15944,7 +16002,7 @@ var map = [
 module.exports = {
 	map: map, // マップ
 	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
+	is_vertical: true, // 交代が垂直かどうか
 };
 
 },{}],190:[function(require,module,exports){
@@ -18124,6 +18182,15 @@ SceneSerifBase.prototype._showMessage = function() {
 	var ctx = this.core.ctx;
 	ctx.save();
 
+	// セリフの色
+	var font_color = this.serif.font_color();
+	if(font_color) {
+		font_color = util.hexToRGBString(font_color);
+	}
+	else {
+		font_color = 'rgb(255, 255, 255)';
+	}
+
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
 	ctx.textBaseAlign = 'middle';
@@ -18140,7 +18207,7 @@ SceneSerifBase.prototype._showMessage = function() {
 			ctx.lineWidth = 4.0;
 			ctx.strokeText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
 
-			ctx.fillStyle = 'white';
+			ctx.fillStyle = font_color;
 			ctx.fillText(lines[i], MESSAGE_WINDOW_OUTLINE_MARGIN * 2 + 20, y); // 1行表示
 
 			y+= 30;
