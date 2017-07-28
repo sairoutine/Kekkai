@@ -17,21 +17,19 @@ var Serif= [
 
 	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……あ、やば"},
 	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ってあれ？　この辺に筆を落としたはずなんだけれど……"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"――ったく、貴女は昔から何も変わってないのね"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ダメじゃない、筆を落としちゃ。ちゃんと握りなさいって習わなかった？"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"って、なに泣いてるのよ。貴女らしくもない。せっかくの可愛い顔が台無しじゃない"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……うっさい！　待たせ過ぎたアンタが悪い！"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"だって仕方がないじゃない。貴女の心に全然スキマが生まれないせいで、\n通って来ようにもまるで通れなかったんだもの"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"火間虫入道のしすぎで太りでもしたんじゃないの？"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"久しぶりの再会だっていうのにー。ひどいわー"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ひどいのはアンタの方よ！　女を泣かすなんて極刑よ極刑！"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"あら、女って言えるほどの歳になったのかしら？\n見たところ、その両胸の果実はずいぶんとまだ固そうだけれども"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"あーもう、うっさい！　アンタが来ると調子が狂う"},
-	{"background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……でも、まぁ……その…………"},
-
-
-	{"background":"title_bg","pos":null,"exp":null,"chara":null,"serif":"…………おかえりなさい、紫"},
-	{"background":"title_bg","pos":null,"exp":null,"chara":null,"serif":"ええ。ただいま、霊夢"},
+	{"font_color": "#5f1984", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"――ったく、貴女は昔から何も変わってないのね"},
+	{"font_color": "#5f1984", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ダメじゃない、筆を落としちゃ。ちゃんと握りなさいって習わなかった？"},
+	{"font_color": "#5f1984", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"って、なに泣いてるのよ。貴女らしくもない。せっかくの可愛い顔が台無しじゃない"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……うっさい！　待たせ過ぎたアンタが悪い！"},
+	{"font_color": "#5f1984", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"だって仕方がないじゃない。貴女の心に全然スキマが生まれないせいで、\n通って来ようにもまるで通れなかったんだもの"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"火間虫入道のしすぎで太りでもしたんじゃないの？"},
+	{"font_color": "#5f1984", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"久しぶりの再会だっていうのにー。ひどいわー"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"ひどいのはアンタの方よ！　女を泣かすなんて極刑よ極刑！"},
+	{"font_color": "#5f1984", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"あら、女って言えるほどの歳になったのかしら？\n見たところ、その両胸の果実はずいぶんとまだ固そうだけれども"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"あーもう、うっさい！　アンタが来ると調子が狂う"},
+	{"font_color": "#e6373c", "background":"epilogue3","pos":null,"exp":null,"chara":null,"serif":"……でも、まぁ……その…………"},
+	{"font_color": "#e6373c", "background":"title_bg","pos":null,"exp":null,"chara":null,"serif":"…………おかえりなさい、紫"},
+	{"font_color": "#5f1984", "background":"title_bg","pos":null,"exp":null,"chara":null,"serif":"ええ。ただいま、霊夢"},
 ];
 
 module.exports = Serif;
