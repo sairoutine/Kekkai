@@ -148,7 +148,15 @@ SceneTitle.prototype.draw = function(){
 	}
 
 
-	var title_bg = this.core.image_loader.getImage('title_bg');
+	var title_bg;
+	// 通常ストーリーのみクリアしていれば、背景を霊夢1人 ver に
+	if(this.core.save.getIsNormalStageCleared() && !this.core.save.getIsExStageCleared()) {
+		title_bg = this.core.image_loader.getImage('title_bg_without_yukari');
+	}
+	else {
+		title_bg = this.core.image_loader.getImage('title_bg');
+	}
+
 	// 背景画像表示
 	ctx.globalAlpha = alpha;
 	ctx.drawImage(title_bg,

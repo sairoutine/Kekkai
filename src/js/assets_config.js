@@ -6,6 +6,7 @@ AssetsConfig.images = {
 	title:         "./image/title.png",
 	// タイトル背景
 	title_bg:      "./image/title_bg.png",
+	title_bg_without_yukari:      "./image/title_bg_without_yukari.png",
 
 	// 回想シーン背景
 	reminiscence:   "./image/reminiscence.png",
