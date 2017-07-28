@@ -36,7 +36,7 @@ AssetsConfig.images = {
 	after_ex4:   "./image/after_ex4.jpg",
 
 	epilogue1:   "./image/epilogue1.jpg",
-	epilogue2:   "./image/epilogue2.png",
+	epilogue2:   "./image/epilogue2.jpg",
 	epilogue3:   "./image/epilogue3.jpg",
 
 	yajirushi:      "./image/yajirushi.png",
