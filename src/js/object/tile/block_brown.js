@@ -4,7 +4,7 @@
 
 
 // 消えるまでの時間
-var FALL_SPAN = 20;
+var FALL_SPAN = 40;
 
 
 var CONSTANT = require('../../constant');
@@ -37,14 +37,6 @@ BlockGreen.prototype.beforeDraw = function() {
 	}
 };
 
-BlockGreen.prototype.draw = function() {
-	var ctx = this.core.ctx;
-	ctx.globalAlpha = 0.5;
-	base_object.prototype.draw.apply(this, arguments);
-	ctx.globalAlpha = 1.0;
-};
-
-
 BlockGreen.prototype.fall = function(){
 	this.start_fall_frame = this.frame_count;
 	this.is_collision = false;
@@ -56,28 +48,16 @@ BlockGreen.prototype.isShow = function() {
 BlockGreen.prototype.isCollision = function() {
 	return this.is_collision;
 };
-
-BlockGreen.prototype.scaleWidth = function(){
-	var base_scale = base_object.prototype.scaleWidth.apply(this, arguments);
+BlockGreen.prototype.alpha = function() {
+	var base_scale = 0.5;
 	if (this.start_fall_frame) {
 		return(base_scale *  (FALL_SPAN - (this.frame_count - this.start_fall_frame)) / FALL_SPAN );
 	}
 	else {
 		return base_scale;
 	}
+
 };
-BlockGreen.prototype.scaleHeight = function(){
-	var base_scale = base_object.prototype.scaleHeight.apply(this, arguments);
-
-	if (this.start_fall_frame) {
-		return(base_scale *  (FALL_SPAN - (this.frame_count - this.start_fall_frame)) / FALL_SPAN );
-	}
-	else {
-		return base_scale;
-	}
-};
-
-
 
 
 module.exports = BlockGreen;
