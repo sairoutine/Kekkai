@@ -8,10 +8,10 @@ AssetsConfig.images = {
 	title_bg:      "./image/title_bg.png",
 
 	// 回想シーン背景
-	reminiscence:   "./image/reminiscence.jpg",
+	reminiscence:   "./image/reminiscence.png",
 
 	// プロローグ背景
-	shrine_noon:   "./image/shrine_noon.jpg",
+	shrine_noon:   "./image/shrine_noon.png",
 
 	// ステージ画面背景
 	stage_bg01:      "./image/stage_bg01.png",
@@ -36,7 +36,7 @@ AssetsConfig.images = {
 	after_ex4:   "./image/after_ex4.jpg",
 
 	epilogue1:   "./image/epilogue1.jpg",
-	epilogue2:   "./image/epilogue2.jpg",
+	epilogue2:   "./image/epilogue2.png",
 	epilogue3:   "./image/epilogue3.jpg",
 
 	yajirushi:      "./image/yajirushi.png",
