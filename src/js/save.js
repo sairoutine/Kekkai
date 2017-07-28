@@ -5,6 +5,7 @@
 var base_class = require('./hakurei').storage.save;
 var util = require('./hakurei').util;
 var CONSTANT = require('./constant');
+var LogicScore = require('./logic/score');
 
 var StorageSave = function(scene) {
 	base_class.apply(this, arguments);
@@ -109,25 +110,38 @@ StorageSave.prototype.updateStageResult = function(stage_no, time, exchange_num)
 	stage_no -= 1; // 配列なので 0 から
 	var list = this.getStageResultList();
 
-	// 初期化
+	// ステージ実績がなければ現在の実績でハイスコアを更新
 	if(!list[stage_no]) {
 		list[stage_no] = {
-			stage_no: stage_no + 1, // -1 しちゃったのでここだけ正常なstage noに戻す
-			time:         null, // クリア時刻
-			exchange_num: null, // 使用 交換回数
+			stage_no: stage_no + 1,     // -1 しちゃったのでここだけ正常なstage noに戻す
+			time:         time,         // クリア時刻
+			exchange_num: exchange_num, // 使用 交換回数
 		};
 	}
+	else {
+		// 以前のハイスコア
+		var previous_honor_num = LogicScore.calcHonor(
+			list[stage_no].time,
+			list[stage_no].exchange_num,
+			// TODO: 各マップから取得する
+			100,
+			1
+		);
+		// 今回のスコア
+		var next_honor_num = LogicScore.calcHonor(
+			time,
+			exchange_num,
+			// TODO: 各マップから取得する
+			100,
+			1
+		);
 
-	// クリア時刻が早ければ更新
-	if(list[stage_no].time === null || list[stage_no].time > time) {
-		list[stage_no].time = time;
+		// ベストスコアであれば更新
+		if(next_honor_num > previous_honor_num) {
+			list[stage_no].time = time;
+			list[stage_no].exchange_num = exchange_num;
+		}
 	}
-
-	// 交換回数が少なければ更新
-	if(list[stage_no].exchange_num === null || list[stage_no].exchange_num > exchange_num) {
-		list[stage_no].exchange_num = exchange_num;
-	}
-
 	// セーブ
 	this.set("stage_result_list", list);
 };
