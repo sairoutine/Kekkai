@@ -31,6 +31,9 @@ SceneAfterNormal.prototype.bgm = function() {
 	return "mute";
 };
 
+SceneAfterNormal.prototype.isPlayFadeIn = function() {
+	return true;
+};
 
 
 module.exports = SceneAfterNormal;
