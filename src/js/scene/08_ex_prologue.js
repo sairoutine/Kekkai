@@ -30,5 +30,10 @@ ScenePrologue.prototype.serifScript = function() {
 ScenePrologue.prototype.background = function() {
 	return "shrine_night";
 };
+ScenePrologue.prototype.isPlayFadeOut = function() {
+	return true;
+};
+
+
 
 module.exports = ScenePrologue;

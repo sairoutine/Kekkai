@@ -43,7 +43,7 @@ SceneSerifBase.prototype.init = function(serif){
 	}
 
 	if (this.isPlayFadeOut()) {
-		this.setFadeOut();
+		this.setFadeOut(60);
 	}
 };
 

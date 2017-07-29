@@ -29,6 +29,13 @@ SceneAfterEx.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 };
 
+SceneAfterEx.prototype.isPlayFadeIn = function() {
+	return true;
+};
+SceneAfterEx.prototype.isPlayFadeOut = function() {
+	return true;
+};
+
 
 
 
