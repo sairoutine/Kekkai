@@ -8,6 +8,21 @@ AssetsConfig.images = {
 	title_bg:      "./image/title_bg.png",
 	title_bg_without_yukari:      "./image/title_bg_without_yukari.png",
 
+	// メニュー
+	menu_story_start_off:    "./image/menu/menu_story_start_off.png",
+	menu_story_start_on:     "./image/menu/menu_story_start_on.png",
+	menu_ex_story_start_off: "./image/menu/menu_ex_story_start_off.png",
+	menu_ex_story_start_on:  "./image/menu/menu_ex_story_start_on.png",
+	menu_select_stage_off:   "./image/menu/menu_select_stage_off.png",
+	menu_select_stage_on:    "./image/menu/menu_select_stage_on.png",
+	menu_music_room_off:     "./image/menu/menu_music_room_off.png",
+	menu_music_room_on:      "./image/menu/menu_music_room_on.png",
+	menu_how_to_off:         "./image/menu/menu_how_to_off.png",
+	menu_how_to_on:          "./image/menu/menu_how_to_on.png",
+	menu_config_off:         "./image/menu/menu_config_off.png",
+	menu_config_on:          "./image/menu/menu_config_on.png",
+
+
 	// 回想シーン背景
 	reminiscence:   "./image/reminiscence.png",
 
