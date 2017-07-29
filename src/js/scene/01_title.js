@@ -12,7 +12,7 @@ var SHOW_TRANSITION_COUNT = 100;
 var SHOW_START_MESSAGE_INTERVAL = 50;
 
 var MENU = [
-	["Story Start", "reminiscence", function (core) {
+	["menu_story_start", "reminiscence", function (core) {
 		var progress_stage_no = core.save.getNormalStageProgress();
 
 		// 最初から
@@ -26,7 +26,7 @@ var MENU = [
 			core.changeScene("stage", progress_stage_no + 1, "talk", true);
 		}
 	}],
-	["Ex Story Start", "ex_epigraph", function (core) {
+	["menu_ex_story_start", "ex_epigraph", function (core) {
 		var progress_stage_no = core.save.getExStageProgress();
 
 		// 最初から
@@ -40,20 +40,20 @@ var MENU = [
 			core.changeScene("stage", progress_stage_no + 1, "talk", true);
 		}
 	}],
-	["Select Stage", "select", function (core) {
+	["menu_select_stage", "select", function (core) {
 		// ステージセレクト画面へ
 		core.changeScene("select");
 	}],
-	/*
-	["How To", "howto", function (core) {
+	///*
+	["menu_how_to", "howto", function (core) {
 		// 遊び方画面へ
 		core.changeScene("howto");
 	}],
-	["Config", "config", function (core) {
+	["menu_config", "config", function (core) {
 		core.changeScene("config");
 	}],
-	*/
-	["Music Room", "music", function (core) {
+	//*/
+	["menu_music_room", "music", function (core) {
 		// Music Room 画面へ
 		core.changeScene("music");
 	}],
@@ -171,33 +171,29 @@ SceneTitle.prototype.draw = function(){
 
 
 
-	var cursor_x    = this.core.width - 200;
-	var text_x      = cursor_x + 30;
-	var y = this.core.height/2 - 50;
+	var text_x    = this.core.width - 120;
+	var y = 130;
 
-	// 文字背景 表示
-	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.7; // 半透明
-	ctx.fillRect(cursor_x - 10, y - 100, this.core.width - cursor_x - 20, this.core.height - y + 70);
-
-	// 文字表示
-	ctx.globalAlpha = 1.0; // 半透明戻す
-	ctx.font = "18px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-
+	// メニュー一覧表示
 	for(var i = 0, len = this.menu_list.length; i < len; i++) {
 		var menu = this.menu_list[i];
 
+		var suffix, pre_x;
 		if(this.index === i) {
-			// cursor 表示
-			this._drawText("▶", cursor_x, y);
+			suffix = "_on";
+			pre_x = 10;
 		}
-		// 文字表示
-		this._drawText(menu[0], text_x, y); // 1行表示
-
-		y+= 40;
+		else {
+			suffix = "_off";
+			pre_x = 0;
+		}
+		var menu_image = this.core.image_loader.getImage(menu[0] + suffix);
+		ctx.drawImage(menu_image,
+						text_x - pre_x,
+						y,
+						menu_image.width,
+						menu_image.height);
+		y+= menu_image.height;
 	}
 
 	ctx.restore();
