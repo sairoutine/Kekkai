@@ -8,6 +8,7 @@ var serifs = [
 	["イラスト","シノバ (shnva)"],
 	["脚本・シナリオ・セリフ","土露団子"],
 	["BGM","敷き紙"],
+	["DLカード デザイン","RF"],
 ];
 var RESULT_TRANSITION_COUNT = 320;
 
