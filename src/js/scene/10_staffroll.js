@@ -9,6 +9,7 @@ var serifs = [
 	["脚本・演出","土露団子"],
 	["BGM","敷き紙"],
 	["DLカード デザイン","RF"],
+	["制作","サークル ひまわり鎮痛剤"],
 ];
 var RESULT_TRANSITION_COUNT = 320;
 
