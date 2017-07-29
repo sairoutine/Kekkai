@@ -19,6 +19,8 @@ SceneStageResultClearBySelect.prototype.init = function(){
 	// 表示するメッセージを取得
 	this.message = this.getMessage();
 
+	this.sound_count = 0;
+
 	this.move_frame_count0 = 0;
 	this.is_show_bg = false;
 	this.move_frame_count1 = 1000;
@@ -48,9 +50,19 @@ SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 	else if (!this.is_show_bg) {
 		this.is_show_bg = true;
 	}
+	// SE再生(1度だけ)
+	else if (this.sound_count === 0) {
+		this.sound_count++;
+		this.core.playSound("stage_result1");
+	}
 	// Stage Clear メッセージ表示
 	else if (this.move_frame_count1 > 150) {
 		this.move_frame_count1-=50;
+	}
+	// SE再生(1度だけ)
+	else if (this.sound_count === 1) {
+		this.sound_count++;
+		this.core.playSound("stage_result1");
 	}
 	// スコア表示
 	else if (this.move_frame_count2 > 250) {
@@ -64,6 +76,12 @@ SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 	else if (!this.is_show_serif) {
 		this.is_show_serif = true;
 	}
+	// SE再生(1度だけ)
+	else if (this.sound_count === 2) {
+		this.sound_count++;
+		this.core.playSound("stage_result2");
+	}
+
 
 };
 
