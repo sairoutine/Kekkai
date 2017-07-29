@@ -188,6 +188,9 @@ SceneStage.prototype.notifyResultClearEndByStory = function(){
 
 // セレクト: クリア後のリザルト画面終了後
 SceneStage.prototype.notifyResultClearEndBySelect = function(){
+
+	// セレクト画面から来た場合、フェードアウトする
+	this.setFadeOut(60);
 	this.core.changeScene("select", this.stage_no);
 };
 
