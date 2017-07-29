@@ -37,6 +37,14 @@ SceneSerifBase.prototype.init = function(serif){
 	if (this.bgm()) {
 		this.core.playBGM(this.bgm());
 	}
+
+	if (this.isPlayFadeIn()) {
+		this.setFadeIn(60);
+	}
+
+	if (this.isPlayFadeOut()) {
+		this.setFadeOut();
+	}
 };
 
 SceneSerifBase.prototype.beforeDraw = function(){
@@ -290,6 +298,16 @@ SceneSerifBase.prototype.background = function() {
 // BGM
 SceneSerifBase.prototype.bgm = function() {
 };
+
+// フェードインするかどうか
+SceneSerifBase.prototype.isPlayFadeIn = function() {
+	return false;
+};
+// フェードアウトするかどうか
+SceneSerifBase.prototype.isPlayFadeOut = function() {
+	return false;
+};
+
 
 
 

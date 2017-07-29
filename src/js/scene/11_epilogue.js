@@ -35,4 +35,9 @@ ScenePrologue.prototype.bgm = function() {
 	return "mute";
 };
 
+ScenePrologue.prototype.isPlayFadeIn = function() {
+	return true;
+};
+
+
 module.exports = ScenePrologue;
