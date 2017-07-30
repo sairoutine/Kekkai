@@ -70,6 +70,8 @@ AssetsConfig.images = {
 	reimu_normal2:  "./image/reimu/normal2.png",
 	reimu_smile:    "./image/reimu/smile.png",
 	reimu_yarare:   "./image/reimu/yarare.png",
+	reimu_strength1:   "./image/reimu/strength1.png",
+	reimu_strength2:   "./image/reimu/strength2.png",
 
 	yukari_angry:        "./image/yukari/angry.png",
 	yukari_confused:     "./image/yukari/confused.png",
