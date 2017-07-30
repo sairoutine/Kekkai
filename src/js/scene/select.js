@@ -168,7 +168,8 @@ SceneSelect.prototype.draw = function(){
 
 		if(i === index) {
 			// カーソル表示
-			this._drawText("▶", this.core.width - 150, x + 24*i);
+			var cursor = this.core.image_loader.getImage('cursor');
+			ctx.drawImage(cursor, this.core.width - 150, x - 14 + 24*i);
 		}
 		// 文字表示
 		this._drawText(menu, this.core.width - 120, x + 24 * i); // 1行表示

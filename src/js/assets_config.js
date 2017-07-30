@@ -64,6 +64,9 @@ AssetsConfig.images = {
 	star_on:       "./image/star_on.png",
 	star_off:      "./image/star_off.png",
 
+	// カーソル
+	cursor:      "./image/right_arrow.png",
+
 	reimu_angry1:   "./image/reimu/angry1.png",
 	reimu_angry2:   "./image/reimu/angry2.png",
 	reimu_confused: "./image/reimu/confused.png",
