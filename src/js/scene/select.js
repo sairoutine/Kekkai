@@ -96,6 +96,17 @@ SceneSelect.prototype.createMap = function(){
 
 	return stage_objects;
 };
+// ノーマル ストーリーのステージかどうか
+SceneSelect.prototype.isInNormalStory = function() {
+	return !this.isInExStory();
+};
+// Ex ストーリーのステージかどうか
+SceneSelect.prototype.isInExStory = function() {
+	return this.selected_stage+1 >= CONSTANT.EX_STORY_START_STAGE_NO ? true : false;
+};
+
+
+
 
 // 画面更新
 SceneSelect.prototype.draw = function(){

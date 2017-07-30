@@ -67,7 +67,13 @@ Item.prototype.spriteName = function(){
 	return "stage_tile_24";
 };
 Item.prototype.spriteIndices = function(){
-	return [{x: 1, y: 2}];
+	// Ex ストーリーになるとアイテムが変わる
+	if (this.scene.isInExStory()) {
+		return [{x: 2, y: 2}];
+	}
+	else {
+		return [{x: 1, y: 2}];
+	}
 };
 Item.prototype.spriteWidth = function(){
 	return 24;
