@@ -49,7 +49,7 @@ SceneMusic.prototype.beforeDraw = function(){
 	}
 
 	// カーソルを下移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_DOWN)) {
 		this.index++;
 
 		if(this.index >= BGMS.length) {
@@ -57,7 +57,7 @@ SceneMusic.prototype.beforeDraw = function(){
 		}
 	}
 	// カーソルを上移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_UP)) {
 		this.index--;
 
 		if(this.index < 0) {

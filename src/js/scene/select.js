@@ -56,7 +56,7 @@ SceneSelect.prototype.beforeDraw = function(){
 	}
 
 	// カーソルを下移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_DOWN)) {
 		this.selected_stage++;
 
 		if(this.selected_stage >= this.stage_list.length) {
@@ -67,7 +67,7 @@ SceneSelect.prototype.beforeDraw = function(){
 		this.stage_objects = this.createMap();
 	}
 	// カーソルを上移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_UP)) {
 		this.selected_stage--;
 
 		if(this.selected_stage < 0) {

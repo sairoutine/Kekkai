@@ -66,6 +66,15 @@ Game.prototype.init = function () {
 	this.changeScene("loading");
 
 };
+
+Game.prototype.isKeyLongDown = function (key) {
+	var time = this.getKeyDownTime(key);
+	return time > 30 && time % 5 === 0 ? true : false;
+};
+Game.prototype.isKeyPushOrLongDown = function (key) {
+	return this.isKeyPush(key) || this.isKeyLongDown(key);
+};
+
 Game.prototype.playSound = function () {
 	if (CONSTANT.DEBUG.SOUND_OFF) return;
 	return this.audio_loader.playSound.apply(this.audio_loader, arguments);

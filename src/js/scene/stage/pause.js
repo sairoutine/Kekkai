@@ -21,7 +21,7 @@ SceneStagePause.prototype.init = function(){
 SceneStagePause.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	if(this.core.isKeyPush(CONSTANT.BUTTON_UP)) {
+	if(this.core.isKeyPushOrLongDown(CONSTANT.BUTTON_UP)) {
 		this.core.playSound('select');
 		this.selectIndex--;
 
@@ -30,7 +30,7 @@ SceneStagePause.prototype.beforeDraw = function(){
 			this.selectIndex = 0;
 		}
 	}
-	else if(this.core.isKeyPush(CONSTANT.BUTTON_DOWN)) {
+	else if(this.core.isKeyPushOrLongDown(CONSTANT.BUTTON_DOWN)) {
 		this.core.playSound('select');
 		this.selectIndex++;
 
@@ -40,7 +40,7 @@ SceneStagePause.prototype.beforeDraw = function(){
 		}
 	}
 
-	if(this.core.isKeyPush(CONSTANT.BUTTON_SPACE)) {
+	if(this.core.isKeyPushOrLongDown(CONSTANT.BUTTON_SPACE)) {
 		this.core.playSound('select');
 
 		// Continue
