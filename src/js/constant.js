@@ -4,6 +4,9 @@ var DEBUG = require("./debug_constant");
 var CONSTANT = {
 	DEBUG: {},
 
+	// スコアの最高数
+	MAX_SCORE:  3,
+
 	// Ex Story の開始 stage no
 	EX_STORY_START_STAGE_NO:  31,
 

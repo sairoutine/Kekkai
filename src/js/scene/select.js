@@ -222,14 +222,13 @@ SceneSelect.prototype.draw = function(){
 			1
 		);
 
-		var honor_str = "";
-		for (i = 0; i < honor_num; i++) {
-			honor_str = honor_str + "★";
-		}
-
 		// ステージスコア表示
-		ctx.font = "40px 'Migu'";
-		this._drawText(honor_str, this.core.width - 300, this.core.height - 50);
+		var star_on = this.core.image_loader.getImage('star_on');
+		var star_off = this.core.image_loader.getImage('star_off');
+		for (i = 0; i < CONSTANT.MAX_SCORE; i++) {
+			var star = i < honor_num ? star_on : star_off;
+			ctx.drawImage(star, this.core.width - 300 + i*star.width, this.core.height - 120);
+		}
 	}
 
 	// 操作方法説明
