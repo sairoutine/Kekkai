@@ -99,6 +99,9 @@ SceneSerifBase.prototype.draw = function(){
 	var ctx = this.core.ctx;
 
 	if (this.isInTransition()) {
+		ctx.fillStyle = this.backgroundTransitionColor();
+		ctx.fillRect(0, 0, this.width, this.height);
+
 		// 背景表示
 		ctx.globalAlpha = (TRANSITION_COUNT - this.transition_count) / TRANSITION_COUNT;
 		this._showBackground();
@@ -294,6 +297,10 @@ SceneSerifBase.prototype.serifScript = function() {
 // 背景画像名
 SceneSerifBase.prototype.background = function() {
 	throw new Error("background method must be defined.");
+};
+// トランジションカラー
+SceneSerifBase.prototype.backgroundTransitionColor = function() {
+	return "white";
 };
 // BGM
 SceneSerifBase.prototype.bgm = function() {

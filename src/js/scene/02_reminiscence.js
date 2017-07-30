@@ -25,14 +25,15 @@ SceneReminiscence.prototype.serifScript = function() {
 	return serif_script;
 };
 
-// 背景画像名
-SceneReminiscence.prototype.background = function() {
-	return "reminiscence";
-};
-
 // BGM
 SceneReminiscence.prototype.bgm = function() {
 	return "mute";
 };
+// トランジションカラー
+SceneReminiscence.prototype.backgroundTransitionColor = function() {
+	return "black";
+};
+
+
 
 module.exports = SceneReminiscence;
