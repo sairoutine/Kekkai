@@ -24,7 +24,8 @@ AssetsConfig.images = {
 
 
 	// 回想シーン背景
-	reminiscence:   "./image/reminiscence.png",
+	reminiscence1:   "./image/reminiscence1.png",
+	reminiscence2:   "./image/reminiscence2.jpg",
 
 	// プロローグ背景
 	shrine_noon:   "./image/shrine_noon.png",
