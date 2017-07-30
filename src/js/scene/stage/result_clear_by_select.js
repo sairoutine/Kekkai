@@ -2,7 +2,8 @@
 // クリア リザルト
 
 var base_scene = require('../../hakurei').scene.base;
-var CONSTANT = require('../../hakurei').constant;
+var H_CONSTANT = require('../../hakurei').constant;
+var CONSTANT = require('../../constant');
 var util = require('../../hakurei').util;
 var LogicScore = require('../../logic/score');
 var Message = require('../../logic/result_message/select');
@@ -37,7 +38,7 @@ SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 		this.parent.objects[i].beforeDraw();
 	}
 
-	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
 		this.goToNextScene();
 	}
@@ -127,13 +128,15 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 	// スコア計算
 	var honor_num = this.parent.calcHonor();
 
-	var honor_str = "";
-	for (var i = 0; i < honor_num; i++) {
-		honor_str = honor_str + "★";
+
+	// ステージスコア表示
+	var star_on = this.core.image_loader.getImage('star_on');
+	var star_off = this.core.image_loader.getImage('star_off');
+	for (var i = 0; i < CONSTANT.MAX_SCORE; i++) {
+		var star = i < honor_num ? star_on : star_off;
+		ctx.drawImage(star, this.move_frame_count2 + 100 + i*star.width, 285);
 	}
 
-	ctx.textAlign = 'right';
-	ctx.fillText(honor_str, this.move_frame_count2 + 190, 320);
 	ctx.restore();
 
 	// キャラ表示
