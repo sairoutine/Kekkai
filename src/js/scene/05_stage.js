@@ -122,7 +122,7 @@ SceneStage.prototype.notifyQuit = function(){
 	}
 	// セレクト画面からプレイしたならセレクト画面へ
 	else {
-		this.core.changeScene("select");
+		this.core.changeScene("select", this.stage_no);
 	}
 };
 
@@ -216,6 +216,10 @@ SceneStage.prototype.notifyAfterTalkEnd = function() {
 // ノーマルステージの最終ステージかどうか
 SceneStage.prototype.isLastNormalStory = function() {
 	return this.stage_no === (CONSTANT.EX_STORY_START_STAGE_NO - 1) ? true : false;
+};
+// ノーマル ストーリーのステージかどうか
+SceneStage.prototype.isInNormalStory = function() {
+	return !this.isInExStory();
 };
 // Exステージの最終ステージかどうか
 SceneStage.prototype.isLastExStory = function() {
