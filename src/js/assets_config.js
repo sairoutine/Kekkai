@@ -115,6 +115,10 @@ AssetsConfig.sounds = {
 		path: "./sound/stage_result1",
 		volume: 1.0,
 	},
+	drop: {
+		path: "./sound/drop",
+		volume: 0.5,
+	},
 	stage_result2: {
 		path: "./sound/stage_result2",
 		volume: 1.0,

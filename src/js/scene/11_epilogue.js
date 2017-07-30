@@ -15,6 +15,21 @@ var ScenePrologue = function(game) {
 
 util.inherit(ScenePrologue, base_scene);
 
+ScenePrologue.prototype.init = function() {
+	base_scene.prototype.init.apply(this, arguments);
+
+	this._is_play_drop_sound = false;
+};
+ScenePrologue.prototype.beforeDraw = function() {
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// 霊夢が筆を落とす音
+	if(this.serif.progress === 9 && !this._is_play_drop_sound) {
+		this._is_play_drop_sound = true;
+		this.core.playSound("drop");
+	}
+};
+
 // 立ち絵＆セリフ終了後
 ScenePrologue.prototype.notifySerifEnd = function() {
 	this.core.changeScene("title");
