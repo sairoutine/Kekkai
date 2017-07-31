@@ -365,11 +365,9 @@ SceneStage.prototype.calcItemNum = function() {
 
 SceneStage.prototype.calcHonor = function() {
 	return LogicScore.calcHonor(
+		this.stage_no,
 		this.getSubScene("play").frame_count,
-		this.player().exchange_num,
-		// TODO: 各マップから取得する
-		100,
-		1
+		this.player().exchange_num
 	);
 };
 

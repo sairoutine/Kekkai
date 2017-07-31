@@ -38,4 +38,6 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 2, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time: 30,
+	criteria_exchange_num: 0,
 };

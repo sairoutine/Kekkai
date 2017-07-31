@@ -227,11 +227,9 @@ SceneSelect.prototype.draw = function(){
 		LogicCreateMap.drawFrames(this, 12, 70, 0.8);
 
 		var honor_num = LogicScore.calcHonor(
+			stage_data.stage_no,
 			stage_data.time,
-			stage_data.exchange_num,
-			// TODO: 各マップから取得する
-			100,
-			1
+			stage_data.exchange_num
 		);
 
 		// ステージスコア表示

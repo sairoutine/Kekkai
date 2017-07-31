@@ -121,19 +121,15 @@ StorageSave.prototype.updateStageResult = function(stage_no, time, exchange_num)
 	else {
 		// 以前のハイスコア
 		var previous_honor_num = LogicScore.calcHonor(
+			stage_no,
 			list[stage_no].time,
-			list[stage_no].exchange_num,
-			// TODO: 各マップから取得する
-			100,
-			1
+			list[stage_no].exchange_num
 		);
 		// 今回のスコア
 		var next_honor_num = LogicScore.calcHonor(
+			stage_no,
 			time,
-			exchange_num,
-			// TODO: 各マップから取得する
-			100,
-			1
+			exchange_num
 		);
 
 		// ベストスコアであれば更新

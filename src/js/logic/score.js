@@ -1,5 +1,8 @@
 'use strict';
 
+
+var MAPS = require('../stage_config').MAPS;
+
 /* スコア計算ロジック */
 
 // 静的クラス
@@ -10,9 +13,11 @@ var Score = function() {};
 // S -> 3
 // A -> 2
 // B -> 1
-Score.calcHonor = function(time, exchange_num, criteria_time, criteria_exchange_num){
+Score.calcHonor = function(stage_no, time, exchange_num){
+	var stage_data = this.getStageData(stage_no);
+
 	var score          = this.calcScore(time, exchange_num);
-	var criteria_score = this.calcScore(criteria_time, criteria_exchange_num);
+	var criteria_score = this.calcScore(stage_data.criteria_time, stage_data.criteria_exchange_num);
 
 	if (score > criteria_score) {
 		return 3;
@@ -36,5 +41,9 @@ Score.calcScore = function(time, exchange_num){
 	if(e < 0) e = 0;
 
 	return t*e;
+};
+
+Score.getStageData = function(stage_no){
+	return MAPS[stage_no];
 };
 module.exports = Score;
