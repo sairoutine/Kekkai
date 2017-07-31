@@ -9,13 +9,21 @@ var AlterEgo = function (scene) {
 };
 util.inherit(AlterEgo, base_object);
 
-AlterEgo.prototype.init = function() {
+AlterEgo.prototype.init = function(chara_no) {
 	base_object.prototype.init.apply(this, arguments);
 
 	this.span = 0;
 	this.exchange_animation_start_count = 0;
 	this.exchange_anim = new ExchangeAnim(this.scene);
+	this.chara_no = chara_no;
 };
+AlterEgo.prototype.isYukari = function(){
+	return this.chara_no === CONSTANT.YUKARI_NO;
+};
+AlterEgo.prototype.isExReimu = function(){
+	return this.chara_no === CONSTANT.EX_REIMU_NO;
+};
+
 
 AlterEgo.prototype.x = function(){
 	if (this.scene.isVertical()) {
@@ -107,11 +115,36 @@ AlterEgo.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 AlterEgo.prototype.spriteAnimationSpan = function(){
-	return 30;
+	if (this.isYukari()) {
+		return 30;
+	}
+	else {
+		return 10;
+	}
 };
 AlterEgo.prototype.spriteIndices = function(){
-	return [{x: 5, y: 0}, {x: 6, y: 0}];
+	// 紫
+	if (this.isYukari()) {
+		return [{x: 5, y: 0}, {x: 6, y: 0}];
+	}
+	// 霊夢(精神)
+	else {
+		if(this.parent.isClimbDown()) {
+			return [{x: 5, y: 5}, {x: 6, y: 5}];
+		}
+		else {
+			var is_reflect;
+			if (this.scene.isVertical()) {
+				is_reflect = this.parent.is_reflect;
+			}
+			else {
+				is_reflect = !this.parent.is_reflect; // 自機と左右対象
+			}
+			return(is_reflect ? [{x: 3, y: 5}, {x: 4, y: 5}] : [{x: 1, y: 5}, {x: 2, y:5}]);
+		}
+	}
 };
+
 AlterEgo.prototype.spriteWidth = function(){
 	return 32;
 };
@@ -123,8 +156,7 @@ AlterEgo.prototype.startExchange = function(span) {
 	this.exchange_animation_start_count = this.frame_count;
 	this.span = span;
 
-	var is_yukari = true;
-	this.exchange_anim.init(this.x(), this.y(), span, is_yukari);
+	this.exchange_anim.init(this.x(), this.y(), span, this.chara_no);
 	this.addSubObject(this.exchange_anim);
 };
 module.exports = AlterEgo;

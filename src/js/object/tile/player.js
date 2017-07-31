@@ -92,11 +92,11 @@ Player.prototype.init = function(x, y) {
 
 	// 分身
 	this.alterego = new AlterEgo(this.scene, this);
-	this.alterego.init();
+	this.alterego.init(this.scene.isInNormalStory() ? CONSTANT.YUKARI_NO : CONSTANT.EX_REIMU_NO);
 	this.addSubObject(this.alterego);
 
 	// 位置交換アニメーション
-	this.exchange_anim = new ExchangeAnim(this.scene);
+	this.exchange_anim = new ExchangeAnim(this.scene, this);
 
 	// 初期状態
 	this.changeState(CONSTANT.STATE_NORMAL);

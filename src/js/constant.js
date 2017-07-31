@@ -48,6 +48,12 @@ var CONSTANT = {
 	STATE_FALLDOWN:  5,
 	STATE_MOVELEFT:  6,
 	STATE_MOVERIGHT: 7,
+
+
+	// キャラ ドット絵一覧
+	REIMU_NO:    1, // 霊夢(実体)
+	YUKARI_NO:   2, // 紫
+	EX_REIMU_NO: 3, // 霊夢(精神)
 };
 
 // レンダリングの順番
