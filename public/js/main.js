@@ -433,9 +433,26 @@ AssetsConfig.images = {
 	title:         "./image/title.png",
 	// タイトル背景
 	title_bg:      "./image/title_bg.png",
+	title_bg_without_yukari:      "./image/title_bg_without_yukari.png",
+
+	// メニュー
+	menu_story_start_off:    "./image/menu/menu_story_start_off.png",
+	menu_story_start_on:     "./image/menu/menu_story_start_on.png",
+	menu_ex_story_start_off: "./image/menu/menu_ex_story_start_off.png",
+	menu_ex_story_start_on:  "./image/menu/menu_ex_story_start_on.png",
+	menu_select_stage_off:   "./image/menu/menu_select_stage_off.png",
+	menu_select_stage_on:    "./image/menu/menu_select_stage_on.png",
+	menu_music_room_off:     "./image/menu/menu_music_room_off.png",
+	menu_music_room_on:      "./image/menu/menu_music_room_on.png",
+	menu_how_to_off:         "./image/menu/menu_how_to_off.png",
+	menu_how_to_on:          "./image/menu/menu_how_to_on.png",
+	menu_config_off:         "./image/menu/menu_config_off.png",
+	menu_config_on:          "./image/menu/menu_config_on.png",
+
 
 	// 回想シーン背景
-	reminiscence:   "./image/reminiscence.png",
+	reminiscence1:   "./image/reminiscence1.png",
+	reminiscence2:   "./image/reminiscence2.jpg",
 
 	// プロローグ背景
 	shrine_noon:   "./image/shrine_noon.png",
@@ -462,13 +479,20 @@ AssetsConfig.images = {
 	after_ex3:   "./image/after_ex3.jpg",
 	after_ex4:   "./image/after_ex4.jpg",
 
-	epilogue1:   "./image/epilogue1.jpg",
+	epilogue1:   "./image/epilogue1.png",
 	epilogue2:   "./image/epilogue2.jpg",
 	epilogue3:   "./image/epilogue3.jpg",
 
 	yajirushi:      "./image/yajirushi.png",
 
 	thumbnail15:      "./image/thumbnail/15.png",
+
+	// スコアの★
+	star_on:       "./image/star_on.png",
+	star_off:      "./image/star_off.png",
+
+	// カーソル
+	cursor:      "./image/right_arrow.png",
 
 	reimu_angry1:   "./image/reimu/angry1.png",
 	reimu_angry2:   "./image/reimu/angry2.png",
@@ -480,6 +504,8 @@ AssetsConfig.images = {
 	reimu_normal2:  "./image/reimu/normal2.png",
 	reimu_smile:    "./image/reimu/smile.png",
 	reimu_yarare:   "./image/reimu/yarare.png",
+	reimu_strength1:   "./image/reimu/strength1.png",
+	reimu_strength2:   "./image/reimu/strength2.png",
 
 	yukari_angry:        "./image/yukari/angry.png",
 	yukari_confused:     "./image/yukari/confused.png",
@@ -521,7 +547,18 @@ AssetsConfig.sounds = {
 		path: "./sound/got_item_ribon",
 		volume: 0.8,
 	},
-
+	stage_result1: {
+		path: "./sound/stage_result1",
+		volume: 1.0,
+	},
+	drop: {
+		path: "./sound/drop",
+		volume: 0.5,
+	},
+	stage_result2: {
+		path: "./sound/stage_result2",
+		volume: 1.0,
+	},
 };
 // bgm ファイルはogg と m4a の二種類を用意してください
 AssetsConfig.bgms = {
@@ -558,6 +595,9 @@ var DEBUG = require("./debug_constant");
 
 var CONSTANT = {
 	DEBUG: {},
+
+	// スコアの最高数
+	MAX_SCORE:  3,
 
 	// Ex Story の開始 stage no
 	EX_STORY_START_STAGE_NO:  31,
@@ -600,6 +640,12 @@ var CONSTANT = {
 	STATE_FALLDOWN:  5,
 	STATE_MOVELEFT:  6,
 	STATE_MOVERIGHT: 7,
+
+
+	// キャラ ドット絵一覧
+	REIMU_NO:    1, // 霊夢(実体)
+	YUKARI_NO:   2, // 紫
+	EX_REIMU_NO: 3, // 霊夢(精神)
 };
 
 // レンダリングの順番
@@ -631,8 +677,8 @@ module.exports = CONSTANT;
 },{"./debug_constant":7}],7:[function(require,module,exports){
 'use strict';
 var DEBUG = {
-	ON: false,
-	SOUND_OFF: true,
+	ON: true,
+	SOUND_OFF: false,
 	START_SCENE: "title",
 };
 
@@ -707,6 +753,15 @@ Game.prototype.init = function () {
 	this.changeScene("loading");
 
 };
+
+Game.prototype.isKeyLongDown = function (key) {
+	var time = this.getKeyDownTime(key);
+	return time > 30 && time % 5 === 0 ? true : false;
+};
+Game.prototype.isKeyPushOrLongDown = function (key) {
+	return this.isKeyPush(key) || this.isKeyLongDown(key);
+};
+
 Game.prototype.playSound = function () {
 	if (CONSTANT.DEBUG.SOUND_OFF) return;
 	return this.audio_loader.playSound.apply(this.audio_loader, arguments);
@@ -1064,6 +1119,7 @@ module.exports = ImageLoader;
 },{}],13:[function(require,module,exports){
 'use strict';
 
+// only keyboard (because core class uses key board map)
 var Constant = {
 	BUTTON_LEFT:  0x01,
 	BUTTON_UP:    0x02,
@@ -1126,6 +1182,18 @@ var ShaderProgram = require('./shader_program');
 var VS = require("./shader/main.vs");
 var FS = require("./shader/main.fs");
 
+
+// const
+var BUTTON_ID_TO_BIT_CODE = {
+	0: CONSTANT.BUTTON_Z,
+	1: CONSTANT.BUTTON_X,
+	//2: CONSTANT.BUTTON_SELECT,
+	//3: CONSTANT.BUTTON_START,
+	4: CONSTANT.BUTTON_SHIFT,
+	5: CONSTANT.BUTTON_SHIFT,
+	6: CONSTANT.BUTTON_SPACE,
+};
+
 var Core = function(canvas, options) {
 	if(!options) {
 		options = {};
@@ -1178,6 +1246,7 @@ var Core = function(canvas, options) {
 
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
+	this._key_bit_code_to_down_time = {};
 
 	this.is_left_clicked  = false;
 	this.is_right_clicked = false;
@@ -1205,6 +1274,7 @@ Core.prototype.init = function () {
 
 	this.current_keyflag = 0x0;
 	this.before_keyflag = 0x0;
+	this.initPressedKeyTime();
 
 	this.is_left_clicked  = false;
 	this.is_right_clicked = false;
@@ -1244,6 +1314,9 @@ Core.prototype.stopRun = function () {
 Core.prototype.run = function(){
 	// get gamepad input
 	this.handleGamePad();
+
+	// get pressed key time
+	this.handlePressedKeyTime();
 
 	// go to next scene if next scene is set
 	this.changeNextSceneIfReserved();
@@ -1305,12 +1378,20 @@ Core.prototype.changeScene = function() {
 };
 Core.prototype.changeNextSceneIfReserved = function() {
 	if(this._reserved_next_scene) {
-		this.current_scene = this._reserved_next_scene.shift();
+		if (this.currentScene() && this.currentScene().isSetFadeOut() && !this.currentScene().isInFadeOut()) {
+			this.currentScene().startFadeOut();
+		}
+		else if (this.currentScene() && this.currentScene().isSetFadeOut() && this.currentScene().isInFadeOut()) {
+			// waiting for quiting fade out
+		}
+		else {
+			// change next scene
+			this.current_scene = this._reserved_next_scene.shift();
+			var current_scene = this.currentScene();
+			current_scene.init.apply(current_scene, this._reserved_next_scene);
 
-		var current_scene = this.currentScene();
-		current_scene.init.apply(current_scene, this._reserved_next_scene);
-
-		this._reserved_next_scene = null;
+			this._reserved_next_scene = null;
+		}
 	}
 };
 Core.prototype.changeSceneWithLoading = function(scene, assets) {
@@ -1453,21 +1534,66 @@ Core.prototype.handleGamePad = function() {
 
 	if(!pad) return;
 
-	this.current_keyflag = 0x00;
-	this.current_keyflag |= pad.buttons[1].pressed ? CONSTANT.BUTTON_Z:      0x00;// A
-	this.current_keyflag |= pad.buttons[0].pressed ? CONSTANT.BUTTON_X:      0x00;// B
-	this.current_keyflag |= pad.buttons[2].pressed ? CONSTANT.BUTTON_SELECT: 0x00;// SELECT
-	this.current_keyflag |= pad.buttons[3].pressed ? CONSTANT.BUTTON_START:  0x00;// START
-	this.current_keyflag |= pad.buttons[4].pressed ? CONSTANT.BUTTON_SHIFT:  0x00;// SHIFT
-	this.current_keyflag |= pad.buttons[5].pressed ? CONSTANT.BUTTON_SHIFT:  0x00;// SHIFT
-	this.current_keyflag |= pad.buttons[6].pressed ? CONSTANT.BUTTON_SPACE:  0x00;// SPACE
-	//this.current_keyflag |= pad.buttons[8].pressed ? 0x04 : 0x00;// SELECT
-	//this.current_keyflag |= pad.buttons[9].pressed ? 0x08 : 0x00;// START
+	// button
+	for (var i = 0, len = pad.buttons.length; i < len; i++) {
+		if(!(i in BUTTON_ID_TO_BIT_CODE)) continue; // ignore if I don't know its button
 
-	this.current_keyflag |= pad.axes[1] < -0.5 ? CONSTANT.BUTTON_UP:         0x00;// UP
-	this.current_keyflag |= pad.axes[1] >  0.5 ? CONSTANT.BUTTON_DOWN:       0x00;// DOWN
-	this.current_keyflag |= pad.axes[0] < -0.5 ? CONSTANT.BUTTON_LEFT:       0x00;// LEFT
-	this.current_keyflag |= pad.axes[0] >  0.5 ? CONSTANT.BUTTON_RIGHT:      0x00;// RIGHT
+		if(pad.buttons[i].pressed) { // pressed
+			this.current_keyflag |= BUTTON_ID_TO_BIT_CODE[i];
+		}
+		else { // not pressed
+			this.current_keyflag &= ~BUTTON_ID_TO_BIT_CODE[i];
+		}
+	}
+
+	// arrow keys
+	if (pad.axes[1] < -0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_UP;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_UP;
+	}
+	if (pad.axes[1] > 0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_DOWN;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_DOWN;
+	}
+	if (pad.axes[0] < -0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_LEFT;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_LEFT;
+	}
+	if (pad.axes[0] > 0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_RIGHT;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
+	}
+};
+Core.prototype.initPressedKeyTime = function() {
+	this._key_bit_code_to_down_time = {};
+
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		this._key_bit_code_to_down_time[bit_code] = 0;
+	}
+};
+
+Core.prototype.handlePressedKeyTime = function() {
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		if (this.isKeyDown(bit_code)) {
+			this._key_bit_code_to_down_time[bit_code]++;
+		}
+		else {
+			this._key_bit_code_to_down_time[bit_code] = 0;
+		}
+	}
+};
+Core.prototype.getKeyDownTime = function(bit_code) {
+	return this._key_bit_code_to_down_time[bit_code];
 };
 
 Core.prototype.fullscreen = function() {
@@ -9738,6 +9864,7 @@ Sprite.prototype.draw = function(){
 			ctx.transform(-1, 0, 0, 1, 0, 0);
 		}
 
+		ctx.globalAlpha = this.alpha();
 		ctx.drawImage(image,
 			// sprite position
 			sprite_width * this.spriteIndexX(), sprite_height * this.spriteIndexY(),
@@ -9810,6 +9937,10 @@ Sprite.prototype.scaleHeight = function(){
 Sprite.prototype.isReflect = function(){
 	return false;
 };
+Sprite.prototype.alpha = function() {
+	return 1.0;
+};
+
 
 
 
@@ -10181,6 +10312,16 @@ var SceneBase = function(core, scene) {
 	this.current_scene = null;
 	this._reserved_next_scene = null; // next scene which changes next frame run
 	this.scenes = {};
+
+	// property for fade in
+	this._fade_in_duration = null;
+	this._fade_in_color = null;
+	this._fade_in_start_frame_count = null;
+
+	// property for fade out
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
 };
 
 SceneBase.prototype.init = function(){
@@ -10192,6 +10333,16 @@ SceneBase.prototype.init = function(){
 	this._y = 0;
 
 	this.frame_count = 0;
+
+	// property for fade in
+	this._fade_in_duration = null;
+	this._fade_in_color = null;
+	this._fade_in_start_frame_count = null;
+
+	// property for fade out
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
 
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].init();
@@ -10219,6 +10370,59 @@ SceneBase.prototype.draw = function(){
 };
 
 SceneBase.prototype.afterDraw = function(){
+	var ctx = this.core.ctx;
+
+	var alpha;
+	// fade in
+	if (this.isInFadeIn()) {
+		ctx.save();
+
+		// tranparent settings
+		if(this.frame_count - this._fade_in_start_frame_count < this._fade_in_duration) {
+			alpha = 1.0 - (this.frame_count - this._fade_in_start_frame_count) / this._fade_in_duration;
+		}
+		else {
+			alpha = 0.0;
+		}
+
+		ctx.globalAlpha = alpha;
+
+		// transition color
+		ctx.fillStyle = this._fade_in_color;
+		ctx.fillRect(0, 0, this.width, this.height);
+
+		ctx.restore();
+
+		// alpha === 0.0 by transparent settings so quit fade in
+		// why there? because alpha === 0, _fade_in_color === null by quitFadeIn method
+		if(alpha === 1) this._quitFadeIn();
+
+	}
+	// fade out
+	else if (this.isInFadeOut()) {
+		ctx.save();
+
+		// tranparent settings
+		if(this.frame_count - this._fade_out_start_frame_count < this._fade_out_duration) {
+			alpha = (this.frame_count - this._fade_out_start_frame_count) / this._fade_out_duration;
+		}
+		else {
+			alpha = 1.0;
+		}
+
+		ctx.globalAlpha = alpha;
+
+		// transition color
+		ctx.fillStyle = this._fade_out_color;
+		ctx.fillRect(0, 0, this.width, this.height);
+
+		ctx.restore();
+
+		// alpha === 1.0 by transparent settings so quit fade out
+		// why there? because alpha === 1, _fade_out_color === null by quitFadeOut method
+		if(alpha === 1) this._quitFadeOut();
+	}
+
 	for(var i = 0, len = this.objects.length; i < len; i++) {
 		this.objects[i].afterDraw();
 	}
@@ -10262,6 +10466,51 @@ SceneBase.prototype.changeNextSubSceneIfReserved = function() {
 		this._reserved_next_scene = null;
 	}
 
+};
+
+SceneBase.prototype.setFadeIn = function(duration, color) {
+	this._fade_in_duration = duration || 30;
+	this._fade_in_color = color || 'white';
+
+	// start fade in immediately
+	this._startFadeIn();
+};
+SceneBase.prototype._startFadeIn = function() {
+	this._quitFadeOut();
+	this._fade_in_start_frame_count = this.frame_count;
+};
+
+SceneBase.prototype._quitFadeIn = function() {
+	this._fade_in_duration = null;
+	this._fade_in_color = null;
+	this._fade_in_start_frame_count = null;
+};
+SceneBase.prototype.isInFadeIn = function() {
+	return this._fade_in_start_frame_count !== null ? true : false;
+};
+
+
+SceneBase.prototype.setFadeOut = function(duration, color) {
+	this._fade_out_duration = duration || 30;
+	this._fade_out_color = color || 'black';
+};
+SceneBase.prototype.startFadeOut = function() {
+	if(!this.isSetFadeOut()) return;
+
+	this._quitFadeIn();
+	this._fade_out_start_frame_count = this.frame_count;
+};
+
+SceneBase.prototype._quitFadeOut = function() {
+	this._fade_out_duration = null;
+	this._fade_out_color = null;
+	this._fade_out_start_frame_count = null;
+};
+SceneBase.prototype.isInFadeOut = function() {
+	return this._fade_out_start_frame_count !== null ? true : false;
+};
+SceneBase.prototype.isSetFadeOut = function() {
+	return this._fade_out_duration && this._fade_out_color ? true : false;
 };
 
 SceneBase.prototype.x = function(val) {
@@ -11124,23 +11373,23 @@ module.exports = CreateMap;
 
 // 星3つ
 var messageS = [
-	["reimu_smile", "星3つ メッセージA"],
-	["reimu_smile", "星3つ メッセージB"],
-	["reimu_smile", "星3つ メッセージC"],
+	["reimu", "smile", "やるじゃない"],
+	["yukari", "normal1", "あら、すてきね"],
+	//["reimu", "smile", ""],
 ];
 
 // 星2つ
 var messageA = [
-	["reimu_smile", "星2つ メッセージA"],
-	["reimu_smile", "星2つ メッセージB"],
-	["reimu_smile", "星2つ メッセージC"],
+	["reimu", "normal2", "まぁ、こんなところね"],
+	//["yukari", "smile", "星2つ メッセージB"],
+	//["reimu", "smile", "星2つ メッセージC"],
 ];
 
 // 星1つ
 var messageB = [
-	["reimu_smile", "星1つ メッセージA"],
-	["reimu_smile", "星1つ メッセージB"],
-	["reimu_smile", "星1つ メッセージC"],
+	["reimu", "yarare", "ちょっと調子が悪かっただけよ"],
+	["yukari", "normal2", "あら、残念"],
+	["yukari", "normal1", "雨垂れでも石を穿つものよ。次がんばりましょう"],
 
 ];
 
@@ -11155,23 +11404,26 @@ module.exports = {
 
 //ステージ1~15のリザルト画面のメッセージ
 var messageA = [
-	["reimu_smile", "1-15 メッセージA"],
-	["reimu_smile", "1-15 メッセージB"],
-	["reimu_smile", "1-15 メッセージC"],
+	// デート気分
+	//["reimu", "confused", ""],
+	["yukari", "disappointed", "霊夢ったら、せっかくの肝試しなのに全然怖がってくれないわ"],
+	["yukari", "ecstasy1", "霊夢ー！おばけー！"],
 ];
 
 //ステージ16~30のリザルト画面のメッセージ
 var messageB = [
-	["reimu_smile", "16-30 メッセージA"],
-	["reimu_smile", "16-30 メッセージB"],
-	["reimu_smile", "16-30 メッセージC"],
+	["reimu", "normal1", "そもそも、このオバケたち、どこから持ってきたのよ"],
+	["reimu", "normal1", "紫、アイツ何か隠しているんじゃないかしら"],
+	["yukari", "ecstasy1", "霊夢ったら、いつの間にか一人前になっちゃって"],
+	["yukari", "normal1", "博麗大結界は代々、博麗の巫女が管理してきたのよ"],
+	["reimu", "normal1", "アイツとこうしてるのも、月の異変以来ね"],
 ];
 
 //ステージ31~40のリザルト画面のメッセージ
 var messageC = [
-	["reimu_smile", "31-40 メッセージA"],
-	["reimu_smile", "31-40 メッセージB"],
-	["reimu_smile", "31-40 メッセージC"],
+	["reimu", "strength2", "アイツ、ガラにもないこと言い出して...\n絶対連れ戻すんだから！"],
+	["reimu", "confused", "紫..."],
+	//["reimu", "smile", "31-40 メッセージC"],
 ];
 
 var i;
@@ -11192,6 +11444,9 @@ module.exports = messages;
 },{}],47:[function(require,module,exports){
 'use strict';
 
+
+var MAPS = require('../stage_config').MAPS;
+
 /* スコア計算ロジック */
 
 // 静的クラス
@@ -11202,9 +11457,11 @@ var Score = function() {};
 // S -> 3
 // A -> 2
 // B -> 1
-Score.calcHonor = function(time, exchange_num, criteria_time, criteria_exchange_num){
+Score.calcHonor = function(stage_no, time, exchange_num){
+	var stage_data = this.getStageData(stage_no);
+
 	var score          = this.calcScore(time, exchange_num);
-	var criteria_score = this.calcScore(criteria_time, criteria_exchange_num);
+	var criteria_score = this.calcScore(stage_data.criteria_time, stage_data.criteria_exchange_num);
 
 	if (score > criteria_score) {
 		return 3;
@@ -11229,9 +11486,13 @@ Score.calcScore = function(time, exchange_num){
 
 	return t*e;
 };
+
+Score.getStageData = function(stage_no){
+	return MAPS[stage_no];
+};
 module.exports = Score;
 
-},{}],48:[function(require,module,exports){
+},{"../stage_config":232}],48:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11330,9 +11591,9 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"――――もし、"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"もし、この幻想郷が全てを受け入れるというのであれば――"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"この結末を受け入れない私もまた、受け入れるはずよ！"},
+	{"pos":"right","exp":"strength1","chara":"reimu","serif":"――――もし、"},
+	{"pos":"right","exp":"strength1","chara":"reimu","serif":"もし、この幻想郷が全てを受け入れるというのであれば――"},
+	{"pos":"right","exp":"strength2","chara":"reimu","serif":"この結末を受け入れない私もまた、受け入れるはずよ！"},
 ];
 
 
@@ -11367,15 +11628,15 @@ module.exports = Serif;
 
 // セリフ
 var Serif= [
-	{"pos":null,"exp":null,"chara":null,"serif":"もう、霊夢ったら。そう力任せにぐちゃっと書いちゃダメよ。\n霊符にならないじゃない"},
-	{"pos":null,"exp":null,"chara":null,"serif":"霊符はね、紙と咒文とが組み合わさって初めて効果を発揮するの。いい？\n書く時はこう、筆の向きに逆らわないようにしながら、すすーっと走らせて――"},
-	{"pos":null,"exp":null,"chara":null,"serif":"そんなこと言われたって難しいんだもん！"},
-	{"pos":null,"exp":null,"chara":null,"serif":"そうやってすぐにむくれて筆を投げ落とさないの。ほら、ちゃんと筆を握って。\nいつかは貴女も、この札を使わなきゃいけなくなる時が来るのよ？"},
-	{"pos":null,"exp":null,"chara":null,"serif":"……紫が書いて作り置きしとけばいいじゃん"},
-	{"pos":null,"exp":null,"chara":null,"serif":"私がいつまで霊夢のそばにいられるか分からないでしょ？"},
-	{"pos":null,"exp":null,"chara":null,"serif":"そんなことあり得るの？\n紫の方がずっと長生きするのに"},
-	{"pos":null,"exp":null,"chara":null,"serif":"さぁ、どうかしら"},
-	{"pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。幻想郷は全てを受け入れるのよ。\nそれはそれは残酷な話ですわ"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"もう、霊夢ったら。そう力任せにぐちゃっと書いちゃダメよ。\n霊符にならないじゃない"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"霊符はね、紙と咒文とが組み合わさって初めて効果を発揮するの。いい？\n書く時はこう、筆の向きに逆らわないようにしながら、すすーっと走らせて――"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"そんなこと言われたって難しいんだもん！"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"そうやってすぐにむくれて筆を投げ落とさないの。ほら、ちゃんと筆を握って。\nいつかは貴女も、この札を使わなきゃいけなくなる時が来るのよ？"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"……紫が書いて作り置きしとけばいいじゃん"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"私がいつまで霊夢のそばにいられるか分からないでしょ？"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"そんなことあり得るの？\n紫の方がずっと長生きするのに"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"さぁ、どうかしら"},
+	{"background": "reminiscence2", "pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。幻想郷は全てを受け入れるのよ。\nそれはそれは残酷な話ですわ"},
 ];
 module.exports = Serif;
 
@@ -11456,7 +11717,7 @@ arguments[4][54][0].apply(exports,arguments)
 // セリフ
 var Serif= [
 	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":null},
-	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"茶色のブロックがあるわ"},
+	{"pos":"right","exp":"normal2","chara":"reimu","fukidashi":"normal","serif":"色の違うブロックがあるわ"},
 	{"pos":"left","exp":"normal1","chara":"yukari","fukidashi":"normal","serif":"一度乗ったら消えちゃうみたいね"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"消えちゃうのね"},
 ];
@@ -11777,7 +12038,7 @@ var Serif= [
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"ふぅ、何とかここまでは来れたわね"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"ただ、あまり時間は残されていないみたい。\n巫術を使って、一時的に肉体と精神とを分離させているだけに過ぎないし"},
 	{"pos":"right","exp":"normal1","chara":"reimu","serif":"下手したらこの何もかもあやふやな\nこの世界に私が溶け込まれてしまうことだって十分有り得るし……"},
-	{"pos":"right","exp":"normal1","chara":"reimu","serif":"意地でもアンタを幻想郷へと連れ戻すわよ、紫"},
+	{"pos":"right","exp":"strength2","chara":"reimu","serif":"意地でもアンタを幻想郷へと連れ戻すわよ、紫"},
 ];
 module.exports = Serif;
 
@@ -11939,13 +12200,21 @@ var AlterEgo = function (scene) {
 };
 util.inherit(AlterEgo, base_object);
 
-AlterEgo.prototype.init = function() {
+AlterEgo.prototype.init = function(chara_no) {
 	base_object.prototype.init.apply(this, arguments);
 
 	this.span = 0;
 	this.exchange_animation_start_count = 0;
 	this.exchange_anim = new ExchangeAnim(this.scene);
+	this.chara_no = chara_no;
 };
+AlterEgo.prototype.isYukari = function(){
+	return this.chara_no === CONSTANT.YUKARI_NO;
+};
+AlterEgo.prototype.isExReimu = function(){
+	return this.chara_no === CONSTANT.EX_REIMU_NO;
+};
+
 
 AlterEgo.prototype.x = function(){
 	if (this.scene.isVertical()) {
@@ -12037,11 +12306,36 @@ AlterEgo.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 AlterEgo.prototype.spriteAnimationSpan = function(){
-	return 30;
+	if (this.isYukari()) {
+		return 30;
+	}
+	else {
+		return 10;
+	}
 };
 AlterEgo.prototype.spriteIndices = function(){
-	return [{x: 5, y: 0}, {x: 6, y: 0}];
+	// 紫
+	if (this.isYukari()) {
+		return [{x: 5, y: 0}, {x: 6, y: 0}];
+	}
+	// 霊夢(精神)
+	else {
+		if(this.parent.isClimbDown()) {
+			return [{x: 5, y: 5}, {x: 6, y: 5}];
+		}
+		else {
+			var is_reflect;
+			if (this.scene.isVertical()) {
+				is_reflect = this.parent.is_reflect;
+			}
+			else {
+				is_reflect = !this.parent.is_reflect; // 自機と左右対象
+			}
+			return(is_reflect ? [{x: 3, y: 5}, {x: 4, y: 5}] : [{x: 1, y: 5}, {x: 2, y:5}]);
+		}
+	}
 };
+
 AlterEgo.prototype.spriteWidth = function(){
 	return 32;
 };
@@ -12053,8 +12347,7 @@ AlterEgo.prototype.startExchange = function(span) {
 	this.exchange_animation_start_count = this.frame_count;
 	this.span = span;
 
-	var is_yukari = true;
-	this.exchange_anim.init(this.x(), this.y(), span, is_yukari);
+	this.exchange_anim.init(this.x(), this.y(), span, this.chara_no);
 	this.addSubObject(this.exchange_anim);
 };
 module.exports = AlterEgo;
@@ -12093,17 +12386,18 @@ module.exports = BackGroundEye;
 'use strict';
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
 
-var AlterEgo = function (scene) {
+var AlterEgo = function (scene, parent) {
 	base_object.apply(this, arguments);
 };
 util.inherit(AlterEgo, base_object);
 
-AlterEgo.prototype.init = function(x, y, anim_span, is_yukari) {
+AlterEgo.prototype.init = function(x, y, anim_span, chara_no) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x(x);
 	this.y(y);
-	this.is_yukari = is_yukari ? true : false;
+	this.chara_no = chara_no;
 
 	this.anim_span = anim_span;
 };
@@ -12111,22 +12405,52 @@ AlterEgo.prototype.init = function(x, y, anim_span, is_yukari) {
 AlterEgo.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 };
+AlterEgo.prototype.isReimu = function(){
+	return this.chara_no === CONSTANT.REIMU_NO;
+};
+AlterEgo.prototype.isYukari = function(){
+	return this.chara_no === CONSTANT.YUKARI_NO;
+};
+AlterEgo.prototype.isExReimu = function(){
+	return this.chara_no === CONSTANT.EX_REIMU_NO;
+};
+
 
 AlterEgo.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
 AlterEgo.prototype.spriteIndices = function(){
-	if (this.is_yukari) {
+	// 紫
+	if (this.isYukari()) {
 		return [
 			{x: 0, y: 1}, {x: 1, y: 1},{x: 2, y: 1}, {x:3, y: 1}, {x:3, y: 1}, {x:4, y: 1}, {x:5, y: 1}, {x: 6, y:1},
 			{x: 6, y: 3}, {x: 5, y: 3},{x: 4, y:3}, {x:3, y:3}, {x:3, y:3}, {x:2, y: 3}, {x:1, y: 3}, {x: 0, y:3},
 		];
 	}
-	else {
+	// 霊夢(精神)
+	else if (this.isExReimu()) {
 		return [
-			{x: 0, y: 3}, {x: 1, y: 3},{x: 2, y:3}, {x:3, y:3}, {x:3, y:3}, {x:4, y: 3}, {x:5, y: 3}, {x: 6, y:3},
-			{x: 6, y: 1}, {x: 5, y: 1},{x: 4, y: 1}, {x:3, y: 1}, {x:3, y: 1}, {x:2, y: 1}, {x:1, y: 1}, {x: 0, y:1},
+			{x: 0, y: 6}, {x: 1, y: 6},{x: 2, y: 6}, {x:3, y: 6}, {x:3, y: 6}, {x:4, y: 6}, {x:5, y: 6}, {x: 6, y:6},
+			{x: 6, y: 3}, {x: 5, y: 3},{x: 4, y:3}, {x:3, y:3}, {x:3, y:3}, {x:2, y: 3}, {x:1, y: 3}, {x: 0, y:3},
 		];
+	}
+	// 霊夢(実体)
+	else {
+		// 分身が紫の場合
+		if (this.parent.alterego.isYukari()) {
+			return [
+				{x: 0, y: 3}, {x: 1, y: 3},{x: 2, y:3}, {x:3, y:3}, {x:3, y:3}, {x:4, y: 3}, {x:5, y: 3}, {x: 6, y:3},
+				{x: 6, y: 1}, {x: 5, y: 1},{x: 4, y: 1}, {x:3, y: 1}, {x:3, y: 1}, {x:2, y: 1}, {x:1, y: 1}, {x: 0, y:1},
+			];
+		}
+		// 分身が霊夢(精神)の場合
+		else if (this.parent.alterego.isExReimu()) {
+			return [
+				{x: 0, y: 3}, {x: 1, y: 3},{x: 2, y:3}, {x:3, y:3}, {x:3, y:3}, {x:4, y: 3}, {x:5, y: 3}, {x: 6, y:3},
+				{x: 6, y: 6}, {x: 5, y: 6},{x: 4, y: 6}, {x:3, y: 6}, {x:3, y: 6}, {x:2, y: 6}, {x:1, y: 6}, {x: 0, y:6},
+			];
+		}
+
 	}
 };
 AlterEgo.prototype.spriteWidth = function(){
@@ -12142,7 +12466,7 @@ AlterEgo.prototype.spriteAnimationSpan = function(){
 
 module.exports = AlterEgo;
 
-},{"../hakurei":9}],138:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9}],138:[function(require,module,exports){
 'use strict';
 
 /* スタッフロール用霊夢 */
@@ -12362,7 +12686,7 @@ module.exports = BlockGreen;
 
 
 // 消えるまでの時間
-var FALL_SPAN = 20;
+var FALL_SPAN = 40;
 
 
 var CONSTANT = require('../../constant');
@@ -12382,7 +12706,7 @@ BlockGreen.prototype.init = function(x, y) {
 };
 
 BlockGreen.prototype.spriteIndices = function(){
-	return [{x: 3, y: 0}];
+	return [{x: 1, y: 0}];
 };
 
 BlockGreen.prototype.beforeDraw = function() {
@@ -12395,9 +12719,6 @@ BlockGreen.prototype.beforeDraw = function() {
 	}
 };
 
-
-
-
 BlockGreen.prototype.fall = function(){
 	this.start_fall_frame = this.frame_count;
 	this.is_collision = false;
@@ -12409,28 +12730,16 @@ BlockGreen.prototype.isShow = function() {
 BlockGreen.prototype.isCollision = function() {
 	return this.is_collision;
 };
-
-BlockGreen.prototype.scaleWidth = function(){
-	var base_scale = base_object.prototype.scaleWidth.apply(this, arguments);
+BlockGreen.prototype.alpha = function() {
+	var base_scale = 0.5;
 	if (this.start_fall_frame) {
 		return(base_scale *  (FALL_SPAN - (this.frame_count - this.start_fall_frame)) / FALL_SPAN );
 	}
 	else {
 		return base_scale;
 	}
+
 };
-BlockGreen.prototype.scaleHeight = function(){
-	var base_scale = base_object.prototype.scaleHeight.apply(this, arguments);
-
-	if (this.start_fall_frame) {
-		return(base_scale *  (FALL_SPAN - (this.frame_count - this.start_fall_frame)) / FALL_SPAN );
-	}
-	else {
-		return base_scale;
-	}
-};
-
-
 
 
 module.exports = BlockGreen;
@@ -12944,7 +13253,13 @@ Item.prototype.spriteName = function(){
 	return "stage_tile_24";
 };
 Item.prototype.spriteIndices = function(){
-	return [{x: 1, y: 2}];
+	// Ex ストーリーになるとアイテムが変わる
+	if (this.scene.isInExStory()) {
+		return [{x: 2, y: 2}];
+	}
+	else {
+		return [{x: 1, y: 2}];
+	}
 };
 Item.prototype.spriteWidth = function(){
 	return 24;
@@ -13024,7 +13339,14 @@ Item.prototype.spriteName = function(){
 	return "stage_tile_24";
 };
 Item.prototype.spriteIndices = function(){
-	return [{x: 0, y: 2}];
+	// Ex ストーリーになるとアイテムが変わる
+	if (this.scene.isInExStory()) {
+		return [{x: 3, y: 2}];
+	}
+	else {
+		return [{x: 0, y: 2}];
+	}
+
 };
 Item.prototype.spriteWidth = function(){
 	return 24;
@@ -13224,7 +13546,7 @@ var LADDER_SPEED = 2;
 // 交代アニメーション時間
 var EXCHANGE_ANIM_SPAN = 3 * 15.9; //anim span * 7
 // 死亡アニメーション時間
-var DIE_ANIM_SPAN = 90;
+var DIE_ANIM_SPAN = 60;
 
 // 地面ブロック一覧
 var BLOCK_TILE_TYPES = [
@@ -13303,11 +13625,11 @@ Player.prototype.init = function(x, y) {
 
 	// 分身
 	this.alterego = new AlterEgo(this.scene, this);
-	this.alterego.init();
+	this.alterego.init(this.scene.isInNormalStory() ? CONSTANT.YUKARI_NO : CONSTANT.EX_REIMU_NO);
 	this.addSubObject(this.alterego);
 
 	// 位置交換アニメーション
-	this.exchange_anim = new ExchangeAnim(this.scene);
+	this.exchange_anim = new ExchangeAnim(this.scene, this);
 
 	// 初期状態
 	this.changeState(CONSTANT.STATE_NORMAL);
@@ -14086,6 +14408,7 @@ module.exports = TileBase;
 var base_class = require('./hakurei').storage.save;
 var util = require('./hakurei').util;
 var CONSTANT = require('./constant');
+var LogicScore = require('./logic/score');
 
 var StorageSave = function(scene) {
 	base_class.apply(this, arguments);
@@ -14190,25 +14513,34 @@ StorageSave.prototype.updateStageResult = function(stage_no, time, exchange_num)
 	stage_no -= 1; // 配列なので 0 から
 	var list = this.getStageResultList();
 
-	// 初期化
+	// ステージ実績がなければ現在の実績でハイスコアを更新
 	if(!list[stage_no]) {
 		list[stage_no] = {
-			stage_no: stage_no + 1, // -1 しちゃったのでここだけ正常なstage noに戻す
-			time:         null, // クリア時刻
-			exchange_num: null, // 使用 交換回数
+			stage_no: stage_no + 1,     // -1 しちゃったのでここだけ正常なstage noに戻す
+			time:         time,         // クリア時刻
+			exchange_num: exchange_num, // 使用 交換回数
 		};
 	}
+	else {
+		// 以前のハイスコア
+		var previous_honor_num = LogicScore.calcHonor(
+			stage_no + 1,
+			list[stage_no].time,
+			list[stage_no].exchange_num
+		);
+		// 今回のスコア
+		var next_honor_num = LogicScore.calcHonor(
+			stage_no + 1,
+			time,
+			exchange_num
+		);
 
-	// クリア時刻が早ければ更新
-	if(list[stage_no].time === null || list[stage_no].time > time) {
-		list[stage_no].time = time;
+		// ベストスコアであれば更新
+		if(next_honor_num > previous_honor_num) {
+			list[stage_no].time = time;
+			list[stage_no].exchange_num = exchange_num;
+		}
 	}
-
-	// 交換回数が少なければ更新
-	if(list[stage_no].exchange_num === null || list[stage_no].exchange_num > exchange_num) {
-		list[stage_no].exchange_num = exchange_num;
-	}
-
 	// セーブ
 	this.set("stage_result_list", list);
 };
@@ -14262,7 +14594,7 @@ StorageSave.prototype.clearExStageForDebug = function(){
 
 module.exports = StorageSave;
 
-},{"./constant":6,"./hakurei":9}],169:[function(require,module,exports){
+},{"./constant":6,"./hakurei":9,"./logic/score":47}],169:[function(require,module,exports){
 'use strict';
 
 // ローディングシーン
@@ -14381,7 +14713,7 @@ var SHOW_TRANSITION_COUNT = 100;
 var SHOW_START_MESSAGE_INTERVAL = 50;
 
 var MENU = [
-	["Story Start", "reminiscence", function (core) {
+	["menu_story_start", "reminiscence", function (core) {
 		var progress_stage_no = core.save.getNormalStageProgress();
 
 		// 最初から
@@ -14395,7 +14727,7 @@ var MENU = [
 			core.changeScene("stage", progress_stage_no + 1, "talk", true);
 		}
 	}],
-	["Ex Story Start", "ex_epigraph", function (core) {
+	["menu_ex_story_start", "ex_epigraph", function (core) {
 		var progress_stage_no = core.save.getExStageProgress();
 
 		// 最初から
@@ -14409,20 +14741,20 @@ var MENU = [
 			core.changeScene("stage", progress_stage_no + 1, "talk", true);
 		}
 	}],
-	["Select Stage", "select", function (core) {
+	["menu_select_stage", "select", function (core) {
 		// ステージセレクト画面へ
 		core.changeScene("select");
 	}],
-	/*
-	["How To", "howto", function (core) {
+	///*
+	["menu_how_to", "howto", function (core) {
 		// 遊び方画面へ
 		core.changeScene("howto");
 	}],
-	["Config", "config", function (core) {
+	["menu_config", "config", function (core) {
 		core.changeScene("config");
 	}],
-	*/
-	["Music Room", "music", function (core) {
+	//*/
+	["menu_music_room", "music", function (core) {
 		// Music Room 画面へ
 		core.changeScene("music");
 	}],
@@ -14463,6 +14795,9 @@ SceneTitle.prototype.init = function(){
 	}
 
 	this.core.stopBGM();
+
+	// フェードインする
+	this.setFadeIn(SHOW_TRANSITION_COUNT);
 };
 
 
@@ -14474,7 +14809,7 @@ SceneTitle.prototype.beforeDraw = function(){
 	}
 
 	// カーソルを下移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_DOWN)) {
 		this.index++;
 
 		if(this.index >= this.menu_list.length) {
@@ -14482,7 +14817,7 @@ SceneTitle.prototype.beforeDraw = function(){
 		}
 	}
 	// カーソルを上移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_UP)) {
 		this.index--;
 
 		if(this.index < 0) {
@@ -14507,19 +14842,16 @@ SceneTitle.prototype.draw = function(){
 
 	ctx.save();
 
-	// 切り替え効果
-	var alpha;
-	if( this.frame_count < SHOW_TRANSITION_COUNT ) {
-		alpha = this.frame_count / SHOW_TRANSITION_COUNT;
+	var title_bg;
+	// 通常ストーリーのみクリアしていれば、背景を霊夢1人 ver に
+	if(this.core.save.getIsNormalStageCleared() && !this.core.save.getIsExStageCleared()) {
+		title_bg = this.core.image_loader.getImage('title_bg_without_yukari');
 	}
 	else {
-		alpha = 1.0;
+		title_bg = this.core.image_loader.getImage('title_bg');
 	}
 
-
-	var title_bg = this.core.image_loader.getImage('title_bg');
 	// 背景画像表示
-	ctx.globalAlpha = alpha;
 	ctx.drawImage(title_bg,
 					0,
 					0,
@@ -14540,33 +14872,29 @@ SceneTitle.prototype.draw = function(){
 
 
 
-	var cursor_x    = this.core.width - 200;
-	var text_x      = cursor_x + 30;
-	var y = this.core.height/2 - 50;
+	var text_x    = this.core.width - 120;
+	var y = 130;
 
-	// 文字背景 表示
-	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.7; // 半透明
-	ctx.fillRect(cursor_x - 10, y - 100, this.core.width - cursor_x - 20, this.core.height - y + 70);
-
-	// 文字表示
-	ctx.globalAlpha = 1.0; // 半透明戻す
-	ctx.font = "18px 'Migu'";
-	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
-	ctx.fillStyle = 'rgb( 255, 255, 255 )';
-
+	// メニュー一覧表示
 	for(var i = 0, len = this.menu_list.length; i < len; i++) {
 		var menu = this.menu_list[i];
 
+		var suffix, pre_x;
 		if(this.index === i) {
-			// cursor 表示
-			this._drawText("▶", cursor_x, y);
+			suffix = "_on";
+			pre_x = 10;
 		}
-		// 文字表示
-		this._drawText(menu[0], text_x, y); // 1行表示
-
-		y+= 40;
+		else {
+			suffix = "_off";
+			pre_x = 0;
+		}
+		var menu_image = this.core.image_loader.getImage(menu[0] + suffix);
+		ctx.drawImage(menu_image,
+						text_x - pre_x,
+						y,
+						menu_image.width,
+						menu_image.height);
+		y+= menu_image.height;
 	}
 
 	ctx.restore();
@@ -14617,15 +14945,16 @@ SceneReminiscence.prototype.serifScript = function() {
 	return serif_script;
 };
 
-// 背景画像名
-SceneReminiscence.prototype.background = function() {
-	return "reminiscence";
-};
-
 // BGM
 SceneReminiscence.prototype.bgm = function() {
 	return "mute";
 };
+// トランジションカラー
+SceneReminiscence.prototype.backgroundTransitionColor = function() {
+	return "black";
+};
+
+
 
 module.exports = SceneReminiscence;
 
@@ -14865,7 +15194,7 @@ SceneStage.prototype.notifyQuit = function(){
 	}
 	// セレクト画面からプレイしたならセレクト画面へ
 	else {
-		this.core.changeScene("select");
+		this.core.changeScene("select", this.stage_no);
 	}
 };
 
@@ -14931,6 +15260,9 @@ SceneStage.prototype.notifyResultClearEndByStory = function(){
 
 // セレクト: クリア後のリザルト画面終了後
 SceneStage.prototype.notifyResultClearEndBySelect = function(){
+
+	// セレクト画面から来た場合、フェードアウトする
+	this.setFadeOut(60);
 	this.core.changeScene("select", this.stage_no);
 };
 
@@ -14938,6 +15270,8 @@ SceneStage.prototype.notifyResultClearEndBySelect = function(){
 SceneStage.prototype.notifyAfterTalkEnd = function() {
 	// 通常ストーリークリア後
 	if (this.isLastNormalStory()) {
+		// フェードアウトして終了
+		this.setFadeOut(60, 'white');
 		// 次のシーンへ
 		this.core.changeScene("after_normal");
 	}
@@ -14954,6 +15288,10 @@ SceneStage.prototype.notifyAfterTalkEnd = function() {
 // ノーマルステージの最終ステージかどうか
 SceneStage.prototype.isLastNormalStory = function() {
 	return this.stage_no === (CONSTANT.EX_STORY_START_STAGE_NO - 1) ? true : false;
+};
+// ノーマル ストーリーのステージかどうか
+SceneStage.prototype.isInNormalStory = function() {
+	return !this.isInExStory();
 };
 // Exステージの最終ステージかどうか
 SceneStage.prototype.isLastExStory = function() {
@@ -15099,11 +15437,9 @@ SceneStage.prototype.calcItemNum = function() {
 
 SceneStage.prototype.calcHonor = function() {
 	return LogicScore.calcHonor(
+		this.stage_no,
 		this.getSubScene("play").frame_count,
-		this.player().exchange_num,
-		// TODO: 各マップから取得する
-		100,
-		1
+		this.player().exchange_num
 	);
 };
 
@@ -15171,6 +15507,9 @@ SceneAfterNormal.prototype.bgm = function() {
 	return "mute";
 };
 
+SceneAfterNormal.prototype.isPlayFadeIn = function() {
+	return true;
+};
 
 
 module.exports = SceneAfterNormal;
@@ -15281,6 +15620,11 @@ ScenePrologue.prototype.serifScript = function() {
 ScenePrologue.prototype.background = function() {
 	return "shrine_night";
 };
+ScenePrologue.prototype.isPlayFadeOut = function() {
+	return true;
+};
+
+
 
 module.exports = ScenePrologue;
 
@@ -15316,6 +15660,13 @@ SceneAfterEx.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 };
 
+SceneAfterEx.prototype.isPlayFadeIn = function() {
+	return true;
+};
+SceneAfterEx.prototype.isPlayFadeOut = function() {
+	return true;
+};
+
 
 
 
@@ -15342,11 +15693,12 @@ module.exports = SceneAfterEx;
 /* スタッフロール画面 */
 
 var serifs = [
-	["プログラマー","テストA"],
-	["ドット絵","テストB"],
-	["イラスト","テストC"],
-	["脚本・シナリオ・セリフ","テストD"],
-	["BGM","テストE"],
+	["プログラム","さい"],
+	["ドット絵・UI","AOI"],
+	["イラスト","シノバ (shnva)"],
+	["脚本・演出","土露団子"],
+	["BGM","敷き紙"],
+	["DLカード デザイン","RF"],
 ];
 var RESULT_TRANSITION_COUNT = 320;
 
@@ -15464,6 +15816,21 @@ var ScenePrologue = function(game) {
 
 util.inherit(ScenePrologue, base_scene);
 
+ScenePrologue.prototype.init = function() {
+	base_scene.prototype.init.apply(this, arguments);
+
+	this._is_play_drop_sound = false;
+};
+ScenePrologue.prototype.beforeDraw = function() {
+	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// 霊夢が筆を落とす音
+	if(this.serif.progress === 9 && !this._is_play_drop_sound) {
+		this._is_play_drop_sound = true;
+		this.core.playSound("drop");
+	}
+};
+
 // 立ち絵＆セリフ終了後
 ScenePrologue.prototype.notifySerifEnd = function() {
 	this.core.changeScene("title");
@@ -15483,6 +15850,11 @@ ScenePrologue.prototype.background = function() {
 ScenePrologue.prototype.bgm = function() {
 	return "mute";
 };
+
+ScenePrologue.prototype.isPlayFadeIn = function() {
+	return true;
+};
+
 
 module.exports = ScenePrologue;
 
@@ -15698,6 +16070,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 2, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time: 30,
+	criteria_exchange_num: 0,
 };
 
 },{}],183:[function(require,module,exports){
@@ -17498,7 +17872,7 @@ SceneMusic.prototype.beforeDraw = function(){
 	}
 
 	// カーソルを下移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_DOWN)) {
 		this.index++;
 
 		if(this.index >= BGMS.length) {
@@ -17506,7 +17880,7 @@ SceneMusic.prototype.beforeDraw = function(){
 		}
 	}
 	// カーソルを上移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_UP)) {
 		this.index--;
 
 		if(this.index < 0) {
@@ -17753,7 +18127,7 @@ SceneSelect.prototype.beforeDraw = function(){
 	}
 
 	// カーソルを下移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_DOWN)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_DOWN)) {
 		this.selected_stage++;
 
 		if(this.selected_stage >= this.stage_list.length) {
@@ -17764,7 +18138,7 @@ SceneSelect.prototype.beforeDraw = function(){
 		this.stage_objects = this.createMap();
 	}
 	// カーソルを上移動
-	if(this.core.isKeyPush(H_CONSTANT.BUTTON_UP)) {
+	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_UP)) {
 		this.selected_stage--;
 
 		if(this.selected_stage < 0) {
@@ -17793,6 +18167,17 @@ SceneSelect.prototype.createMap = function(){
 
 	return stage_objects;
 };
+// ノーマル ストーリーのステージかどうか
+SceneSelect.prototype.isInNormalStory = function() {
+	return !this.isInExStory();
+};
+// Ex ストーリーのステージかどうか
+SceneSelect.prototype.isInExStory = function() {
+	return this.selected_stage+1 >= CONSTANT.EX_STORY_START_STAGE_NO ? true : false;
+};
+
+
+
 
 // 画面更新
 SceneSelect.prototype.draw = function(){
@@ -17865,7 +18250,8 @@ SceneSelect.prototype.draw = function(){
 
 		if(i === index) {
 			// カーソル表示
-			this._drawText("▶", this.core.width - 150, x + 24*i);
+			var cursor = this.core.image_loader.getImage('cursor');
+			ctx.drawImage(cursor, this.core.width - 150, x - 14 + 24*i);
 		}
 		// 文字表示
 		this._drawText(menu, this.core.width - 120, x + 24 * i); // 1行表示
@@ -17912,21 +18298,18 @@ SceneSelect.prototype.draw = function(){
 		LogicCreateMap.drawFrames(this, 12, 70, 0.8);
 
 		var honor_num = LogicScore.calcHonor(
+			stage_data.stage_no,
 			stage_data.time,
-			stage_data.exchange_num,
-			// TODO: 各マップから取得する
-			100,
-			1
+			stage_data.exchange_num
 		);
 
-		var honor_str = "";
-		for (i = 0; i < honor_num; i++) {
-			honor_str = honor_str + "★";
-		}
-
 		// ステージスコア表示
-		ctx.font = "40px 'Migu'";
-		this._drawText(honor_str, this.core.width - 300, this.core.height - 50);
+		var star_on = this.core.image_loader.getImage('star_on');
+		var star_off = this.core.image_loader.getImage('star_off');
+		for (i = 0; i < CONSTANT.MAX_SCORE; i++) {
+			var star = i < honor_num ? star_on : star_off;
+			ctx.drawImage(star, this.core.width - 300 + i*star.width, this.core.height - 120);
+		}
 	}
 
 	// 操作方法説明
@@ -18005,6 +18388,14 @@ SceneSerifBase.prototype.init = function(serif){
 	if (this.bgm()) {
 		this.core.playBGM(this.bgm());
 	}
+
+	if (this.isPlayFadeIn()) {
+		this.setFadeIn(60);
+	}
+
+	if (this.isPlayFadeOut()) {
+		this.setFadeOut(60);
+	}
 };
 
 SceneSerifBase.prototype.beforeDraw = function(){
@@ -18059,6 +18450,9 @@ SceneSerifBase.prototype.draw = function(){
 	var ctx = this.core.ctx;
 
 	if (this.isInTransition()) {
+		ctx.fillStyle = this.backgroundTransitionColor();
+		ctx.fillRect(0, 0, this.width, this.height);
+
 		// 背景表示
 		ctx.globalAlpha = (TRANSITION_COUNT - this.transition_count) / TRANSITION_COUNT;
 		this._showBackground();
@@ -18255,9 +18649,23 @@ SceneSerifBase.prototype.serifScript = function() {
 SceneSerifBase.prototype.background = function() {
 	throw new Error("background method must be defined.");
 };
+// トランジションカラー
+SceneSerifBase.prototype.backgroundTransitionColor = function() {
+	return "white";
+};
 // BGM
 SceneSerifBase.prototype.bgm = function() {
 };
+
+// フェードインするかどうか
+SceneSerifBase.prototype.isPlayFadeIn = function() {
+	return false;
+};
+// フェードアウトするかどうか
+SceneSerifBase.prototype.isPlayFadeOut = function() {
+	return false;
+};
+
 
 
 
@@ -18338,7 +18746,7 @@ SceneStagePause.prototype.init = function(){
 SceneStagePause.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
-	if(this.core.isKeyPush(CONSTANT.BUTTON_UP)) {
+	if(this.core.isKeyPushOrLongDown(CONSTANT.BUTTON_UP)) {
 		this.core.playSound('select');
 		this.selectIndex--;
 
@@ -18347,7 +18755,7 @@ SceneStagePause.prototype.beforeDraw = function(){
 			this.selectIndex = 0;
 		}
 	}
-	else if(this.core.isKeyPush(CONSTANT.BUTTON_DOWN)) {
+	else if(this.core.isKeyPushOrLongDown(CONSTANT.BUTTON_DOWN)) {
 		this.core.playSound('select');
 		this.selectIndex++;
 
@@ -18357,7 +18765,7 @@ SceneStagePause.prototype.beforeDraw = function(){
 		}
 	}
 
-	if(this.core.isKeyPush(CONSTANT.BUTTON_SPACE)) {
+	if(this.core.isKeyPushOrLongDown(CONSTANT.BUTTON_SPACE)) {
 		this.core.playSound('select');
 
 		// Continue
@@ -18511,7 +18919,8 @@ module.exports = SceneStagePlay;
 // クリア リザルト
 
 var base_scene = require('../../hakurei').scene.base;
-var CONSTANT = require('../../hakurei').constant;
+var H_CONSTANT = require('../../hakurei').constant;
+var CONSTANT = require('../../constant');
 var util = require('../../hakurei').util;
 var LogicScore = require('../../logic/score');
 var Message = require('../../logic/result_message/select');
@@ -18527,6 +18936,8 @@ SceneStageResultClearBySelect.prototype.init = function(){
 
 	// 表示するメッセージを取得
 	this.message = this.getMessage();
+
+	this.sound_count = 0;
 
 	this.move_frame_count0 = 0;
 	this.is_show_bg = false;
@@ -18544,7 +18955,7 @@ SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 		this.parent.objects[i].beforeDraw();
 	}
 
-	if(this.core.isKeyPush(CONSTANT.BUTTON_Z)) {
+	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
 		this.core.playSound('select');
 		this.goToNextScene();
 	}
@@ -18557,9 +18968,19 @@ SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 	else if (!this.is_show_bg) {
 		this.is_show_bg = true;
 	}
+	// SE再生(1度だけ)
+	else if (this.sound_count === 0) {
+		this.sound_count++;
+		this.core.playSound("stage_result1");
+	}
 	// Stage Clear メッセージ表示
 	else if (this.move_frame_count1 > 150) {
 		this.move_frame_count1-=50;
+	}
+	// SE再生(1度だけ)
+	else if (this.sound_count === 1) {
+		this.sound_count++;
+		this.core.playSound("stage_result1");
 	}
 	// スコア表示
 	else if (this.move_frame_count2 > 250) {
@@ -18573,6 +18994,12 @@ SceneStageResultClearBySelect.prototype.beforeDraw = function(){
 	else if (!this.is_show_serif) {
 		this.is_show_serif = true;
 	}
+	// SE再生(1度だけ)
+	else if (this.sound_count === 2) {
+		this.sound_count++;
+		this.core.playSound("stage_result2");
+	}
+
 
 };
 
@@ -18618,18 +19045,21 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 	// スコア計算
 	var honor_num = this.parent.calcHonor();
 
-	var honor_str = "";
-	for (var i = 0; i < honor_num; i++) {
-		honor_str = honor_str + "★";
+
+	// ステージスコア表示
+	var star_on = this.core.image_loader.getImage('star_on');
+	var star_off = this.core.image_loader.getImage('star_off');
+	for (var i = 0; i < CONSTANT.MAX_SCORE; i++) {
+		var star = i < honor_num ? star_on : star_off;
+		ctx.drawImage(star, this.move_frame_count2 + 100 + i*star.width, 285);
 	}
 
-	ctx.textAlign = 'right';
-	ctx.fillText(honor_str, this.move_frame_count2 + 190, 320);
 	ctx.restore();
 
 	// キャラ表示
-	this._showRightChara(this.message.chara);
+	this._showRightChara(this.message.chara, this.message.face);
 
+	ctx.save();
 	if (this.is_show_serif) {
 		// メッセージウィンドウ
 		this._showMessageWindow();
@@ -18637,19 +19067,28 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 		// メッセージ表示
 		this._showMessage(this.message.message);
 	}
+	ctx.restore();
 };
 
-SceneStageResultClearBySelect.prototype._showRightChara = function(image_name){
+SceneStageResultClearBySelect.prototype._showRightChara = function(chara, face){
 	var ctx = this.core.ctx;
 	ctx.save();
 
-	var x = this.move_frame_count3;
-	var y = 65;
+	var right_image = this.core.image_loader.getImage(chara + "_" + face);
+	var x = this.move_frame_count3 + right_image.width/2;
+	var y = 65 + right_image.height/2;
 
-	var right_image = this.core.image_loader.getImage(image_name);
+	// 移動
+	ctx.translate(x, y);
+
+	// 紫の場合反転
+	if (this.message.chara === "yukari") {
+		ctx.transform(-1, 0, 0, 1, 0, 0);
+	}
+
 	ctx.drawImage(right_image,
-		x,
-		y,
+		-right_image.width/2,
+		-right_image.height/2,
 		right_image.width,
 		right_image.height
 	);
@@ -18726,7 +19165,8 @@ SceneStageResultClearBySelect.prototype.getMessage = function() {
 
 	return {
 		chara: message[0],
-		message: message[1],
+		face: message[1],
+		message: message[2],
 	};
 };
 
@@ -18739,7 +19179,7 @@ SceneStageResultClearBySelect.prototype.getMessage = function() {
 
 module.exports = SceneStageResultClearBySelect;
 
-},{"../../hakurei":9,"../../logic/result_message/select":45,"../../logic/score":47}],230:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"../../logic/result_message/select":45,"../../logic/score":47}],230:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 // ステージセレクトと一緒なので継承して実装
@@ -18772,7 +19212,8 @@ SceneStageResultClear.prototype.getMessage = function() {
 
 	return {
 		chara: message[0],
-		message: message[1],
+		face: message[1],
+		message: message[2],
 	};
 };
 
