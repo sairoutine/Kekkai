@@ -2,23 +2,23 @@
 
 // 星3つ
 var messageS = [
-	["reimu_smile", "星3つ メッセージA"],
-	["reimu_smile", "星3つ メッセージB"],
-	["reimu_smile", "星3つ メッセージC"],
+	["reimu_smile", "やるじゃない"],
+	["yukari_normal1", "あら、すてきね"],
+	//["reimu_smile", ""],
 ];
 
 // 星2つ
 var messageA = [
-	["reimu_smile", "星2つ メッセージA"],
-	["reimu_smile", "星2つ メッセージB"],
-	["reimu_smile", "星2つ メッセージC"],
+	["reimu_normal2", "まぁ、こんなところね"],
+	//["yukari_smile", "星2つ メッセージB"],
+	//["reimu_smile", "星2つ メッセージC"],
 ];
 
 // 星1つ
 var messageB = [
-	["reimu_smile", "星1つ メッセージA"],
-	["reimu_smile", "星1つ メッセージB"],
-	["reimu_smile", "星1つ メッセージC"],
+	["reimu_yarare", "ちょっと調子が悪かっただけよ"],
+	["yukari_normal2", "あら、残念"],
+	["yukari_normal1", "雨垂れでも石を穿つものよ。次がんばりましょう"],
 
 ];
 
