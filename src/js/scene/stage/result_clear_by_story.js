@@ -30,7 +30,8 @@ SceneStageResultClear.prototype.getMessage = function() {
 
 	return {
 		chara: message[0],
-		message: message[1],
+		face: message[1],
+		message: message[2],
 	};
 };
 

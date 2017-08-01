@@ -140,8 +140,9 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 	ctx.restore();
 
 	// キャラ表示
-	this._showRightChara(this.message.chara);
+	this._showRightChara(this.message.chara, this.message.face);
 
+	ctx.save();
 	if (this.is_show_serif) {
 		// メッセージウィンドウ
 		this._showMessageWindow();
@@ -149,19 +150,28 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 		// メッセージ表示
 		this._showMessage(this.message.message);
 	}
+	ctx.restore();
 };
 
-SceneStageResultClearBySelect.prototype._showRightChara = function(image_name){
+SceneStageResultClearBySelect.prototype._showRightChara = function(chara, face){
 	var ctx = this.core.ctx;
 	ctx.save();
 
-	var x = this.move_frame_count3;
-	var y = 65;
+	var right_image = this.core.image_loader.getImage(chara + "_" + face);
+	var x = this.move_frame_count3 + right_image.width/2;
+	var y = 65 + right_image.height/2;
 
-	var right_image = this.core.image_loader.getImage(image_name);
+	// 移動
+	ctx.translate(x, y);
+
+	// 紫の場合反転
+	if (this.message.chara === "yukari") {
+		ctx.transform(-1, 0, 0, 1, 0, 0);
+	}
+
 	ctx.drawImage(right_image,
-		x,
-		y,
+		-right_image.width/2,
+		-right_image.height/2,
 		right_image.width,
 		right_image.height
 	);
@@ -238,7 +248,8 @@ SceneStageResultClearBySelect.prototype.getMessage = function() {
 
 	return {
 		chara: message[0],
-		message: message[1],
+		face: message[1],
+		message: message[2],
 	};
 };
 
