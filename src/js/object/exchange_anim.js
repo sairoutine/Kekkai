@@ -3,12 +3,12 @@ var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
 
-var AlterEgo = function (scene, parent) {
+var ExchangeAnim = function (scene, parent) {
 	base_object.apply(this, arguments);
 };
-util.inherit(AlterEgo, base_object);
+util.inherit(ExchangeAnim, base_object);
 
-AlterEgo.prototype.init = function(x, y, anim_span, chara_no) {
+ExchangeAnim.prototype.init = function(x, y, anim_span, chara_no) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x(x);
 	this.y(y);
@@ -17,24 +17,24 @@ AlterEgo.prototype.init = function(x, y, anim_span, chara_no) {
 	this.anim_span = anim_span;
 };
 
-AlterEgo.prototype.beforeDraw = function(){
+ExchangeAnim.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 };
-AlterEgo.prototype.isReimu = function(){
+ExchangeAnim.prototype.isReimu = function(){
 	return this.chara_no === CONSTANT.REIMU_NO;
 };
-AlterEgo.prototype.isYukari = function(){
+ExchangeAnim.prototype.isYukari = function(){
 	return this.chara_no === CONSTANT.YUKARI_NO;
 };
-AlterEgo.prototype.isExReimu = function(){
+ExchangeAnim.prototype.isExReimu = function(){
 	return this.chara_no === CONSTANT.EX_REIMU_NO;
 };
 
 
-AlterEgo.prototype.spriteName = function(){
+ExchangeAnim.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
-AlterEgo.prototype.spriteIndices = function(){
+ExchangeAnim.prototype.spriteIndices = function(){
 	// 紫
 	if (this.isYukari()) {
 		return [
@@ -68,15 +68,15 @@ AlterEgo.prototype.spriteIndices = function(){
 
 	}
 };
-AlterEgo.prototype.spriteWidth = function(){
+ExchangeAnim.prototype.spriteWidth = function(){
 	return 32;
 };
-AlterEgo.prototype.spriteHeight = function(){
+ExchangeAnim.prototype.spriteHeight = function(){
 	return 32;
 };
-AlterEgo.prototype.spriteAnimationSpan = function(){
+ExchangeAnim.prototype.spriteAnimationSpan = function(){
 	return 3;
 };
 
 
-module.exports = AlterEgo;
+module.exports = ExchangeAnim;
