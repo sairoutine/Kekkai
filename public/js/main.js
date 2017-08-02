@@ -11373,15 +11373,15 @@ module.exports = CreateMap;
 
 // 星3つ
 var messageS = [
-	["reimu", "smile", "やるじゃない"],
-	["yukari", "normal1", "あら、すてきね"],
+	["reimu", "smile", "やるじゃない！"],
+	["yukari", "smile", "あら、すてきね！"],
 	//["reimu", "smile", ""],
 ];
 
 // 星2つ
 var messageA = [
 	["reimu", "normal2", "まぁ、こんなところね"],
-	//["yukari", "smile", "星2つ メッセージB"],
+	["yukari", "normal3", "上出来ね"],
 	//["reimu", "smile", "星2つ メッセージC"],
 ];
 
@@ -11466,13 +11466,14 @@ Score.calcHonor = function(stage_no, time, exchange_num){
 	if (score > criteria_score) {
 		return 3;
 	}
-	else if (criteria_score >= score && score > criteria_score/2) {
+	else if (criteria_score >= score && score > criteria_score - 10000) {
 		return 2;
 	}
-	else if (criteria_score/2 >= score) {
+	else if (criteria_score - 10000 >= score) {
 		return 1;
 	}
 };
+
 
 // スコア(数字)
 // time -> 600 くらい
@@ -12205,7 +12206,7 @@ AlterEgo.prototype.init = function(chara_no) {
 
 	this.span = 0;
 	this.exchange_animation_start_count = 0;
-	this.exchange_anim = new ExchangeAnim(this.scene);
+	this.exchange_anim = new ExchangeAnim(this.scene, this.parent); //parent = player 本来のparent は alterego だが...
 	this.chara_no = chara_no;
 };
 AlterEgo.prototype.isYukari = function(){
@@ -12388,12 +12389,12 @@ var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
 var CONSTANT = require('../constant');
 
-var AlterEgo = function (scene, parent) {
+var ExchangeAnim = function (scene, parent) {
 	base_object.apply(this, arguments);
 };
-util.inherit(AlterEgo, base_object);
+util.inherit(ExchangeAnim, base_object);
 
-AlterEgo.prototype.init = function(x, y, anim_span, chara_no) {
+ExchangeAnim.prototype.init = function(x, y, anim_span, chara_no) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x(x);
 	this.y(y);
@@ -12402,24 +12403,24 @@ AlterEgo.prototype.init = function(x, y, anim_span, chara_no) {
 	this.anim_span = anim_span;
 };
 
-AlterEgo.prototype.beforeDraw = function(){
+ExchangeAnim.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 };
-AlterEgo.prototype.isReimu = function(){
+ExchangeAnim.prototype.isReimu = function(){
 	return this.chara_no === CONSTANT.REIMU_NO;
 };
-AlterEgo.prototype.isYukari = function(){
+ExchangeAnim.prototype.isYukari = function(){
 	return this.chara_no === CONSTANT.YUKARI_NO;
 };
-AlterEgo.prototype.isExReimu = function(){
+ExchangeAnim.prototype.isExReimu = function(){
 	return this.chara_no === CONSTANT.EX_REIMU_NO;
 };
 
 
-AlterEgo.prototype.spriteName = function(){
+ExchangeAnim.prototype.spriteName = function(){
 	return "stage_tile_32";
 };
-AlterEgo.prototype.spriteIndices = function(){
+ExchangeAnim.prototype.spriteIndices = function(){
 	// 紫
 	if (this.isYukari()) {
 		return [
@@ -12453,18 +12454,18 @@ AlterEgo.prototype.spriteIndices = function(){
 
 	}
 };
-AlterEgo.prototype.spriteWidth = function(){
+ExchangeAnim.prototype.spriteWidth = function(){
 	return 32;
 };
-AlterEgo.prototype.spriteHeight = function(){
+ExchangeAnim.prototype.spriteHeight = function(){
 	return 32;
 };
-AlterEgo.prototype.spriteAnimationSpan = function(){
+ExchangeAnim.prototype.spriteAnimationSpan = function(){
 	return 3;
 };
 
 
-module.exports = AlterEgo;
+module.exports = ExchangeAnim;
 
 },{"../constant":6,"../hakurei":9}],138:[function(require,module,exports){
 'use strict';
@@ -13420,11 +13421,8 @@ Item.prototype.beforeDraw = function(){
 	}
 };
 
-Item.prototype.draw = function(){
-	var ctx = this.core.ctx;
-	ctx.globalAlpha = (this.alpha_for_blink)/100;
-	base_object.prototype.draw.apply(this, arguments);
-	ctx.globalAlpha = 1.0;
+Item.prototype.alpha = function() {
+	return this.alpha_for_blink / 100;
 };
 
 
@@ -16067,11 +16065,11 @@ var map = [
 ];
 
 module.exports = {
-	map: map, // マップ
-	exchange_num: 2, // 位置移動上限回数
-	is_vertical: false, // 交代が垂直かどうか
-	criteria_time: 30,
-	criteria_exchange_num: 0,
+	map:                   map,   // マップ
+	exchange_num:          2,     // 位置移動上限回数
+	is_vertical:           false, // 交代が垂直かどうか
+	criteria_time:         420,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],183:[function(require,module,exports){
@@ -16118,6 +16116,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 1, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         820,   // スコア計算用基準タイム
+	criteria_exchange_num: 1,     // スコア計算用基準 交換回数
 };
 
 },{}],184:[function(require,module,exports){
@@ -16161,6 +16161,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 3, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         770,   // スコア計算用基準タイム
+	criteria_exchange_num: 3,     // スコア計算用基準 交換回数
 };
 
 },{}],185:[function(require,module,exports){
@@ -16204,6 +16206,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 1, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1200,   // スコア計算用基準タイム
+	criteria_exchange_num: 0,     // スコア計算用基準 交換回数
 };
 
 },{}],186:[function(require,module,exports){
@@ -16247,6 +16251,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 2, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1300,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],187:[function(require,module,exports){
@@ -16290,6 +16296,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         730,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],188:[function(require,module,exports){
@@ -16333,6 +16341,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1400,   // スコア計算用基準タイム
+	criteria_exchange_num: 0,     // スコア計算用基準 交換回数
 };
 
 },{}],189:[function(require,module,exports){
@@ -16377,6 +16387,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 2, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         800,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],190:[function(require,module,exports){
@@ -16420,6 +16432,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1200,   // スコア計算用基準タイム
+	criteria_exchange_num: 3,     // スコア計算用基準 交換回数
 };
 
 },{}],191:[function(require,module,exports){
@@ -16463,6 +16477,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 2, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1350,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],192:[function(require,module,exports){
@@ -16506,6 +16522,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 1, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         740,   // スコア計算用基準タイム
+	criteria_exchange_num: 1,     // スコア計算用基準 交換回数
 };
 
 },{}],193:[function(require,module,exports){
@@ -16549,6 +16567,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 1, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         2040,   // スコア計算用基準タイム
+	criteria_exchange_num: 1,     // スコア計算用基準 交換回数
 };
 
 },{}],194:[function(require,module,exports){
@@ -16592,6 +16612,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 2, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         2300,   // スコア計算用基準タイム
+	criteria_exchange_num: 1,     // スコア計算用基準 交換回数
 };
 
 },{}],195:[function(require,module,exports){
@@ -16636,6 +16658,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 5, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1900,   // スコア計算用基準タイム
+	criteria_exchange_num: 5,     // スコア計算用基準 交換回数
 };
 
 },{}],196:[function(require,module,exports){
@@ -16681,6 +16705,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 3, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1600,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],197:[function(require,module,exports){
@@ -16726,6 +16752,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 5, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1420,   // スコア計算用基準タイム
+	criteria_exchange_num: 3,     // スコア計算用基準 交換回数
 };
 
 },{}],198:[function(require,module,exports){
@@ -16771,6 +16799,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 3, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1200,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],199:[function(require,module,exports){
@@ -16816,6 +16846,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 3, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1100,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],200:[function(require,module,exports){
@@ -16861,6 +16893,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1850,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,     // スコア計算用基準 交換回数
 };
 
 },{}],201:[function(require,module,exports){
@@ -16906,6 +16940,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 6, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1800,   // スコア計算用基準タイム
+	criteria_exchange_num: 6,     // スコア計算用基準 交換回数
 };
 
 },{}],202:[function(require,module,exports){
@@ -16951,6 +16987,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1400,   // スコア計算用基準タイム
+	criteria_exchange_num: 4,     // スコア計算用基準 交換回数
 };
 
 },{}],203:[function(require,module,exports){
@@ -16996,6 +17034,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 5, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         900,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,   // スコア計算用基準 交換回数
 };
 
 },{}],204:[function(require,module,exports){
@@ -17041,6 +17081,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1300,   // スコア計算用基準タイム
+	criteria_exchange_num: 3,   // スコア計算用基準 交換回数
 };
 
 },{}],205:[function(require,module,exports){
@@ -17086,6 +17128,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 6, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1100,   // スコア計算用基準タイム
+	criteria_exchange_num: 6,   // スコア計算用基準 交換回数
 };
 
 },{}],206:[function(require,module,exports){
@@ -17131,6 +17175,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 6, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1300,   // スコア計算用基準タイム
+	criteria_exchange_num: 6,   // スコア計算用基準 交換回数
 };
 
 },{}],207:[function(require,module,exports){
@@ -17176,6 +17222,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 5, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1300,   // スコア計算用基準タイム
+	criteria_exchange_num: 4,   // スコア計算用基準 交換回数
 };
 
 },{}],208:[function(require,module,exports){
@@ -17221,6 +17269,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         2000,   // スコア計算用基準タイム
+	criteria_exchange_num: 0,   // スコア計算用基準 交換回数
 };
 
 },{}],209:[function(require,module,exports){
@@ -17266,6 +17316,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 5, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1100,   // スコア計算用基準タイム
+	criteria_exchange_num: 4,   // スコア計算用基準 交換回数
 };
 
 },{}],210:[function(require,module,exports){
@@ -17312,6 +17364,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         2500,   // スコア計算用基準タイム
+	criteria_exchange_num: 4,   // スコア計算用基準 交換回数
 };
 
 },{}],211:[function(require,module,exports){
@@ -17358,6 +17412,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1200,   // スコア計算用基準タイム
+	criteria_exchange_num: 4,   // スコア計算用基準 交換回数
 };
 
 },{}],212:[function(require,module,exports){
@@ -17404,6 +17460,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 1, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         2000,   // スコア計算用基準タイム
+	criteria_exchange_num: 0,   // スコア計算用基準 交換回数
 };
 
 },{}],213:[function(require,module,exports){
@@ -17450,6 +17508,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1500,   // スコア計算用基準タイム
+	criteria_exchange_num: 4,   // スコア計算用基準 交換回数
 };
 
 },{}],214:[function(require,module,exports){
@@ -17496,6 +17556,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 1, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1100,   // スコア計算用基準タイム
+	criteria_exchange_num: 1,   // スコア計算用基準 交換回数
 };
 
 },{}],215:[function(require,module,exports){
@@ -17542,6 +17604,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         960,   // スコア計算用基準タイム
+	criteria_exchange_num: 3,   // スコア計算用基準 交換回数
 };
 
 },{}],216:[function(require,module,exports){
@@ -17588,6 +17652,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 3, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1600,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,   // スコア計算用基準 交換回数
 };
 
 },{}],217:[function(require,module,exports){
@@ -17634,6 +17700,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 3, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         1660,   // スコア計算用基準タイム
+	criteria_exchange_num: 2,   // スコア計算用基準 交換回数
 };
 
 },{}],218:[function(require,module,exports){
@@ -17680,6 +17748,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 3, // 位置移動上限回数
 	is_vertical: true, // 交代が垂直かどうか
+	criteria_time:         940,   // スコア計算用基準タイム
+	criteria_exchange_num: 3,   // スコア計算用基準 交換回数
 };
 
 },{}],219:[function(require,module,exports){
@@ -17726,6 +17796,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 2, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1900,   // スコア計算用基準タイム
+	criteria_exchange_num: 1,   // スコア計算用基準 交換回数
 };
 
 },{}],220:[function(require,module,exports){
@@ -17772,6 +17844,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 4, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         900,   // スコア計算用基準タイム
+	criteria_exchange_num: 4,   // スコア計算用基準 交換回数
 };
 
 },{}],221:[function(require,module,exports){
@@ -17818,6 +17892,8 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 11, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
+	criteria_time:         1300,   // スコア計算用基準タイム
+	criteria_exchange_num: 11,   // スコア計算用基準 交換回数
 };
 
 },{}],222:[function(require,module,exports){
@@ -19077,6 +19153,10 @@ SceneStageResultClearBySelect.prototype._showRightChara = function(chara, face){
 	var right_image = this.core.image_loader.getImage(chara + "_" + face);
 	var x = this.move_frame_count3 + right_image.width/2;
 	var y = 65 + right_image.height/2;
+
+	if (this.message.chara === "yukari") {
+		y -= 40; // 紫の方が背が高い
+	}
 
 	// 移動
 	ctx.translate(x, y);
