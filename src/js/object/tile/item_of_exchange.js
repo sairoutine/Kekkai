@@ -61,11 +61,8 @@ Item.prototype.beforeDraw = function(){
 	}
 };
 
-Item.prototype.draw = function(){
-	var ctx = this.core.ctx;
-	ctx.globalAlpha = (this.alpha_for_blink)/100;
-	base_object.prototype.draw.apply(this, arguments);
-	ctx.globalAlpha = 1.0;
+Item.prototype.alpha = function() {
+	return this.alpha_for_blink / 100;
 };
 
 
