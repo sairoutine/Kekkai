@@ -2,15 +2,15 @@
 
 // 星3つ
 var messageS = [
-	["reimu", "smile", "やるじゃない"],
-	["yukari", "normal1", "あら、すてきね"],
+	["reimu", "smile", "やるじゃない！"],
+	["yukari", "smile", "あら、すてきね！"],
 	//["reimu", "smile", ""],
 ];
 
 // 星2つ
 var messageA = [
 	["reimu", "normal2", "まぁ、こんなところね"],
-	//["yukari", "smile", "星2つ メッセージB"],
+	["yukari", "normal3", "上出来ね"],
 	//["reimu", "smile", "星2つ メッセージC"],
 ];
 
