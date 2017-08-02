@@ -22,13 +22,14 @@ Score.calcHonor = function(stage_no, time, exchange_num){
 	if (score > criteria_score) {
 		return 3;
 	}
-	else if (criteria_score >= score && score > criteria_score/2) {
+	else if (criteria_score >= score && score > criteria_score - 10000) {
 		return 2;
 	}
-	else if (criteria_score/2 >= score) {
+	else if (criteria_score - 10000 >= score) {
 		return 1;
 	}
 };
+
 
 // スコア(数字)
 // time -> 600 くらい
