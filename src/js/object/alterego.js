@@ -14,7 +14,7 @@ AlterEgo.prototype.init = function(chara_no) {
 
 	this.span = 0;
 	this.exchange_animation_start_count = 0;
-	this.exchange_anim = new ExchangeAnim(this.scene);
+	this.exchange_anim = new ExchangeAnim(this.scene, this.parent); //parent = player 本来のparent は alterego だが...
 	this.chara_no = chara_no;
 };
 AlterEgo.prototype.isYukari = function(){
