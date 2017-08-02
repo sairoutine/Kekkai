@@ -161,6 +161,10 @@ SceneStageResultClearBySelect.prototype._showRightChara = function(chara, face){
 	var x = this.move_frame_count3 + right_image.width/2;
 	var y = 65 + right_image.height/2;
 
+	if (this.message.chara === "yukari") {
+		y -= 40; // 紫の方が背が高い
+	}
+
 	// 移動
 	ctx.translate(x, y);
 
