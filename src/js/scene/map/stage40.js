@@ -41,6 +41,6 @@ module.exports = {
 	map: map, // マップ
 	exchange_num: 11, // 位置移動上限回数
 	is_vertical: false, // 交代が垂直かどうか
-	criteria_time:         0,   // スコア計算用基準タイム
-	criteria_exchange_num: 0,   // スコア計算用基準 交換回数
+	criteria_time:         1300,   // スコア計算用基準タイム
+	criteria_exchange_num: 11,   // スコア計算用基準 交換回数
 };
