@@ -45,7 +45,7 @@ AssetsConfig.images = {
 
 	mari_bg:       "./image/mari_bg.png",
 	// ノーマルステージクリア後背景
-	shrine_night:   "./image/shrine_night.jpg",
+	shrine_night:   "./image/shrine_night.png",
 
 	after_ex1:   "./image/after_ex1.jpg",
 	after_ex2:   "./image/after_ex2.jpg",
