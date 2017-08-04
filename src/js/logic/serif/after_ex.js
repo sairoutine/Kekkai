@@ -3,18 +3,18 @@
 // セリフ
 var Serif= [
 	//（1. 霊夢と紫が別れるときのセリフを言ってるシーン）
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"やっぱり……無理なの？"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"ええ、ごめんなさいね"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"でも……また逢えるから。貴女が寂しくなったときにはきっと、ね"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"紫は……幻想郷の方が大事なの？"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"……そんなことはないわよ。愛しの子らだもの、貴女も幻想郷も同じくらい好きよ"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。始まりには必ず終わりが来るものなのよ。生きとし生けるものが\n泡沫のように散り去るのと同じように、森羅万象全てにはそう宿命付けられているの"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"それはとても哀しいことだけれども、終わることで始まることもある。\n消えぬ霧を、迎えぬ春を、明けぬ夜を終えて乗り越えた貴女なら分かるでしょう？"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"だから大丈夫、心配する必要なんてないわ。私が愛することが出来なくても、\n今度は代わりに幻想郷が貴女を愛する。貴女はもう素敵な楽園の巫女なのだから、ね？"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"…………そんなこと……ない"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"私にだって、終わらせたくない異変もあるのよ……紫"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"ダメよ、霊夢。貴女の手でこの異変に幕を下ろさなきゃ。\n異変を解決するのが、貴女の務めなのだから。お願い、分かって"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"…………"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"やっぱり……無理なの？"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"ええ、ごめんなさいね"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"でも……また逢えるから。貴女が寂しくなったときにはきっと、ね"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"紫は……幻想郷の方が大事なの？"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"……そんなことはないわよ。愛しの子らだもの、貴女も幻想郷も同じくらい好きよ"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。始まりには必ず終わりが来るものなのよ。生きとし生けるものが\n泡沫のように散り去るのと同じように、森羅万象全てにはそう宿命付けられているの"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"それはとても哀しいことだけれども、終わることで始まることもある。\n消えぬ霧を、迎えぬ春を、明けぬ夜を終えて乗り越えた貴女なら分かるでしょう？"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"だから大丈夫、心配する必要なんてないわ。私が愛することが出来なくても、\n今度は代わりに幻想郷が貴女を愛する。貴女はもう素敵な楽園の巫女なのだから、ね？"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"…………そんなこと……ない"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"私にだって、終わらせたくない異変もあるのよ……紫"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"ダメよ、霊夢。貴女の手でこの異変に幕を下ろさなきゃ。\n異変を解決するのが、貴女の務めなのだから。お願い、分かって"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"…………"},
 
 	//（2. 霊夢のわかったわって顔）
 
