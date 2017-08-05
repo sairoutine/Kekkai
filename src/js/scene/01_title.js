@@ -44,15 +44,15 @@ var MENU = [
 		// ステージセレクト画面へ
 		core.changeScene("select");
 	}],
-	///*
+	/*
 	["menu_how_to", "howto", function (core) {
 		// 遊び方画面へ
 		core.changeScene("howto");
 	}],
+	*/
 	["menu_config", "config", function (core) {
 		core.changeScene("config");
 	}],
-	//*/
 	["menu_music_room", "music", function (core) {
 		// Music Room 画面へ
 		core.changeScene("music");
