@@ -48,17 +48,13 @@ AssetsConfig.images = {
 	shrine_night:   "./image/shrine_night.png",
 
 	after_ex1:   "./image/after_ex1.jpg",
-	after_ex2:   "./image/after_ex2.jpg",
+	after_ex2:   "./image/after_ex2.png",
 	after_ex3:   "./image/after_ex3.jpg",
-	after_ex4:   "./image/after_ex4.jpg",
+	after_ex4:   "./image/after_ex4.png",
 
 	epilogue1:   "./image/epilogue1.png",
 	epilogue2:   "./image/epilogue2.png",
 	epilogue3:   "./image/epilogue3.jpg",
-
-	yajirushi:      "./image/yajirushi.png",
-
-	thumbnail15:      "./image/thumbnail/15.png",
 
 	// スコアの★
 	star_on:       "./image/star_on.png",
