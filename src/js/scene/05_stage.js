@@ -128,42 +128,42 @@ SceneStage.prototype.notifyQuit = function(){
 
 SceneStage.prototype.notifyStageClear = function(){
 	// (ストーリー／セレクト両方) ステージ実績に更新があればセーブ
-	this.core.save.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);
+	this.core.storage_story.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);
 
 	// ストーリー中かつ
 	if (!this.is_from_select_scene) {
 		// 通常ストーリーならば
 		if(!this.isInExStory()) {
 			/// 通常ストーリー進捗を更新
-			this.core.save.incrementNormalStageProgress();
+			this.core.storage_story.incrementNormalStageProgress();
 
 			// 通常ストーリーの最後ならば
 			if (this.isLastNormalStory()) {
 				// 進捗をリセット
-				this.core.save.resetNormalStageProgress();
+				this.core.storage_story.resetNormalStageProgress();
 
 				// Ex ストーリー解放
-				this.core.save.clearNormalStage();
+				this.core.storage_story.clearNormalStage();
 			}
 
 		}
 		// Ex ストーリーならば
 		else {
 			/// Ex ストーリー進捗を更新
-			this.core.save.incrementExStageProgress();
+			this.core.storage_story.incrementExStageProgress();
 
 			// Ex ストーリーの最後ならば
 			if (this.isLastExStory()) {
 				// 進捗をリセット
-				this.core.save.resetExStageProgress();
+				this.core.storage_story.resetExStageProgress();
 
 				// Ex ストーリー クリア フラグON
-				this.core.save.clearExStage();
+				this.core.storage_story.clearExStage();
 			}
 		}
 	}
 
-	this.core.save.save();
+	this.core.storage_story.save();
 
 	// セレクト画面からプレイしたなら
 	if (this.is_from_select_scene) {

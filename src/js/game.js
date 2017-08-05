@@ -3,7 +3,7 @@ var core = require('./hakurei').core;
 var util = require('./hakurei').util;
 var CONSTANT = require('./constant');
 
-var StorageSave = require('./save');
+var StorageStory = require('./storage/story');
 
 // ローディング画面
 var SceneLoading      = require('./scene/00_loading');
@@ -45,7 +45,7 @@ Game.prototype.init = function () {
 	core.prototype.init.apply(this, arguments);
 
 	// セーブデータ
-	this.save = StorageSave.load();
+	this.storage_story = StorageStory.load(); // ストーリー進捗
 
 	this.addScene("loading", new SceneLoading(this));
 	this.addScene("title", new SceneTitle(this));
@@ -128,17 +128,17 @@ Game.prototype.setupDebug = function (dom) {
 
 	// ゲームデータ消去ボタン
 	this.debug_manager.addMenuButton("セーブクリア", function (game) {
-		game.save.del();
+		game.storage_story.del();
 	});
 
 	// 通常ストーリー クリア ボタン
 	this.debug_manager.addMenuButton("通常ストーリークリア", function (game) {
-		game.save.clearNormalStageForDebug();
+		game.storage_story.clearNormalStageForDebug();
 	});
 
 	// Ex ストーリー クリア ボタン
 	this.debug_manager.addMenuButton("Ex ストーリークリア", function (game) {
-		game.save.clearExStageForDebug();
+		game.storage_story.clearExStageForDebug();
 	});
 };
 

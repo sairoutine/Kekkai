@@ -28,7 +28,7 @@ SceneSelect.prototype.init = function(selected_stage_no){
 	base_scene.prototype.init.apply(this, arguments);
 
 	// ステージ一覧
-	this.stage_list = this.core.save.getStageResultList();
+	this.stage_list = this.core.storage_story.getStageResultList();
 
 	// カーソル位置
 	if (selected_stage_no) {
@@ -194,7 +194,7 @@ SceneSelect.prototype.draw = function(){
 		ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
 	}
 
-	var stage_data = this.core.save.getStageResult(this.selected_stage + 1); // selected_stage は 0から始まるので +1
+	var stage_data = this.core.storage_story.getStageResult(this.selected_stage + 1); // selected_stage は 0から始まるので +1
 
 	if (stage_data) {
 		var stage_no_string = ( '00' + stage_data.stage_no ).slice(-2); // 数字を2桁に揃える

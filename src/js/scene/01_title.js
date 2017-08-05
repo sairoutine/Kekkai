@@ -13,7 +13,7 @@ var SHOW_START_MESSAGE_INTERVAL = 50;
 
 var MENU = [
 	["menu_story_start", "reminiscence", function (core) {
-		var progress_stage_no = core.save.getNormalStageProgress();
+		var progress_stage_no = core.storage_story.getNormalStageProgress();
 
 		// 最初から
 		if (!progress_stage_no) {
@@ -27,7 +27,7 @@ var MENU = [
 		}
 	}],
 	["menu_ex_story_start", "ex_epigraph", function (core) {
-		var progress_stage_no = core.save.getExStageProgress();
+		var progress_stage_no = core.storage_story.getExStageProgress();
 
 		// 最初から
 		if (!progress_stage_no) {
@@ -71,10 +71,10 @@ SceneTitle.prototype.init = function(){
 	this.index = 0;
 
 	// Exステージ解放されているかどうか */
-	var is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
+	var is_normal_stage_cleared = this.core.storage_story.getIsNormalStageCleared();
 
 	// いずれかのステージがクリアされているかどうか
-	var is_any_stage_cleared = this.core.save.getLatestStageResult() ? true : false;
+	var is_any_stage_cleared = this.core.storage_story.getLatestStageResult() ? true : false;
 
 	// メニュー一覧
 	this.menu_list = [];
@@ -143,7 +143,7 @@ SceneTitle.prototype.draw = function(){
 
 	var title_bg;
 	// 通常ストーリーのみクリアしていれば、背景を霊夢1人 ver に
-	if(this.core.save.getIsNormalStageCleared() && !this.core.save.getIsExStageCleared()) {
+	if(this.core.storage_story.getIsNormalStageCleared() && !this.core.storage_story.getIsExStageCleared()) {
 		title_bg = this.core.image_loader.getImage('title_bg_without_yukari');
 	}
 	else {
