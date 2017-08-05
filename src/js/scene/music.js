@@ -221,8 +221,7 @@ SceneMusic.prototype._showMessage = function(message) {
 
 SceneMusic.prototype._showBackGround = function(){
 	var ctx = this.core.ctx;
-	var title_bg = this.core.image_loader.getImage('title_bg');
-/*
+	var title_bg = this.core.image_loader.getImage('shrine_noon');
 	// 背景画像表示
 	ctx.drawImage(title_bg,
 					0,
@@ -233,10 +232,9 @@ SceneMusic.prototype._showBackGround = function(){
 					0,
 					this.core.width,
 					this.core.height);
-*/
 	// 背景をちょっと暗めに表示
 	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.6; // 半透明
+	ctx.globalAlpha = 0.4; // 半透明
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
 	ctx.globalAlpha = 1.0; // 半透明戻す
