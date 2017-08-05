@@ -47,7 +47,7 @@ AssetsConfig.images = {
 	// ノーマルステージクリア後背景
 	shrine_night:   "./image/shrine_night.png",
 
-	after_ex1:   "./image/after_ex1.jpg",
+	after_ex1:   "./image/after_ex1.png",
 	after_ex2:   "./image/after_ex2.png",
 	after_ex3:   "./image/after_ex3.jpg",
 	after_ex4:   "./image/after_ex4.png",
