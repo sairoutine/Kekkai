@@ -3,12 +3,12 @@ var CONSTANT = require('../../constant');
 var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
 
-var Item = function (scene) {
+var ItemOfExchange = function (scene) {
 	base_object.apply(this, arguments);
 };
-util.inherit(Item, base_object);
+util.inherit(ItemOfExchange, base_object);
 
-Item.prototype.init = function(x, y) {
+ItemOfExchange.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x(x);
 	this.y(y);
@@ -16,29 +16,26 @@ Item.prototype.init = function(x, y) {
 	this.is_collision = true;
 
 	this.start_got_animation_frame_count = 0;
-
-	// blink
-	this.alpha_for_blink = 100;
 };
 
-Item.prototype.got = function() {
+ItemOfExchange.prototype.got = function() {
 	this.is_collision = false;
 
-	this.core.playSound("powerup");
+	this.core.playSound("got_item_ohuda");
 
 	// start animation
 	this.start_got_animation_frame_count = this.frame_count;
 };
 
-Item.prototype.isShow = function() {
+ItemOfExchange.prototype.isShow = function() {
 	return this.is_show;
 };
 
-Item.prototype.isCollision = function() {
+ItemOfExchange.prototype.isCollision = function() {
 	return this.is_collision;
 };
 
-Item.prototype.beforeDraw = function(){
+ItemOfExchange.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
 	if (this.start_got_animation_frame_count) {
@@ -54,16 +51,10 @@ Item.prototype.beforeDraw = function(){
 			this.start_got_animation_frame_count = 0; //reset
 		}
 	}
-
-	this.alpha_for_blink--;
-	if (this.alpha_for_blink === 0) {
-		this.alpha_for_blink = 100;
-	}
 };
 
-Item.prototype.alpha = function() {
-	return this.alpha_for_blink / 100;
-};
+
+
 
 
 
@@ -72,16 +63,22 @@ Item.prototype.alpha = function() {
 
 // sprite configuration
 
-Item.prototype.spriteName = function(){
+ItemOfExchange.prototype.spriteName = function(){
 	return "stage_tile_24";
 };
-Item.prototype.spriteIndices = function(){
-	return [{x: 1, y: 2}];
+ItemOfExchange.prototype.spriteIndices = function(){
+	return [{x: 0, y: 3}];
 };
-Item.prototype.spriteWidth = function(){
+ItemOfExchange.prototype.spriteWidth = function(){
 	return 24;
 };
-Item.prototype.spriteHeight = function(){
+ItemOfExchange.prototype.spriteHeight = function(){
 	return 24;
 };
-module.exports = Item;
+ItemOfExchange.prototype.rotateAdjust = function(){
+	return this.frame_count*2 % 360;
+};
+
+
+
+module.exports = ItemOfExchange;
