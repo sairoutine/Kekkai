@@ -437,7 +437,7 @@ Player.prototype.changeState = function(state) {
 	this.currentState().init();
 
 	if (CONSTANT.DEBUG.ON) {
-		//console.log(this.state);
+		console.log(this.state);
 	}
 };
 Player.prototype.currentState = function() {
@@ -635,11 +635,16 @@ Player.prototype.isShow = function(){
 		return this.isExchanging() ? false : true; // 交代中は表示しない
 	}
 };
-Player.prototype.collisionWidth = function() {
+Player.prototype.collisionWidth = function(obj) {
 	return 24;
 };
-Player.prototype.collisionHeight = function() {
-	return 32;
+Player.prototype.collisionHeight = function(obj) {
+	if (obj && obj.type === CONSTANT.LADDER) {
+		return 30;
+	}
+	else {
+		return 32;
+	}
 };
 
 module.exports = Player;
