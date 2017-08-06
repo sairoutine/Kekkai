@@ -212,7 +212,7 @@ SceneMusic.prototype._showMessage = function(message) {
 
 	var x, y;
 	// セリフ表示
-	var lines = [message];
+	var lines = message.split("\n");
 	if (lines.length) {
 		// セリフテキストの y 座標初期位置
 		var message_height = 80;
