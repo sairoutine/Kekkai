@@ -49,10 +49,10 @@ var MENU = [
 		// 遊び方画面へ
 		core.changeScene("howto");
 	}],
-	*/
 	["menu_config", "config", function (core) {
 		core.changeScene("config");
 	}],
+	*/
 	["menu_music_room", "music", function (core) {
 		// Music Room 画面へ
 		core.changeScene("music");
