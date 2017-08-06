@@ -131,13 +131,6 @@ AssetsConfig.sounds = {
 };
 // bgm ファイルはogg と m4a の二種類を用意してください
 AssetsConfig.bgms = {
-	mute: {
-		path: "./bgm/mute",
-		title: "サンプル",
-		message: "サンプルメッセージ",
-		is_ex: true,
-	},
-
 	title: {
 		path: "./bgm/title",
 		loopStart: 0*60 + 10 + 0.312,

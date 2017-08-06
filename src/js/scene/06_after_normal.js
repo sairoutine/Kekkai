@@ -28,7 +28,6 @@ SceneAfterNormal.prototype.serifScript = function() {
 
 // BGM
 SceneAfterNormal.prototype.bgm = function() {
-	return "mute";
 };
 
 SceneAfterNormal.prototype.isPlayFadeIn = function() {
