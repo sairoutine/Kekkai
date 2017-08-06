@@ -2,6 +2,7 @@
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
 var ExchangeAnim = require('./exchange_anim');
+var ItemOfYukari = require('./tile/item_for_yukari');
 var CONSTANT = require('../constant');
 
 var AlterEgo = function (scene) {
@@ -56,35 +57,18 @@ AlterEgo.prototype.beforeDraw = function(){
 		}
 	}
 
-	// アイテムとの接触判定
-	var item = this.checkCollisionWithItems();
-	if(item) {
-		item.got(); // 獲得済
-		this.scene.addYukariItemNum();
-	}
+	// 紫用アイテムとの接触判定
+	var item_for_yukari_list = this.scene.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI];
+	this.checkCollisionWithObjects(item_for_yukari_list);
 };
 
-// アイテムと分身の衝突判定
-AlterEgo.prototype.checkCollisionWithItems = function() {
-	var self = this;
-
-	var collision_item = null;
-
-	var tiles = self.scene.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI];
-	for (var i = 0, len = tiles.length; i < len; i++) {
-		var obj = tiles[i];
-		if(self.checkCollision(obj)) {
-			collision_item = obj;
-			break;
-		}
+AlterEgo.prototype.onCollision = function(obj){
+	// 紫用アイテムと接触したら
+	if (obj instanceof ItemOfYukari) {
+		obj.got(); // 獲得済
+		this.scene.addYukariItemNum(); // 獲得数+1
 	}
-
-	return collision_item;
 };
-
-
-
-
 
 AlterEgo.prototype.draw = function(){
 	base_object.prototype.draw.apply(this, arguments);
