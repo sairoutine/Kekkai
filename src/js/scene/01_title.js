@@ -109,6 +109,7 @@ SceneTitle.prototype.beforeDraw = function(){
 
 	// カーソルを下移動
 	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_DOWN)) {
+		this.core.playSound('select');
 		this.index++;
 
 		if(this.index >= this.menu_list.length) {
@@ -117,6 +118,7 @@ SceneTitle.prototype.beforeDraw = function(){
 	}
 	// カーソルを上移動
 	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_UP)) {
+		this.core.playSound('select');
 		this.index--;
 
 		if(this.index < 0) {
