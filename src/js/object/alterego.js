@@ -64,17 +64,20 @@ AlterEgo.prototype.beforeDraw = function(){
 	}
 };
 
+// アイテムと分身の衝突判定
 AlterEgo.prototype.checkCollisionWithItems = function() {
 	var self = this;
-	// アイテムと分身の衝突判定
-	var collision_item = false;
 
-	self.scene.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI].forEach(function(obj) {
-		if(obj.isCollision() && self.checkCollision(obj)) {
+	var collision_item = null;
+
+	var tiles = self.scene.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI];
+	for (var i = 0, len = tiles.length; i < len; i++) {
+		var obj = tiles[i];
+		if(self.checkCollision(obj)) {
 			collision_item = obj;
-			// TODO: break;
+			break;
 		}
-	});
+	}
 
 	return collision_item;
 };
