@@ -211,6 +211,14 @@ AssetsConfig.bgms = {
 		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
 		is_ex: false,
 	},
+	after_ex: {
+		path: "./bgm/after_ex",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 0*60 + 9 + 0.153,
+		title: "Eternal Dream ～ 幽玄の槭樹",
+		message: "",
+		is_ex: false,
+	},
 
 
 

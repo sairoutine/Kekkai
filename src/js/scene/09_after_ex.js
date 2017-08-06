@@ -51,7 +51,7 @@ SceneAfterEx.prototype.serifScript = function() {
 
 // BGM
 SceneAfterEx.prototype.bgm = function() {
-	return "mute";
+	return "after_ex";
 };
 
 module.exports = SceneAfterEx;
