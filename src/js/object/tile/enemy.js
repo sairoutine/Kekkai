@@ -137,10 +137,10 @@ Enemy.prototype.checkCollisionWithLeftRightBlocks = function() {
 
 
 
-Enemy.prototype.collisionWidth = function(){
-	return 24;
+Enemy.prototype.collisionWidth = function(obj){
+	return 1;
 };
-Enemy.prototype.collisionHeight = function(){
+Enemy.prototype.collisionHeight = function(obj) {
 	return 24 + 1; // 地面との接触のため、+1
 };
 
