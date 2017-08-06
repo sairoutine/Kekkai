@@ -141,7 +141,12 @@ Enemy.prototype.collisionWidth = function(obj){
 	return 1;
 };
 Enemy.prototype.collisionHeight = function(obj) {
-	return 24 + 1; // 地面との接触のため、+1
+	if (obj && obj.type === CONSTANT.PLAYER) {
+		return 1;
+	}
+	else {
+		return 24 + 1; // 地面との接触のため、+1
+	}
 };
 
 Enemy.prototype.isReflect = function(){
