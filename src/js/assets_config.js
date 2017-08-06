@@ -135,6 +135,7 @@ AssetsConfig.bgms = {
 		path: "./bgm/mute",
 		title: "サンプル",
 		message: "サンプルメッセージ",
+		is_ex: true,
 	},
 
 	title: {
@@ -143,6 +144,7 @@ AssetsConfig.bgms = {
 		loopEnd: 0*60 + 51 + 0.562,
 		title: "永夜抄 ～ Eastern Night.",
 		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
+		is_ex: false,
 	},
 
 	stage_a: {
@@ -151,6 +153,7 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 51 + 0.429,
 		title: "春色小径 ～ Colorful Path",
 		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
+		is_ex: false,
 	},
 
 };

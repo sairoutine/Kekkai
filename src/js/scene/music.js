@@ -11,19 +11,11 @@ var AssetsConfig = require('../assets_config');
 /* BGM 一覧を配列化 */
 var BGMS = [];
 for (var key in AssetsConfig.bgms) {
-	var data = AssetsConfig.bgms[key];
+	var data = util.shallowCopyHash(AssetsConfig.bgms[key]);
 
 	data.name = key;
 	BGMS.push(data);
 }
-
-//12個
-// DEBUG用
-
-for (var i = 0; i < 10; i++) {
-	BGMS.push(Object.assign({}, BGMS[0], {title: "サンプル"}));
-}
-
 
 var SceneMusic = function(core) {
 	base_scene.apply(this, arguments);
@@ -67,8 +59,13 @@ SceneMusic.prototype.beforeDraw = function(){
 
 	// 決定
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		var bgm_name = BGMS[this.index].name;
-		this.core.playBGM(bgm_name);
+		if (BGMS[this.index].is_ex && !this.isExStoryCleared()) { // Ex未クリア
+			// Ex未クリアなら聴けない
+		}
+		else {
+			var bgm_name = BGMS[this.index].name;
+			this.core.playBGM(bgm_name);
+		}
 	}
 };
 
@@ -107,10 +104,21 @@ SceneMusic.prototype.draw = function(){
 			this._drawText("▶", cursor_x, y);
 
 			// メッセージ表示
-			this._showMessage(bgm.message);
+			if (bgm.is_ex && !this.isExStoryCleared()) { // Ex未クリア
+				this._showMessage("クリアしたら聴けるわよ");
+			}
+			else {
+				this._showMessage(bgm.message);
+			}
 		}
+
 		// 文字表示
-		this._drawText(music_no + ": " + bgm.title, text_x, y); // 1行表示
+		if (bgm.is_ex && !this.isExStoryCleared()) { // Ex未クリア
+			this._drawText(music_no + ": " + "???????", text_x, y); // 1行表示
+		}
+		else {
+			this._drawText(music_no + ": " + bgm.title, text_x, y); // 1行表示
+		}
 
 		y+= 30;
 	}
@@ -238,6 +246,11 @@ SceneMusic.prototype._showBackGround = function(){
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
 	ctx.globalAlpha = 1.0; // 半透明戻す
+};
+
+
+SceneMusic.prototype.isExStoryCleared = function(){
+	return this.core.storage_story.getIsExStageCleared();
 };
 
 
