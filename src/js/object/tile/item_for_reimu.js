@@ -5,6 +5,9 @@ var util = require('../../hakurei').util;
 
 var Item = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.ITEM_FOR_REIMU;
 };
 util.inherit(Item, base_object);
 

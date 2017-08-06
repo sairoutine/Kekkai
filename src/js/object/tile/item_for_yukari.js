@@ -3,12 +3,15 @@ var CONSTANT = require('../../constant');
 var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
 
-var Item = function (scene) {
+var ItemForYukari = function (scene) {
 	base_object.apply(this, arguments);
-};
-util.inherit(Item, base_object);
 
-Item.prototype.init = function(x, y) {
+	// 種類
+	this.type = CONSTANT.ITEM_FOR_YUKARI;
+};
+util.inherit(ItemForYukari, base_object);
+
+ItemForYukari.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x(x);
 	this.y(y);
@@ -18,7 +21,7 @@ Item.prototype.init = function(x, y) {
 	this.start_got_animation_frame_count = 0;
 };
 
-Item.prototype.got = function() {
+ItemForYukari.prototype.got = function() {
 	this.is_collision = false;
 
 	this.core.playSound("got_item_ribon");
@@ -27,15 +30,24 @@ Item.prototype.got = function() {
 	this.start_got_animation_frame_count = this.frame_count;
 };
 
-Item.prototype.isShow = function() {
+ItemForYukari.prototype.onCollision = function(obj){
+	// 紫と接触したら
+	if (obj.type === CONSTANT.ALTEREGO) {
+		this.got(); // 獲得済
+	}
+};
+
+
+
+ItemForYukari.prototype.isShow = function() {
 	return this.is_show;
 };
 
-Item.prototype.isCollision = function() {
+ItemForYukari.prototype.isCollision = function() {
 	return this.is_collision;
 };
 
-Item.prototype.beforeDraw = function(){
+ItemForYukari.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
 	if (this.start_got_animation_frame_count) {
@@ -63,10 +75,10 @@ Item.prototype.beforeDraw = function(){
 
 // sprite configuration
 
-Item.prototype.spriteName = function(){
+ItemForYukari.prototype.spriteName = function(){
 	return "stage_tile_24";
 };
-Item.prototype.spriteIndices = function(){
+ItemForYukari.prototype.spriteIndices = function(){
 	// Ex ストーリーになるとアイテムが変わる
 	if (this.scene.isInExStory()) {
 		return [{x: 3, y: 2}];
@@ -76,10 +88,10 @@ Item.prototype.spriteIndices = function(){
 	}
 
 };
-Item.prototype.spriteWidth = function(){
+ItemForYukari.prototype.spriteWidth = function(){
 	return 24;
 };
-Item.prototype.spriteHeight = function(){
+ItemForYukari.prototype.spriteHeight = function(){
 	return 24;
 };
-module.exports = Item;
+module.exports = ItemForYukari;

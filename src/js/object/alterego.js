@@ -2,11 +2,13 @@
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
 var ExchangeAnim = require('./exchange_anim');
-var ItemOfYukari = require('./tile/item_for_yukari');
 var CONSTANT = require('../constant');
 
 var AlterEgo = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.ALTEREGO;
 };
 util.inherit(AlterEgo, base_object);
 
@@ -64,8 +66,7 @@ AlterEgo.prototype.beforeDraw = function(){
 
 AlterEgo.prototype.onCollision = function(obj){
 	// 紫用アイテムと接触したら
-	if (obj instanceof ItemOfYukari) {
-		obj.got(); // 獲得済
+	if (obj.type === CONSTANT.ITEM_FOR_YUKARI) {
 		this.scene.addYukariItemNum(); // 獲得数+1
 	}
 };

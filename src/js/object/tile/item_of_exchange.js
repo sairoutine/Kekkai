@@ -5,6 +5,9 @@ var util = require('../../hakurei').util;
 
 var ItemOfExchange = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.ITEM_OF_EXCHANGE;
 };
 util.inherit(ItemOfExchange, base_object);
 

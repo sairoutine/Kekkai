@@ -8,6 +8,9 @@ var util = require('../../hakurei').util;
 
 var Enemy = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.ENEMY_VERTICAL;
 };
 util.inherit(Enemy, base_object);
 

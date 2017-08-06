@@ -5,6 +5,9 @@ var util = require('../../hakurei').util;
 
 var BlockStone3 = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.BLOCK_STONE3;
 };
 util.inherit(BlockStone3, base_object);
 

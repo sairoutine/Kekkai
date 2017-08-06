@@ -38,6 +38,7 @@ var CONSTANT = {
 	ITEM_FOR_YUKARI: 14,
 	ITEM_OF_EXCHANGE:15,
 	ENEMY_VERTICAL:  16,
+	ALTEREGO:        17, //NOTE: マップデータ上には配置できない
 
 
 	// プレイヤーの状態

@@ -60,6 +60,9 @@ var StateFallDown  = require('./player/state_falldown');
 var Player = function (scene) {
 	base_object.apply(this, arguments);
 
+	// 種類
+	this.type = CONSTANT.PLAYER;
+
 	// プレイヤーの状態一覧
 	this.state = null;
 	this.states = {};

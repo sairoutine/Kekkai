@@ -13,6 +13,9 @@ var util = require('../../hakurei').util;
 
 var BlockDisappear = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.BLOCK_DISAPPEAR;
 };
 util.inherit(BlockDisappear, base_object);
 

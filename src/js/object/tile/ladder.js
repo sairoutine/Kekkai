@@ -5,6 +5,9 @@ var util = require('../../hakurei').util;
 
 var Ladder = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.LADDER;
 };
 util.inherit(Ladder, base_object);
 

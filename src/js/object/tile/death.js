@@ -5,6 +5,9 @@ var util = require('../../hakurei').util;
 
 var Death = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.DEATH;
 };
 util.inherit(Death, base_object);
 
