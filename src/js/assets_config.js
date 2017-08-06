@@ -227,11 +227,14 @@ AssetsConfig.bgms = {
 		message: "",
 		is_ex: false,
 	},
-
-
-
-
-
+	epilogue: {
+		path: "./bgm/epilogue",
+		loopStart: 0*60 + 19 + 0.831,
+		loopEnd: 1*60 + 8 + 0.664,
+		title: "紅より儚い永遠",
+		message: "",
+		is_ex: false,
+	},
 };
 
 
