@@ -146,6 +146,15 @@ AssetsConfig.bgms = {
 		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
 		is_ex: false,
 	},
+	reminiscence: {
+		path: "./bgm/reminiscence",
+		loopStart: 0*60 + 13 + 0.220,
+		loopEnd: 1*60 + 22 + 0.373,
+		title: "無何有の郷",
+		message: "",
+		is_ex: false,
+	},
+
 
 	stage_a: {
 		path: "./bgm/stage_a",

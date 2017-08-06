@@ -27,7 +27,7 @@ SceneReminiscence.prototype.serifScript = function() {
 
 // BGM
 SceneReminiscence.prototype.bgm = function() {
-	return "mute";
+	return "reminiscence";
 };
 // トランジションカラー
 SceneReminiscence.prototype.backgroundTransitionColor = function() {

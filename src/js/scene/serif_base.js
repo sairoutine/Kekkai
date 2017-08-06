@@ -34,8 +34,9 @@ SceneSerifBase.prototype.init = function(serif){
 
 	this.transition_count = 0;
 
+	// シーン遷移前の BGM 止める
 	if (this.bgm()) {
-		this.core.playBGM(this.bgm());
+		this.core.stopBGM();
 	}
 
 	if (this.isPlayFadeIn()) {
@@ -49,6 +50,12 @@ SceneSerifBase.prototype.init = function(serif){
 
 SceneSerifBase.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// BGM 再生
+	if (this.frame_count === 60 && this.bgm()) {
+		this.core.playBGM(this.bgm());
+	}
+
 
 	if (this.isInTransition()) {
 		this.transition_count--;
