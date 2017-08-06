@@ -14,6 +14,9 @@ BlockBase.prototype.init = function(x, y) {
 
 	this.is_collision = true;
 };
+BlockBase.prototype.isBlock = function() {
+	return true;
+};
 
 BlockBase.prototype.isCollision = function() {
 	return this.is_collision;

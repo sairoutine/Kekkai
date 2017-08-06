@@ -17,4 +17,7 @@ TileBase.prototype.init = function(x, y, scale) {
 	this._scale = scale;
 };
 
+TileBase.prototype.isBlock = function() {
+	return false;
+};
 module.exports = TileBase;

@@ -106,6 +106,18 @@ SceneStage.prototype.beforeDraw = function(){
 	}
 };
 
+SceneStage.prototype.getBlocks = function(){
+	var blocks = [];
+	for (var i = 0, len = this.objects.length; i < len; i++) {
+		if (!this.objects[i].isBlock()) continue;
+		blocks.push(this.objects[i]);
+	}
+
+	return blocks;
+};
+
+
+
 SceneStage.prototype.notifyPlayerDie = function(){
 	// 当該ステージの最初から
 	this.notifyRestart();

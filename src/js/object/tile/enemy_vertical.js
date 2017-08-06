@@ -25,7 +25,6 @@ Enemy.prototype.init = function(x, y) {
 Enemy.prototype.beforeDraw = function() {
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
-	var before_y = this.y();
 	if (this.is_down) {
 		this._y += SPEED;
 	}
@@ -38,60 +37,28 @@ Enemy.prototype.beforeDraw = function() {
 		this.is_down = !this.is_down;
 	}
 
-	if(this.checkCollisionWithBlocks()) {
-		// ブロックと接触するならば戻って反転
-		this._y = before_y;
-		this.is_down = !this.is_down;
-	}
+	// ブロックとの接触判定
+	var stage_blocks = this.scene.getBlocks();
+	this.checkCollisionWithObjects(stage_blocks);
 };
 
-Enemy.prototype.isCollision = function() {
+Enemy.prototype.isCollision = function(obj) {
+	var self = this;
+	// 左右のブロックとは当たり判定しない
+	if (obj) {
+		if(self.x()-self.collisionWidth()/2 > obj.x()+obj.collisionWidth()/2) return false;
+		if(self.x()+self.collisionWidth()/2 < obj.x()-obj.collisionWidth()/2) return false;
+	}
 	return true;
 };
 
-
-
-
-// 地面ブロック一覧
-var BLOCK_TILE_TYPES = [
-	CONSTANT.BLOCK_GREEN,
-	CONSTANT.BLOCK_BLUE,
-	CONSTANT.BLOCK_RED,
-	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_DISAPPEAR,
-	CONSTANT.BLOCK_STONE1,
-	CONSTANT.BLOCK_STONE2,
-	CONSTANT.BLOCK_STONE3,
-];
-
-// ブロックとの接触判定
-Enemy.prototype.checkCollisionWithBlocks = function() {
-	var self = this;
-	// 壁と敵の衝突判定
-	var is_collision = false;
-	for (var i = 0; i < BLOCK_TILE_TYPES.length; i++) {
-		var tile_type = BLOCK_TILE_TYPES[i];
-		var tile_objects = self.scene.objects_by_tile_type[tile_type];
-
-		for (var j = 0; j < tile_objects.length; j++) {
-			var obj = tile_objects[j];
-
-			// 敵の左右のブロックは無視する
-			if(self.x()-self.collisionWidth()/2 > obj.x()+obj.collisionWidth()/2) continue;
-			if(self.x()+self.collisionWidth()/2 < obj.x()-obj.collisionWidth()/2) continue;
-			if(obj.isCollision() && self.checkCollision(obj)) {
-				is_collision = true;
-				break;
-			}
-		}
+Enemy.prototype.onCollision = function(obj) {
+	// ブロックと接触したら
+	if (obj.isBlock()) {
+		//TODO: this._y = before_y;
+		this.is_down = !this.is_down;
 	}
-
-	return is_collision;
 };
-
-
-
-
 
 Enemy.prototype.collisionWidth = function(){
 	return 24;
