@@ -154,6 +154,15 @@ AssetsConfig.bgms = {
 		message: "",
 		is_ex: false,
 	},
+	prologue: {
+		path: "./bgm/prologue",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 0*60 + 52 + 0.881,
+		title: "おてんば恋娘",
+		message: "",
+		is_ex: false,
+	},
+
 
 
 	stage_a: {

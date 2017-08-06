@@ -32,6 +32,6 @@ ScenePrologue.prototype.background = function() {
 };
 // BGM
 ScenePrologue.prototype.bgm = function() {
-	return "mute";
+	return "prologue";
 };
 module.exports = ScenePrologue;
