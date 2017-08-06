@@ -164,7 +164,7 @@ AssetsConfig.bgms = {
 		loopStart: 0*60 + 29 + 0.143,
 		loopEnd: 1*60 + 51 + 0.429,
 		title: "春色小径",
-		message: "ステージ曲その1よ。勢いがそこそこあって、異変解決するぞ！的な感じがあるわね。",
+		message: "ステージ曲その1よ。勢いがそこそこあって、\n異変解決するぞ！的な感じが垣間見える曲ね。",
 		is_normal: false,
 		is_ex:     false,
 	},
