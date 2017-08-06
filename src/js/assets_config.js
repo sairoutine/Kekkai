@@ -203,6 +203,14 @@ AssetsConfig.bgms = {
 		message: "",
 		is_ex: false,
 	},
+	title_without_yukari: {
+		path: "./bgm/title_without_yukari",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 0*60 + 51 + 0.562,
+		title: "永夜抄 ～ Eastern Night. (霊夢1人ver.)",
+		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
+		is_ex: false,
+	},
 
 
 
