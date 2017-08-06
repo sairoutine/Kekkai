@@ -36,7 +36,7 @@ var SceneStage = function(core) {
 };
 util.inherit(SceneStage, base_scene);
 
-SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm, is_from_select_scene){
+SceneStage.prototype.init = function(stage_no, sub_scene, is_from_select_scene){
 	base_scene.prototype.init.apply(this, arguments);
 
 	// stage no
@@ -45,8 +45,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm, is_from_s
 	// デフォルトは talk シーンから開始
 	if(!sub_scene) sub_scene = "talk";
 
-	this.is_play_bgm = is_play_bgm ? true : false;
-	if(this.is_play_bgm) {
+	if(this.core.audio_loader.currentPlayingBGM() !== this.getBGMName()) {
 		this.core.stopBGM();
 	}
 
@@ -101,8 +100,8 @@ SceneStage.prototype.beforeDraw = function(){
 
 	// サブオブジェクトのbeforeDraw は sub scene play の中でやっている
 
-	if(this.is_play_bgm && this.frame_count === 60) {
-		this.core.playBGM('stage_a');
+	if(this.frame_count === 60) {
+		this.core.changeBGM(this.getBGMName());
 	}
 };
 
@@ -124,7 +123,7 @@ SceneStage.prototype.notifyPlayerDie = function(){
 };
 // ポーズ画面から、restart
 SceneStage.prototype.notifyRestart = function(){
-	this.core.changeScene("stage", this.stage_no, "play", false, this.is_from_select_scene);
+	this.core.changeScene("stage", this.stage_no, "play", this.is_from_select_scene);
 };
 // ポーズ画面から、quit
 SceneStage.prototype.notifyQuit = function(){
@@ -402,6 +401,32 @@ SceneStage.prototype.getBGImageName = function() {
 		return "stage_bg01";
 	}
 };
+// ステージBGM名
+SceneStage.prototype.getBGMName = function() {
+	if (this.stage_no <= 10) {
+		return "stage_a";
+	}
+	else if (10 < this.stage_no && this.stage_no <= 20) {
+		return "stage_b";
+	}
+	else if (20 < this.stage_no && this.stage_no <= 30) {
+		return "stage_c";
+	}
+	else if (30 < this.stage_no && this.stage_no <= 35) {
+		return "stage_d";
+	}
+	else if (35 < this.stage_no && this.stage_no <= 40) {
+		return "stage_e";
+	}
+	else {
+		// ここにくることはないはず
+		return "stage_a";
+	}
+};
+
+
+
+
 
 SceneStage.prototype.clearStageForDebug = function () {
 	// サブシーンがゲームの操作できるシーンならば

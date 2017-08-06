@@ -23,7 +23,7 @@ var MENU = [
 		// 続きから
 		else {
 			// 続きのステージから
-			core.changeScene("stage", progress_stage_no + 1, "talk", true);
+			core.changeScene("stage", progress_stage_no + 1, "talk");
 		}
 	}],
 	["menu_ex_story_start", "ex_epigraph", function (core) {
@@ -37,7 +37,7 @@ var MENU = [
 		// 続きから
 		else {
 			// 続きのステージから
-			core.changeScene("stage", progress_stage_no + 1, "talk", true);
+			core.changeScene("stage", progress_stage_no + 1, "talk");
 		}
 	}],
 	["menu_select_stage", "select", function (core) {

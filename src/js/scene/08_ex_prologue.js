@@ -18,7 +18,7 @@ util.inherit(ScenePrologue, base_scene);
 // 立ち絵＆セリフ終了後
 ScenePrologue.prototype.notifySerifEnd = function() {
 	var stage_no = CONSTANT.EX_STORY_START_STAGE_NO;
-	this.core.changeScene("stage", stage_no, "talk", true);
+	this.core.changeScene("stage", stage_no, "talk");
 };
 
 // セリフスクリプト

@@ -163,8 +163,6 @@ AssetsConfig.bgms = {
 		is_ex: false,
 	},
 
-
-
 	stage_a: {
 		path: "./bgm/stage_a",
 		loopStart: 0*60 + 29 + 0.143,
@@ -173,6 +171,41 @@ AssetsConfig.bgms = {
 		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
 		is_ex: false,
 	},
+	stage_b: {
+		path: "./bgm/stage_b",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 1*60 + 22 + 0.500,
+		title: "少女綺想曲",
+		message: "",
+		is_ex: false,
+	},
+	stage_c: {
+		path: "./bgm/stage_c",
+		loopStart: 0*60 + 14 + 0.746,
+		loopEnd: 1*60 + 53 + 0.898,
+		title: "夜が降りてくる",
+		message: "",
+		is_ex: false,
+	},
+	stage_d: {
+		path: "./bgm/stage_d",
+		loopStart: 0*60 + 29 + 0.189,
+		loopEnd: 1*60 + 47 + 0.027,
+		title: "二色蓮花蝶",
+		message: "",
+		is_ex: false,
+	},
+	stage_e: {
+		path: "./bgm/stage_e",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 2*60 + 37 + 0.297,
+		title: "ネクロファンタジア",
+		message: "",
+		is_ex: false,
+	},
+
+
+
 
 };
 

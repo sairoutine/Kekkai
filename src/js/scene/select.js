@@ -48,7 +48,7 @@ SceneSelect.prototype.beforeDraw = function(){
 
 	// 決定
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		this.core.changeScene("stage", this.selected_stage + 1, "play", true, true); // 0 から selected_stage は始まるので +1
+		this.core.changeScene("stage", this.selected_stage + 1, "play", true); // 0 から selected_stage は始まるので +1
 	}
 	// 戻る
 	else if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
