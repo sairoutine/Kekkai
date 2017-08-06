@@ -59,7 +59,10 @@ SceneMusic.prototype.beforeDraw = function(){
 
 	// 決定
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		if (BGMS[this.index].is_ex && !this.isExStoryCleared()) { // Ex未クリア
+		if (BGMS[this.index].is_normal && !this.isNormalStoryCleared()) { // Normal未クリア
+			// Normal 未クリアなら聴けない
+		}
+		else if (BGMS[this.index].is_ex && !this.isExStoryCleared()) { // Ex未クリア
 			// Ex未クリアなら聴けない
 		}
 		else {
@@ -104,8 +107,11 @@ SceneMusic.prototype.draw = function(){
 			this._drawText("▶", cursor_x, y);
 
 			// メッセージ表示
-			if (bgm.is_ex && !this.isExStoryCleared()) { // Ex未クリア
-				this._showMessage("クリアしたら聴けるわよ");
+			if (bgm.is_normal && !this.isNormalStoryCleared()) { // Normal未クリア
+				this._showMessage("ゲームをすすめたら聴けるわよ");
+			}
+			else if (bgm.is_ex && !this.isExStoryCleared()) { // Ex未クリア
+				this._showMessage("ゲームをすすめたら聴けるわよ");
 			}
 			else {
 				this._showMessage(bgm.message);
@@ -113,7 +119,10 @@ SceneMusic.prototype.draw = function(){
 		}
 
 		// 文字表示
-		if (bgm.is_ex && !this.isExStoryCleared()) { // Ex未クリア
+		if (bgm.is_normal && !this.isNormalStoryCleared()) { // Normal未クリア
+			this._drawText(music_no + ": " + "???????", text_x, y); // 1行表示
+		}
+		else if (bgm.is_ex && !this.isExStoryCleared()) { // Ex未クリア
 			this._drawText(music_no + ": " + "???????", text_x, y); // 1行表示
 		}
 		else {
@@ -252,6 +261,10 @@ SceneMusic.prototype._showBackGround = function(){
 SceneMusic.prototype.isExStoryCleared = function(){
 	return this.core.storage_story.getIsExStageCleared();
 };
+SceneMusic.prototype.isNormalStoryCleared = function(){
+	return this.core.storage_story.getIsNormalStageCleared();
+};
+
 
 
 module.exports = SceneMusic;

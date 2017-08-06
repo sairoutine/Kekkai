@@ -137,7 +137,8 @@ AssetsConfig.bgms = {
 		loopEnd: 0*60 + 51 + 0.562,
 		title: "永夜抄 ～ Eastern Night.",
 		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     false,
 	},
 	reminiscence: {
 		path: "./bgm/reminiscence",
@@ -145,7 +146,8 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 22 + 0.373,
 		title: "無何有の郷",
 		message: "",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     false,
 	},
 	prologue: {
 		path: "./bgm/prologue",
@@ -153,7 +155,8 @@ AssetsConfig.bgms = {
 		loopEnd: 0*60 + 52 + 0.881,
 		title: "おてんば恋娘",
 		message: "",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     false,
 	},
 
 	stage_a: {
@@ -162,7 +165,8 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 51 + 0.429,
 		title: "春色小径 ～ Colorful Path",
 		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     false,
 	},
 	stage_b: {
 		path: "./bgm/stage_b",
@@ -170,7 +174,8 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 22 + 0.500,
 		title: "少女綺想曲",
 		message: "",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     false,
 	},
 	stage_c: {
 		path: "./bgm/stage_c",
@@ -178,7 +183,8 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 53 + 0.898,
 		title: "夜が降りてくる",
 		message: "",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     false,
 	},
 	stage_d: {
 		path: "./bgm/stage_d",
@@ -186,7 +192,8 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 47 + 0.027,
 		title: "二色蓮花蝶",
 		message: "",
-		is_ex: false,
+		is_normal: true,
+		is_ex:     false,
 	},
 	stage_e: {
 		path: "./bgm/stage_e",
@@ -194,7 +201,8 @@ AssetsConfig.bgms = {
 		loopEnd: 2*60 + 37 + 0.297,
 		title: "ネクロファンタジア",
 		message: "",
-		is_ex: false,
+		is_normal: true,
+		is_ex:     false,
 	},
 	title_without_yukari: {
 		path: "./bgm/title_without_yukari",
@@ -202,7 +210,8 @@ AssetsConfig.bgms = {
 		loopEnd: 0*60 + 51 + 0.562,
 		title: "永夜抄 ～ Eastern Night.",
 		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
-		is_ex: false,
+		is_normal: true,
+		is_ex:     false,
 	},
 	after_ex: {
 		path: "./bgm/after_ex",
@@ -210,7 +219,8 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 9 + 0.153,
 		title: "Eternal Dream ～ 幽玄の槭樹",
 		message: "",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     true,
 	},
 	staffroll: {
 		path: "./bgm/staffroll",
@@ -218,7 +228,8 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 4 + 0.364,
 		title: "月見草",
 		message: "",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     true,
 	},
 	epilogue: {
 		path: "./bgm/epilogue",
@@ -226,7 +237,8 @@ AssetsConfig.bgms = {
 		loopEnd: 1*60 + 8 + 0.664,
 		title: "紅より儚い永遠",
 		message: "",
-		is_ex: false,
+		is_normal: false,
+		is_ex:     true,
 	},
 };
 
