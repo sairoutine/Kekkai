@@ -640,7 +640,7 @@ Player.prototype.collisionWidth = function(obj) {
 };
 Player.prototype.collisionHeight = function(obj) {
 	if (obj && obj.type === CONSTANT.LADDER) {
-		return 30;
+		return 30; //なぜかこれをしないとはしごから消えるブロックに移動したときに足を踏み外す
 	}
 	else {
 		return 32;
