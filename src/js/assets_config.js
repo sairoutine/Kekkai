@@ -214,11 +214,20 @@ AssetsConfig.bgms = {
 	after_ex: {
 		path: "./bgm/after_ex",
 		loopStart: 0*60 + 0 + 0.000,
-		loopEnd: 0*60 + 9 + 0.153,
+		loopEnd: 1*60 + 9 + 0.153,
 		title: "Eternal Dream ～ 幽玄の槭樹",
 		message: "",
 		is_ex: false,
 	},
+	staffroll: {
+		path: "./bgm/staffroll",
+		loopStart: 0*60 + 8 + 0.727,
+		loopEnd: 1*60 + 4 + 0.364,
+		title: "月見草",
+		message: "",
+		is_ex: false,
+	},
+
 
 
 

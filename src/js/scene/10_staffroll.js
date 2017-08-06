@@ -10,7 +10,7 @@ var serifs = [
 	["BGM","敷き紙"],
 	["DLカード デザイン","RF"],
 ];
-var RESULT_TRANSITION_COUNT = 320;
+var RESULT_TRANSITION_COUNT = 600;
 
 
 var base_scene = require('../hakurei').scene.base;
@@ -34,7 +34,7 @@ SceneStaffroll.prototype.init = function() {
 	// スタッフロール終了中かどうか
 	this.is_ending = false;
 
-	this.core.playBGM("mute");
+	this.core.playBGM("staffroll");
 };
 
 SceneStaffroll.prototype.beforeDraw = function() {
