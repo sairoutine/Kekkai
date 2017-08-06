@@ -166,6 +166,14 @@ Player.prototype.update = function(){
 			this.changeState(CONSTANT.STATE_CLIMBDOWN);
 			this._x = collision_ladder.x();
 			this.climbUp();
+
+			// 再度はしごとの当たり判定をチェックして、はしごと触れてなければ上移動を戻す
+			collision_ladder = this.checkCollisionWithLadder();
+			if (!collision_ladder) {
+				this.climbDown();
+				this.changeState(CONSTANT.STATE_NORMAL);
+			}
+
 		}
 		// 上あるいは下のブロックにめり込んだら、めり込み解除
 		var repulse_y = this.checkCollisionWithBlocks2();
@@ -437,7 +445,7 @@ Player.prototype.changeState = function(state) {
 	this.currentState().init();
 
 	if (CONSTANT.DEBUG.ON) {
-		console.log(this.state);
+		//console.log(this.state);
 	}
 };
 Player.prototype.currentState = function() {
