@@ -472,20 +472,16 @@ AssetsConfig.images = {
 
 	mari_bg:       "./image/mari_bg.png",
 	// ノーマルステージクリア後背景
-	shrine_night:   "./image/shrine_night.jpg",
+	shrine_night:   "./image/shrine_night.png",
 
-	after_ex1:   "./image/after_ex1.jpg",
-	after_ex2:   "./image/after_ex2.jpg",
+	after_ex1:   "./image/after_ex1.png",
+	after_ex2:   "./image/after_ex2.png",
 	after_ex3:   "./image/after_ex3.jpg",
-	after_ex4:   "./image/after_ex4.jpg",
+	after_ex4:   "./image/after_ex4.png",
 
 	epilogue1:   "./image/epilogue1.png",
-	epilogue2:   "./image/epilogue2.jpg",
+	epilogue2:   "./image/epilogue2.png",
 	epilogue3:   "./image/epilogue3.jpg",
-
-	yajirushi:      "./image/yajirushi.png",
-
-	thumbnail15:      "./image/thumbnail/15.png",
 
 	// スコアの★
 	star_on:       "./image/star_on.png",
@@ -562,28 +558,115 @@ AssetsConfig.sounds = {
 };
 // bgm ファイルはogg と m4a の二種類を用意してください
 AssetsConfig.bgms = {
-	mute: {
-		path: "./bgm/mute",
-		title: "サンプル",
-		message: "サンプルメッセージ",
-	},
-
 	title: {
 		path: "./bgm/title",
 		loopStart: 0*60 + 10 + 0.312,
 		loopEnd: 0*60 + 51 + 0.562,
 		title: "永夜抄 ～ Eastern Night.",
-		message: "東方永夜抄から「永夜抄 ～ Eastern Night.」のアレンジよ",
+		message: "",
+		is_normal: false,
+		is_ex:     false,
+	},
+	reminiscence: {
+		path: "./bgm/reminiscence",
+		loopStart: 0*60 + 13 + 0.220,
+		loopEnd: 1*60 + 22 + 0.373,
+		title: "無何有の郷",
+		message: "",
+		is_normal: false,
+		is_ex:     false,
+	},
+	prologue: {
+		path: "./bgm/prologue",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 0*60 + 52 + 0.881,
+		title: "おてんば恋娘",
+		message: "",
+		is_normal: false,
+		is_ex:     false,
 	},
 
 	stage_a: {
 		path: "./bgm/stage_a",
 		loopStart: 0*60 + 29 + 0.143,
 		loopEnd: 1*60 + 51 + 0.429,
-		title: "春色小径 ～ Colorful Path",
-		message: "東方花映塚から「春色小径 ～ Colorful Path」のアレンジよ",
+		title: "春色小径",
+		message: "",
+		is_normal: false,
+		is_ex:     false,
 	},
-
+	stage_b: {
+		path: "./bgm/stage_b",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 1*60 + 22 + 0.500,
+		title: "少女綺想曲",
+		message: "",
+		is_normal: false,
+		is_ex:     false,
+	},
+	stage_c: {
+		path: "./bgm/stage_c",
+		loopStart: 0*60 + 14 + 0.746,
+		loopEnd: 1*60 + 53 + 0.898,
+		title: "夜が降りてくる",
+		message: "",
+		is_normal: false,
+		is_ex:     false,
+	},
+	stage_d: {
+		path: "./bgm/stage_d",
+		loopStart: 0*60 + 29 + 0.189,
+		loopEnd: 1*60 + 47 + 0.027,
+		title: "二色蓮花蝶",
+		message: "",
+		is_normal: true,
+		is_ex:     false,
+	},
+	stage_e: {
+		path: "./bgm/stage_e",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 2*60 + 37 + 0.297,
+		title: "ネクロファンタジア",
+		message: "",
+		is_normal: true,
+		is_ex:     false,
+	},
+	title_without_yukari: {
+		path: "./bgm/title_without_yukari",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 0*60 + 51 + 0.562,
+		title: "永夜抄 ～ Eastern Night.",
+		message: "",
+		is_normal: true,
+		is_ex:     false,
+	},
+	after_ex: {
+		path: "./bgm/after_ex",
+		loopStart: 0*60 + 0 + 0.000,
+		loopEnd: 1*60 + 9 + 0.153,
+		title: "Eternal Dream",
+		message: "",
+		is_normal: false,
+		is_ex:     true,
+	},
+	staffroll: {
+		path: "./bgm/staffroll",
+		loopStart: 0*60 + 8 + 0.727,
+		loopEnd: 1*60 + 4 + 0.364,
+		title: "月見草",
+		message: "",
+		is_normal: false,
+		is_ex:     true,
+	},
+	epilogue: {
+		path: "./bgm/epilogue",
+		loopStart: 0*60 + 19 + 0.831,
+		loopEnd: 1*60 + 8 + 0.664,
+		title: "紅より儚い永遠",
+		message: "",
+		is_normal: false,
+		is_ex:     true,
+	},
 };
 
 
@@ -618,7 +701,7 @@ var CONSTANT = {
 	BLOCK_BLUE:      2,
 	BLOCK_RED:       3,
 	BLOCK_PURPLE:    4,
-	BLOCK_BROWN:     5,
+	BLOCK_DISAPPEAR: 5,
 	LADDER:          6,
 	PLAYER:          7,
 	ENEMY:           8,
@@ -630,6 +713,7 @@ var CONSTANT = {
 	ITEM_FOR_YUKARI: 14,
 	ITEM_OF_EXCHANGE:15,
 	ENEMY_VERTICAL:  16,
+	ALTEREGO:        17, //NOTE: マップデータ上には配置できない
 
 
 	// プレイヤーの状態
@@ -655,7 +739,7 @@ CONSTANT.RENDER_SORT = [
 	CONSTANT.BLOCK_BLUE,
 	CONSTANT.BLOCK_RED,
 	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_DISAPPEAR,
 	CONSTANT.BLOCK_STONE1,
 	CONSTANT.BLOCK_STONE2,
 	CONSTANT.BLOCK_STONE3,
@@ -690,7 +774,7 @@ var core = require('./hakurei').core;
 var util = require('./hakurei').util;
 var CONSTANT = require('./constant');
 
-var StorageSave = require('./save');
+var StorageStory = require('./storage/story');
 
 // ローディング画面
 var SceneLoading      = require('./scene/00_loading');
@@ -732,7 +816,7 @@ Game.prototype.init = function () {
 	core.prototype.init.apply(this, arguments);
 
 	// セーブデータ
-	this.save = StorageSave.load();
+	this.storage_story = StorageStory.load(); // ストーリー進捗
 
 	this.addScene("loading", new SceneLoading(this));
 	this.addScene("title", new SceneTitle(this));
@@ -815,17 +899,17 @@ Game.prototype.setupDebug = function (dom) {
 
 	// ゲームデータ消去ボタン
 	this.debug_manager.addMenuButton("セーブクリア", function (game) {
-		game.save.del();
+		game.storage_story.del();
 	});
 
 	// 通常ストーリー クリア ボタン
 	this.debug_manager.addMenuButton("通常ストーリークリア", function (game) {
-		game.save.clearNormalStageForDebug();
+		game.storage_story.clearNormalStageForDebug();
 	});
 
 	// Ex ストーリー クリア ボタン
 	this.debug_manager.addMenuButton("Ex ストーリークリア", function (game) {
-		game.save.clearExStageForDebug();
+		game.storage_story.clearExStageForDebug();
 	});
 };
 
@@ -835,7 +919,7 @@ Game.prototype.setupDebug = function (dom) {
 
 module.exports = Game;
 
-},{"./constant":6,"./hakurei":9,"./save":168,"./scene/00_loading":169,"./scene/01_title":170,"./scene/02_reminiscence":171,"./scene/03_logo":172,"./scene/04_prologue":173,"./scene/05_stage":174,"./scene/06_after_normal":175,"./scene/07_ex_epigraph":176,"./scene/08_ex_prologue":177,"./scene/09_after_ex":178,"./scene/10_staffroll":179,"./scene/11_epilogue":180,"./scene/howto":181,"./scene/music":222,"./scene/select":223}],9:[function(require,module,exports){
+},{"./constant":6,"./hakurei":9,"./scene/00_loading":169,"./scene/01_title":170,"./scene/02_reminiscence":171,"./scene/03_logo":172,"./scene/04_prologue":173,"./scene/05_stage":174,"./scene/06_after_normal":175,"./scene/07_ex_epigraph":176,"./scene/08_ex_prologue":177,"./scene/09_after_ex":178,"./scene/10_staffroll":179,"./scene/11_epilogue":180,"./scene/howto":181,"./scene/music":222,"./scene/select":223,"./storage/story":233}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = require("./hakureijs/index");
@@ -1173,6 +1257,7 @@ module.exports = CONSTANT;
 var WebGLDebugUtils = require("webgl-debug");
 var CONSTANT = require("./constant");
 var DebugManager = require("./debug_manager");
+var InputManager = require("./input_manager");
 var ImageLoader = require("./asset_loader/image");
 var AudioLoader = require("./asset_loader/audio");
 var FontLoader = require("./asset_loader/font");
@@ -1182,17 +1267,6 @@ var ShaderProgram = require('./shader_program');
 var VS = require("./shader/main.vs");
 var FS = require("./shader/main.fs");
 
-
-// const
-var BUTTON_ID_TO_BIT_CODE = {
-	0: CONSTANT.BUTTON_Z,
-	1: CONSTANT.BUTTON_X,
-	//2: CONSTANT.BUTTON_SELECT,
-	//3: CONSTANT.BUTTON_START,
-	4: CONSTANT.BUTTON_SHIFT,
-	5: CONSTANT.BUTTON_SHIFT,
-	6: CONSTANT.BUTTON_SPACE,
-};
 
 var Core = function(canvas, options) {
 	if(!options) {
@@ -1233,6 +1307,8 @@ var Core = function(canvas, options) {
 
 	this.debug_manager = new DebugManager(this);
 
+	this.input_manager = new InputManager();
+
 	this.width = Number(canvas.getAttribute('width'));
 	this.height = Number(canvas.getAttribute('height'));
 
@@ -1243,22 +1319,6 @@ var Core = function(canvas, options) {
 	this.frame_count = 0;
 
 	this.request_id = null;
-
-	this.current_keyflag = 0x0;
-	this.before_keyflag = 0x0;
-	this._key_bit_code_to_down_time = {};
-
-	this.is_left_clicked  = false;
-	this.is_right_clicked = false;
-	this.before_is_left_clicked  = false;
-	this.before_is_right_clicked = false;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-	this.mouse_x = 0;
-	this.mouse_y = 0;
-	this.mouse_scroll = 0;
-
-	this.is_connect_gamepad = false;
 
 	this.image_loader = new ImageLoader();
 	this.audio_loader = new AudioLoader();
@@ -1272,19 +1332,9 @@ Core.prototype.init = function () {
 
 	this.request_id = null;
 
-	this.current_keyflag = 0x0;
-	this.before_keyflag = 0x0;
-	this.initPressedKeyTime();
-
-	this.is_left_clicked  = false;
-	this.is_right_clicked = false;
-	this.before_is_left_clicked  = false;
-	this.before_is_right_clicked = false;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-	this.mouse_x = 0;
-	this.mouse_y = 0;
-	this.mouse_scroll = 0;
+	// TODO:
+	//this.debug_manager.init();
+	this.input_manager.init();
 
 	this.image_loader.init();
 	this.audio_loader.init();
@@ -1292,10 +1342,6 @@ Core.prototype.init = function () {
 
 	this.addScene("loading", new SceneLoading(this));
 };
-Core.prototype.enableGamePad = function () {
-	this.is_connect_gamepad = true;
-};
-
 Core.prototype.isRunning = function () {
 	return this.request_id ? true : false;
 };
@@ -1313,10 +1359,8 @@ Core.prototype.stopRun = function () {
 };
 Core.prototype.run = function(){
 	// get gamepad input
-	this.handleGamePad();
-
 	// get pressed key time
-	this.handlePressedKeyTime();
+	this.input_manager.beforeRun();
 
 	// go to next scene if next scene is set
 	this.changeNextSceneIfReserved();
@@ -1345,18 +1389,9 @@ Core.prototype.run = function(){
 	this.runPlaySound();
 	*/
 
-	// save key current pressed keys
-	this.before_keyflag = this.current_keyflag;
-	this.before_is_left_clicked = this.is_left_clicked;
-	this.before_is_right_clicked = this.is_right_clicked;
-
-	// reset mouse wheel and mouse move
-	this.mouse_scroll = 0;
-	this.mouse_change_x = 0;
-	this.mouse_change_y = 0;
-
-
 	this.frame_count++;
+
+	this.input_manager.afterRun();
 
 	// tick
 	this.request_id = requestAnimationFrame(this.run.bind(this));
@@ -1417,183 +1452,54 @@ Core.prototype.is2D = function() {
 Core.prototype.is3D = function() {
 	return this.gl ? true : false;
 };
-Core.prototype.handleKeyDown = function(e) {
-	this.current_keyflag |= this._keyCodeToBitCode(e.keyCode);
-	e.preventDefault();
-};
-Core.prototype.handleKeyUp = function(e) {
-	this.current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
-	e.preventDefault();
-};
+// this method is depricated.
 Core.prototype.isKeyDown = function(flag) {
-	return((this.current_keyflag & flag) ? true : false);
+	return this.input_manager.isKeyDown(flag);
 };
+// this method is depricated.
 Core.prototype.isKeyPush = function(flag) {
-	// not true if key is pressed in previous frame
-	return !(this.before_keyflag & flag) && this.current_keyflag & flag;
+	return this.input_manager.isKeyPush(flag);
 };
-Core.prototype.handleMouseDown = function(event) {
-	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-		this.is_left_clicked  = event.which === 1;
-		this.is_right_clicked = event.which === 3;
-	}
-	else if ("button" in event) {  // IE, Opera
-		this.is_left_clicked  = event.button === 1;
-		this.is_right_clicked = event.button === 2;
-	}
-	event.preventDefault();
-};
-Core.prototype.handleMouseUp = function(event) {
-	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-		this.is_left_clicked  = event.which === 1 ? false : this.is_left_clicked;
-		this.is_right_clicked = event.which === 3 ? false : this.is_right_clicked;
-	}
-	else if ("button" in event) {  // IE, Opera
-		this.is_left_clicked  = event.button === 1 ? false : this.is_left_clicked;
-		this.is_right_clicked = event.button === 2 ? false : this.is_right_clicked;
-	}
-	event.preventDefault();
-};
-Core.prototype.isLeftClickDown = function() {
-	return this.is_left_clicked;
-};
-Core.prototype.isLeftClickPush = function() {
-	// not true if is pressed in previous frame
-	return this.is_left_clicked && !this.before_is_left_clicked;
-};
-Core.prototype.isRightClickDown = function() {
-	return this.is_right_clicked;
-};
-Core.prototype.isRightClickPush = function() {
-	// not true if is pressed in previous frame
-	return this.is_right_clicked && !this.before_is_right_clicked;
-};
-
-
-Core.prototype.handleMouseMove = function (d) {
-	d = d ? d : window.event;
-	d.preventDefault();
-	this.mouse_change_x = this.mouse_x - d.clientX;
-	this.mouse_change_y = this.mouse_y - d.clientY;
-	this.mouse_x = d.clientX;
-	this.mouse_y = d.clientY;
-};
-Core.prototype.mousePositionX = function () {
-	return this.mouse_x;
-};
-Core.prototype.mousePositionY = function () {
-	return this.mouse_y;
-};
-Core.prototype.mouseMoveX = function () {
-	return this.mouse_change_x;
-};
-Core.prototype.mouseMoveY = function () {
-	return this.mouse_change_y;
-};
-Core.prototype.handleMouseWheel = function (event) {
-	this.mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
-};
-Core.prototype.mouseScroll = function () {
-	return this.mouse_scroll;
-};
-
-Core.prototype._keyCodeToBitCode = function(keyCode) {
-	var flag;
-	switch(keyCode) {
-		case 16: // shift
-			flag = CONSTANT.BUTTON_SHIFT;
-			break;
-		case 32: // space
-			flag = CONSTANT.BUTTON_SPACE;
-			break;
-		case 37: // left
-			flag = CONSTANT.BUTTON_LEFT;
-			break;
-		case 38: // up
-			flag = CONSTANT.BUTTON_UP;
-			break;
-		case 39: // right
-			flag = CONSTANT.BUTTON_RIGHT;
-			break;
-		case 40: // down
-			flag = CONSTANT.BUTTON_DOWN;
-			break;
-		case 88: // x
-			flag = CONSTANT.BUTTON_X;
-			break;
-		case 90: // z
-			flag = CONSTANT.BUTTON_Z;
-			break;
-	}
-	return flag;
-};
-Core.prototype.handleGamePad = function() {
-	if(!this.is_connect_gamepad) return;
-	var pads = navigator.getGamepads();
-	var pad = pads[0]; // 1Pコン
-
-	if(!pad) return;
-
-	// button
-	for (var i = 0, len = pad.buttons.length; i < len; i++) {
-		if(!(i in BUTTON_ID_TO_BIT_CODE)) continue; // ignore if I don't know its button
-
-		if(pad.buttons[i].pressed) { // pressed
-			this.current_keyflag |= BUTTON_ID_TO_BIT_CODE[i];
-		}
-		else { // not pressed
-			this.current_keyflag &= ~BUTTON_ID_TO_BIT_CODE[i];
-		}
-	}
-
-	// arrow keys
-	if (pad.axes[1] < -0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_UP;
-	}
-	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_UP;
-	}
-	if (pad.axes[1] > 0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_DOWN;
-	}
-	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_DOWN;
-	}
-	if (pad.axes[0] < -0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_LEFT;
-	}
-	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_LEFT;
-	}
-	if (pad.axes[0] > 0.5) {
-			this.current_keyflag |= CONSTANT.BUTTON_RIGHT;
-	}
-	else {
-			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
-	}
-};
-Core.prototype.initPressedKeyTime = function() {
-	this._key_bit_code_to_down_time = {};
-
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
-		this._key_bit_code_to_down_time[bit_code] = 0;
-	}
-};
-
-Core.prototype.handlePressedKeyTime = function() {
-	for (var button_id in CONSTANT) {
-		var bit_code = CONSTANT[button_id];
-		if (this.isKeyDown(bit_code)) {
-			this._key_bit_code_to_down_time[bit_code]++;
-		}
-		else {
-			this._key_bit_code_to_down_time[bit_code] = 0;
-		}
-	}
-};
+// this method is depricated.
 Core.prototype.getKeyDownTime = function(bit_code) {
-	return this._key_bit_code_to_down_time[bit_code];
+	return this.input_manager.getKeyDownTime(bit_code);
+};
+// this method is depricated.
+Core.prototype.isLeftClickDown = function() {
+	return this.input_manager.isLeftClickDown();
+};
+// this method is depricated.
+Core.prototype.isLeftClickPush = function() {
+	return this.input_manager.isLeftClickPush();
+};
+// this method is depricated.
+Core.prototype.isRightClickDown = function() {
+	return this.input_manager.isRightClickDown();
+};
+// this method is depricated.
+Core.prototype.isRightClickPush = function() {
+	return this.input_manager.isRightClickPush();
+};
+
+// this method is depricated.
+Core.prototype.mousePositionX = function () {
+	return this.input_manager.mousePositionX();
+};
+// this method is depricated.
+Core.prototype.mousePositionY = function () {
+	return this.input_manager.mousePositionX();
+};
+// this method is depricated.
+Core.prototype.mouseMoveX = function () {
+	return this.input_manager.mouseMoveX();
+};
+// this method is depricated.
+Core.prototype.mouseMoveY = function () {
+	return this.input_manager.mouseMoveY();
+};
+// this method is depricated.
+Core.prototype.mouseScroll = function () {
+	return this.input_manager.mouseScroll();
 };
 
 Core.prototype.fullscreen = function() {
@@ -1645,34 +1551,7 @@ Core.prototype.setupEvents = function() {
 		self.fontLoadingDone();
 	}
 
-	// bind keyboard
-	window.onkeydown = function(e) { self.handleKeyDown(e); };
-	window.onkeyup   = function(e) { self.handleKeyUp(e); };
-
-	// bind mouse click
-	this.canvas_dom.onmousedown = function(e) { self.handleMouseDown(e); };
-	this.canvas_dom.onmouseup   = function(e) { self.handleMouseUp(e); };
-
-	// bind mouse move
-	this.canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
-
-	// bind mouse wheel
-	var mousewheelevent=(window.navi && /Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
-	if (this.canvas_dom.addEventListener) { //WC3 browsers
-		this.canvas_dom.addEventListener(mousewheelevent, function(e) {
-			var event = window.event || e;
-			self.handleMouseWheel(event);
-		}, false);
-	}
-
-	// unable to use right click menu.
-	// not used
-	// this.canvas_dom.oncontextmenu = function() { return false; };
-
-	// bind gamepad
-	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
-		self.enableGamePad();
-	}
+	this.input_manager.setupEvents(this.canvas_dom);
 };
 
 Core.prototype.createWebGLContext = function(canvas) {
@@ -1695,7 +1574,7 @@ Core.prototype.createWebGLContext = function(canvas) {
 
 module.exports = Core;
 
-},{"./asset_loader/audio":10,"./asset_loader/font":11,"./asset_loader/image":12,"./constant":13,"./debug_manager":16,"./scene/loading":35,"./shader/main.fs":37,"./shader/main.vs":38,"./shader_program":39,"webgl-debug":28}],16:[function(require,module,exports){
+},{"./asset_loader/audio":10,"./asset_loader/font":11,"./asset_loader/image":12,"./constant":13,"./debug_manager":16,"./input_manager":18,"./scene/loading":36,"./shader/main.fs":38,"./shader/main.vs":39,"./shader_program":40,"webgl-debug":29}],16:[function(require,module,exports){
 'use strict';
 
 var DebugManager = function (core) {
@@ -1779,7 +1658,404 @@ module.exports = {
 
 };
 
-},{"./asset_loader/audio":10,"./asset_loader/font":11,"./asset_loader/image":12,"./constant":13,"./core":15,"./object/base":29,"./object/pool_manager":30,"./object/pool_manager3d":31,"./object/sprite":32,"./object/sprite3d":33,"./scene/base":34,"./scene/loading":35,"./serif_manager":36,"./shader_program":39,"./storage/base":40,"./storage/save":41,"./util":42}],18:[function(require,module,exports){
+},{"./asset_loader/audio":10,"./asset_loader/font":11,"./asset_loader/image":12,"./constant":13,"./core":15,"./object/base":30,"./object/pool_manager":31,"./object/pool_manager3d":32,"./object/sprite":33,"./object/sprite3d":34,"./scene/base":35,"./scene/loading":36,"./serif_manager":37,"./shader_program":40,"./storage/base":41,"./storage/save":42,"./util":43}],18:[function(require,module,exports){
+'use strict';
+
+var CONSTANT = require("./constant");
+var Util = require("./util");
+
+// const
+var DEFAULT_BUTTON_ID_TO_BIT_CODE = {
+	0: CONSTANT.BUTTON_Z,
+	1: CONSTANT.BUTTON_X,
+	2: CONSTANT.BUTTON_SPACE,
+	3: CONSTANT.BUTTON_SHIFT,
+};
+
+var InputManager = function () {
+	this.current_keyflag = 0x0;
+	this.before_keyflag = 0x0;
+	this._key_bit_code_to_down_time = {};
+
+	// gamepad button_id to bit code of key input
+	this._button_id_to_key_bit_code = Util.shallowCopyHash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
+
+	this.is_left_clicked  = false;
+	this.is_right_clicked = false;
+	this.before_is_left_clicked  = false;
+	this.before_is_right_clicked = false;
+	this.mouse_change_x = 0;
+	this.mouse_change_y = 0;
+	this.mouse_x = 0;
+	this.mouse_y = 0;
+	this.mouse_scroll = 0;
+
+	this.is_connect_gamepad = false;
+};
+
+InputManager.prototype.init = function () {
+	this.current_keyflag = 0x0;
+	this.before_keyflag = 0x0;
+	this.initPressedKeyTime();
+
+	// gamepad button_id to bit code of key input
+	this._button_id_to_key_bit_code = Util.shallowCopyHash(DEFAULT_BUTTON_ID_TO_BIT_CODE);
+
+	this.is_left_clicked  = false;
+	this.is_right_clicked = false;
+	this.before_is_left_clicked  = false;
+	this.before_is_right_clicked = false;
+	this.mouse_change_x = 0;
+	this.mouse_change_y = 0;
+	this.mouse_x = 0;
+	this.mouse_y = 0;
+	this.mouse_scroll = 0;
+
+	this.is_connect_gamepad = false;
+};
+InputManager.prototype.enableGamePad = function () {
+	this.is_connect_gamepad = true;
+};
+InputManager.prototype.beforeRun = function(){
+	// get gamepad input
+	this.handleGamePad();
+
+	// get pressed key time
+	this.handlePressedKeyTime();
+};
+
+InputManager.prototype.afterRun = function(){
+	// save key current pressed keys
+	this.before_keyflag = this.current_keyflag;
+	this.before_is_left_clicked = this.is_left_clicked;
+	this.before_is_right_clicked = this.is_right_clicked;
+
+	// reset mouse wheel and mouse move
+	this.mouse_scroll = 0;
+	this.mouse_change_x = 0;
+	this.mouse_change_y = 0;
+};
+
+
+InputManager.prototype.handleKeyDown = function(e) {
+	this.current_keyflag |= this._keyCodeToBitCode(e.keyCode);
+	e.preventDefault();
+};
+InputManager.prototype.handleKeyUp = function(e) {
+	this.current_keyflag &= ~this._keyCodeToBitCode(e.keyCode);
+	e.preventDefault();
+};
+InputManager.prototype.isKeyDown = function(flag) {
+	return((this.current_keyflag & flag) ? true : false);
+};
+InputManager.prototype.isKeyPush = function(flag) {
+	return !(this.before_keyflag & flag) && this.current_keyflag & flag;
+};
+
+
+InputManager.prototype.getKeyDownTime = function(bit_code) {
+	return this._key_bit_code_to_down_time[bit_code];
+};
+
+InputManager.prototype.handleMouseDown = function(event) {
+	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+		this.is_left_clicked  = event.which === 1;
+		this.is_right_clicked = event.which === 3;
+	}
+	else if ("button" in event) {  // IE, Opera
+		this.is_left_clicked  = event.button === 1;
+		this.is_right_clicked = event.button === 2;
+	}
+	event.preventDefault();
+};
+InputManager.prototype.handleMouseUp = function(event) {
+	if ("which" in event) { // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+		this.is_left_clicked  = event.which === 1 ? false : this.is_left_clicked;
+		this.is_right_clicked = event.which === 3 ? false : this.is_right_clicked;
+	}
+	else if ("button" in event) {  // IE, Opera
+		this.is_left_clicked  = event.button === 1 ? false : this.is_left_clicked;
+		this.is_right_clicked = event.button === 2 ? false : this.is_right_clicked;
+	}
+	event.preventDefault();
+};
+InputManager.prototype.isLeftClickDown = function() {
+	return this.is_left_clicked;
+};
+InputManager.prototype.isLeftClickPush = function() {
+	// not true if is pressed in previous frame
+	return this.is_left_clicked && !this.before_is_left_clicked;
+};
+InputManager.prototype.isRightClickDown = function() {
+	return this.is_right_clicked;
+};
+InputManager.prototype.isRightClickPush = function() {
+	// not true if is pressed in previous frame
+	return this.is_right_clicked && !this.before_is_right_clicked;
+};
+InputManager.prototype.handleMouseMove = function (d) {
+	d = d ? d : window.event;
+	d.preventDefault();
+	this.mouse_change_x = this.mouse_x - d.clientX;
+	this.mouse_change_y = this.mouse_y - d.clientY;
+	this.mouse_x = d.clientX;
+	this.mouse_y = d.clientY;
+};
+InputManager.prototype.mousePositionX = function () {
+	return this.mouse_x;
+};
+InputManager.prototype.mousePositionY = function () {
+	return this.mouse_y;
+};
+InputManager.prototype.mouseMoveX = function () {
+	return this.mouse_change_x;
+};
+InputManager.prototype.mouseMoveY = function () {
+	return this.mouse_change_y;
+};
+InputManager.prototype.handleMouseWheel = function (event) {
+	this.mouse_scroll = event.detail ? event.detail : -event.wheelDelta/120;
+};
+InputManager.prototype.mouseScroll = function () {
+	return this.mouse_scroll;
+};
+InputManager.prototype._keyCodeToBitCode = function(keyCode) {
+	var flag;
+	switch(keyCode) {
+		case 16: // shift
+			flag = CONSTANT.BUTTON_SHIFT;
+			break;
+		case 32: // space
+			flag = CONSTANT.BUTTON_SPACE;
+			break;
+		case 37: // left
+			flag = CONSTANT.BUTTON_LEFT;
+			break;
+		case 38: // up
+			flag = CONSTANT.BUTTON_UP;
+			break;
+		case 39: // right
+			flag = CONSTANT.BUTTON_RIGHT;
+			break;
+		case 40: // down
+			flag = CONSTANT.BUTTON_DOWN;
+			break;
+		case 88: // x
+			flag = CONSTANT.BUTTON_X;
+			break;
+		case 90: // z
+			flag = CONSTANT.BUTTON_Z;
+			break;
+	}
+	return flag;
+};
+InputManager.prototype.handleGamePad = function() {
+	if(!this.is_connect_gamepad) return;
+	var pads = window.navigator.getGamepads();
+	var pad = pads[0]; // 1Pコン
+
+	if(!pad) return;
+
+	// button
+	for (var i = 0, len = pad.buttons.length; i < len; i++) {
+		if(!(i in this._button_id_to_key_bit_code)) continue; // ignore if I don't know its button
+		if(pad.buttons[i].pressed) { // pressed
+			this.current_keyflag |= this.getKeyByButtonId(i);
+		}
+		else { // not pressed
+			this.current_keyflag &= ~this.getKeyByButtonId(i);
+		}
+	}
+
+	// arrow keys
+	if (pad.axes[1] < -0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_UP;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_UP;
+	}
+	if (pad.axes[1] > 0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_DOWN;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_DOWN;
+	}
+	if (pad.axes[0] < -0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_LEFT;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_LEFT;
+	}
+	if (pad.axes[0] > 0.5) {
+			this.current_keyflag |= CONSTANT.BUTTON_RIGHT;
+	}
+	else {
+			this.current_keyflag &= ~CONSTANT.BUTTON_RIGHT;
+	}
+};
+InputManager.prototype.initPressedKeyTime = function() {
+	this._key_bit_code_to_down_time = {};
+
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		this._key_bit_code_to_down_time[bit_code] = 0;
+	}
+};
+
+InputManager.prototype.handlePressedKeyTime = function() {
+	for (var button_id in CONSTANT) {
+		var bit_code = CONSTANT[button_id];
+		if (this.isKeyDown(bit_code)) {
+			this._key_bit_code_to_down_time[bit_code]++;
+		}
+		else {
+			this._key_bit_code_to_down_time[bit_code] = 0;
+		}
+	}
+};
+InputManager.prototype.setupEvents = function(canvas_dom) {
+	var self = this;
+
+	// bind keyboard
+	window.onkeydown = function(e) { self.handleKeyDown(e); };
+	window.onkeyup   = function(e) { self.handleKeyUp(e); };
+
+	// bind mouse click
+	canvas_dom.onmousedown = function(e) { self.handleMouseDown(e); };
+	canvas_dom.onmouseup   = function(e) { self.handleMouseUp(e); };
+
+	// bind mouse move
+	canvas_dom.onmousemove = function(d) { self.handleMouseMove(d); };
+
+	// bind mouse wheel
+	var mousewheelevent = (window.navi && /Firefox/i.test(window.navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+	if (canvas_dom.addEventListener) { //WC3 browsers
+		canvas_dom.addEventListener(mousewheelevent, function(e) {
+			var event = window.event || e;
+			self.handleMouseWheel(event);
+		}, false);
+	}
+
+	// unable to use right click menu.
+	// NOTE: not used
+	// this.canvas_dom.oncontextmenu = function() { return false; };
+
+	// bind gamepad
+	if(window.Gamepad && window.navigator && window.navigator.getGamepads) {
+		self.enableGamePad();
+	}
+};
+
+InputManager.prototype.getKeyByButtonId = function(button_id) {
+	var keys = this._button_id_to_key_bit_code[button_id];
+	if(!keys) keys = 0x00;
+
+	return keys;
+};
+
+// get one of the pressed button id
+InputManager.prototype.getAnyButtonId = function(){
+	if(!this.is_connect_gamepad) return;
+
+	var pads = window.navigator.getGamepads();
+	var pad = pads[0]; // 1Pコン
+
+	if(!pad) return;
+
+	for (var i = 0; i < pad.buttons.length; i++) {
+		if(pad.buttons[i].pressed) {
+			return i;
+		}
+	}
+};
+/*
+InputManager.prototype.setButtonIdMapping = function(button_id, key) {
+	var defined_key = this._button_id_to_key_bit_code[button_id];
+
+	for (var target_button_id in this._button_id_to_key_bit_code) {
+		var target_key = this._button_id_to_key_bit_code[target_button_id];
+		// If there are already set keys in other keys, replace it.
+		if (target_key === key) {
+			if (defined_key) {
+				// replace other key's button_id mapping to current button_id's key.
+				this._button_id_to_key_bit_code[target_button_id] = defined_key;
+			}
+			else {
+				// the player presses target_button_id, no event has occured.
+				delete this._button_id_to_key_bit_code[target_button_id];
+			}
+		}
+	}
+
+	// set
+	this._button_id_to_key_bit_code[button_id] = key;
+};
+
+InputManager.prototype.setAllButtonIdMapping = function(map) {
+	this._button_id_to_key_bit_code = Util.shallowCopyHash(map);
+};
+
+InputManager.prototype.getButtonIdToKeyMap = function() {
+	return Util.shallowCopyHash(this._button_id_to_key_bit_code);
+};
+// convert { value => key } hash
+InputManager.prototype.getKeyToButtonIdMap = function() {
+	var map = {};
+	for (var button_id in this._button_id_to_key_bit_code) {
+		var key = this._button_id_to_key_bit_code[button_id];
+		map[key] = button_id; // NOTE: cannot duplicate, if it, overwrite it
+	}
+
+	return map;
+};
+
+
+InputManager.prototype.dumpGamePadKey = function() {
+	var dump = {};
+
+	for (var button_id in this._button_id_to_key_bit_code) {
+		var key = this._button_id_to_key_bit_code[ button_id ];
+		switch(key) {
+			case CONSTANT.BUTTON_LEFT:
+				dump[button_id] = "LEFT";
+				break;
+			case CONSTANT.BUTTON_UP:
+				dump[button_id] = "UP";
+				break;
+			case CONSTANT.BUTTON_RIGHT:
+				dump[button_id] = "RIGHT";
+				break;
+			case CONSTANT.BUTTON_DOWN:
+				dump[button_id] = "DOWN";
+				break;
+			case CONSTANT.BUTTON_Z:
+				dump[button_id] = "Z";
+				break;
+			case CONSTANT.BUTTON_X:
+				dump[button_id] = "X";
+				break;
+			case CONSTANT.BUTTON_SHIFT:
+				dump[button_id] = "SHIFT";
+				break;
+			case CONSTANT.BUTTON_SPACE:
+				dump[button_id] = "SPACE";
+				break;
+			default:
+				dump[button_id] = "UNKNOWN";
+		}
+	}
+
+	console.log(dump);
+};
+*/
+
+
+
+
+
+module.exports = InputManager;
+
+},{"./constant":13,"./util":43}],19:[function(require,module,exports){
 /**
  * @fileoverview gl-matrix - High performance matrix and vector operations
  * @author Brandon Jones
@@ -1817,7 +2093,7 @@ exports.quat = require("./gl-matrix/quat.js");
 exports.vec2 = require("./gl-matrix/vec2.js");
 exports.vec3 = require("./gl-matrix/vec3.js");
 exports.vec4 = require("./gl-matrix/vec4.js");
-},{"./gl-matrix/common.js":19,"./gl-matrix/mat2.js":20,"./gl-matrix/mat2d.js":21,"./gl-matrix/mat3.js":22,"./gl-matrix/mat4.js":23,"./gl-matrix/quat.js":24,"./gl-matrix/vec2.js":25,"./gl-matrix/vec3.js":26,"./gl-matrix/vec4.js":27}],19:[function(require,module,exports){
+},{"./gl-matrix/common.js":20,"./gl-matrix/mat2.js":21,"./gl-matrix/mat2d.js":22,"./gl-matrix/mat3.js":23,"./gl-matrix/mat4.js":24,"./gl-matrix/quat.js":25,"./gl-matrix/vec2.js":26,"./gl-matrix/vec3.js":27,"./gl-matrix/vec4.js":28}],20:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -1889,7 +2165,7 @@ glMatrix.equals = function(a, b) {
 
 module.exports = glMatrix;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -2327,7 +2603,7 @@ mat2.multiplyScalarAndAdd = function(out, a, b, scale) {
 
 module.exports = mat2;
 
-},{"./common.js":19}],21:[function(require,module,exports){
+},{"./common.js":20}],22:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -2798,7 +3074,7 @@ mat2d.equals = function (a, b) {
 
 module.exports = mat2d;
 
-},{"./common.js":19}],22:[function(require,module,exports){
+},{"./common.js":20}],23:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -3546,7 +3822,7 @@ mat3.equals = function (a, b) {
 
 module.exports = mat3;
 
-},{"./common.js":19}],23:[function(require,module,exports){
+},{"./common.js":20}],24:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -5684,7 +5960,7 @@ mat4.equals = function (a, b) {
 
 module.exports = mat4;
 
-},{"./common.js":19}],24:[function(require,module,exports){
+},{"./common.js":20}],25:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -6286,7 +6562,7 @@ quat.equals = vec4.equals;
 
 module.exports = quat;
 
-},{"./common.js":19,"./mat3.js":22,"./vec3.js":26,"./vec4.js":27}],25:[function(require,module,exports){
+},{"./common.js":20,"./mat3.js":23,"./vec3.js":27,"./vec4.js":28}],26:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -6875,7 +7151,7 @@ vec2.equals = function (a, b) {
 
 module.exports = vec2;
 
-},{"./common.js":19}],26:[function(require,module,exports){
+},{"./common.js":20}],27:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -7654,7 +7930,7 @@ vec3.equals = function (a, b) {
 
 module.exports = vec3;
 
-},{"./common.js":19}],27:[function(require,module,exports){
+},{"./common.js":20}],28:[function(require,module,exports){
 /* Copyright (c) 2015, Brandon Jones, Colin MacKenzie IV.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -8265,7 +8541,7 @@ vec4.equals = function (a, b) {
 
 module.exports = vec4;
 
-},{"./common.js":19}],28:[function(require,module,exports){
+},{"./common.js":20}],29:[function(require,module,exports){
 (function (global){
 /*
 ** Copyright (c) 2012 The Khronos Group Inc.
@@ -9223,7 +9499,7 @@ return {
 module.exports = WebGLDebugUtils;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 var util = require('../util');
@@ -9325,7 +9601,7 @@ ObjectBase.prototype.move = function() {
 	this._x += x;
 	this._y += y;
 };
-ObjectBase.prototype.onCollision = function(){
+ObjectBase.prototype.onCollision = function(obj){
 };
 
 ObjectBase.prototype.width = function() {
@@ -9353,11 +9629,14 @@ ObjectBase.prototype.globalDownY = function() {
 	return this.scene.x() + this.y() + this.height()/2;
 };
 
-ObjectBase.prototype.collisionWidth = function() {
+ObjectBase.prototype.collisionWidth = function(obj) {
 	return 0;
 };
-ObjectBase.prototype.collisionHeight = function() {
+ObjectBase.prototype.collisionHeight = function(obj) {
 	return 0;
+};
+ObjectBase.prototype.isCollision = function(obj) {
+	return true;
 };
 
 ObjectBase.prototype.checkCollisionWithObject = function(obj1) {
@@ -9381,25 +9660,27 @@ ObjectBase.prototype.checkCollisionWithObjects = function(objs) {
 
 
 ObjectBase.prototype.checkCollision = function(obj) {
-	if(Math.abs(this.x() - obj.x()) < this.collisionWidth()/2 + obj.collisionWidth()/2 &&
-		Math.abs(this.y() - obj.y()) < this.collisionHeight()/2 + obj.collisionHeight()/2) {
+	if (!this.isCollision(obj) || !obj.isCollision(this)) return false;
+
+	if(Math.abs(this.x() - obj.x()) < this.collisionWidth(obj)/2 + obj.collisionWidth(this)/2 &&
+		Math.abs(this.y() - obj.y()) < this.collisionHeight(obj)/2 + obj.collisionHeight(this)/2) {
 		return true;
 	}
 
 	return false;
 };
 
-ObjectBase.prototype.getCollisionLeftX = function() {
-	return this.x() - this.collisionWidth() / 2;
+ObjectBase.prototype.getCollisionLeftX = function(obj) {
+	return this.x() - this.collisionWidth(obj) / 2;
 };
-ObjectBase.prototype.getCollisionRightX = function() {
-	return this.x() + this.collisionWidth() / 2;
+ObjectBase.prototype.getCollisionRightX = function(obj) {
+	return this.x() + this.collisionWidth(obj) / 2;
 };
-ObjectBase.prototype.getCollisionUpY = function() {
-	return this.y() - this.collisionHeight() / 2;
+ObjectBase.prototype.getCollisionUpY = function(obj) {
+	return this.y() - this.collisionHeight(obj) / 2;
 };
-ObjectBase.prototype.getCollisionDownY = function() {
-	return this.y() + this.collisionHeight() / 2;
+ObjectBase.prototype.getCollisionDownY = function(obj) {
+	return this.y() + this.collisionHeight(obj) / 2;
 };
 
 
@@ -9465,7 +9746,7 @@ ObjectBase.prototype.isOutOfStage = function( ) {
 module.exports = ObjectBase;
 
 
-},{"../util":42}],30:[function(require,module,exports){
+},{"../util":43}],31:[function(require,module,exports){
 'use strict';
 
 // TODO: add pooling logic
@@ -9563,7 +9844,7 @@ PoolManager.prototype.removeOutOfStageObjects = function() {
 
 module.exports = PoolManager;
 
-},{"../util":42,"./base":29}],31:[function(require,module,exports){
+},{"../util":43,"./base":30}],32:[function(require,module,exports){
 'use strict';
 
 // TODO: add pooling logic
@@ -9804,7 +10085,7 @@ PoolManager3D.prototype.shader = function(){
 
 module.exports = PoolManager3D;
 
-},{"../constant_3d":14,"../util":42,"./base":29,"gl-matrix":18}],32:[function(require,module,exports){
+},{"../constant_3d":14,"../util":43,"./base":30,"gl-matrix":19}],33:[function(require,module,exports){
 'use strict';
 var base_object = require('./base');
 var util = require('../util');
@@ -9947,7 +10228,7 @@ Sprite.prototype.alpha = function() {
 
 module.exports = Sprite;
 
-},{"../util":42,"./base":29}],33:[function(require,module,exports){
+},{"../util":43,"./base":30}],34:[function(require,module,exports){
 'use strict';
 var base_object = require('./base');
 var util = require('../util');
@@ -10292,7 +10573,7 @@ Sprite3d.prototype.isReflect = function(){
 
 module.exports = Sprite3d;
 
-},{"../constant_3d":14,"../util":42,"./base":29,"gl-matrix":18}],34:[function(require,module,exports){
+},{"../constant_3d":14,"../util":43,"./base":30,"gl-matrix":19}],35:[function(require,module,exports){
 'use strict';
 
 var SceneBase = function(core, scene) {
@@ -10525,7 +10806,7 @@ SceneBase.prototype.y = function(val) {
 module.exports = SceneBase;
 
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 // loading scene
@@ -10594,7 +10875,7 @@ SceneLoading.prototype.notifyAllLoaded = function(){
 
 module.exports = SceneLoading;
 
-},{"../util":42,"./base":34}],36:[function(require,module,exports){
+},{"../util":43,"./base":35}],37:[function(require,module,exports){
 'use strict';
 
 var SerifManager = function () {
@@ -10819,13 +11100,13 @@ SerifManager.prototype.lines = function () {
 
 module.exports = SerifManager;
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = "precision mediump float;\nuniform sampler2D uSampler;\nvarying vec2 vTextureCoordinates;\nvarying vec4 vColor;\n\nvoid main() {\n\tvec4 textureColor = texture2D(uSampler, vTextureCoordinates);\n\tgl_FragColor = textureColor * vColor;\n}\n\n";
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports = "attribute vec3 aVertexPosition;\nattribute vec2 aTextureCoordinates;\nattribute vec4 aColor;\n\nuniform mat4 uMVMatrix;\nuniform mat4 uPMatrix;\nvarying vec2 vTextureCoordinates;\nvarying vec4 vColor;\n\nvoid main() {\n\tgl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);\n\tvTextureCoordinates = aTextureCoordinates;\n\tvColor = aColor;\n}\n\n";
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 var glmat = require("gl-matrix");
 
@@ -10896,7 +11177,7 @@ ShaderProgram.prototype.createShaderProgram = function(gl, vertex_shader, fragme
 
 module.exports = ShaderProgram;
 
-},{"gl-matrix":18}],40:[function(require,module,exports){
+},{"gl-matrix":19}],41:[function(require,module,exports){
 'use strict';
 
 /*
@@ -10929,6 +11210,14 @@ StorageBase.prototype.get = function(key) {
 StorageBase.prototype.remove = function(key) {
 	return delete this._data[key];
 };
+StorageBase.prototype.isEmpty = function(key) {
+	return Object.keys(this._data).length === 0;
+};
+StorageBase.prototype.toHash = function() {
+	return Util.shallowCopyHash(this._data);
+};
+
+
 // is Electron or NW.js ?
 StorageBase.isLocalMode = function() {
 	// this is Electron
@@ -11087,7 +11376,7 @@ StorageBase.prototype._removeWebStorage = function() {
 
 module.exports = StorageBase;
 
-},{"../util":42}],41:[function(require,module,exports){
+},{"../util":43}],42:[function(require,module,exports){
 'use strict';
 var base_class = require('./base');
 var util = require('../util');
@@ -11109,7 +11398,7 @@ StorageSave.KEY = function(){
 
 module.exports = StorageSave;
 
-},{"../util":42,"./base":40}],42:[function(require,module,exports){
+},{"../util":43,"./base":41}],43:[function(require,module,exports){
 'use strict';
 var Util = {
 	inherit: function( child, parent ) {
@@ -11166,11 +11455,18 @@ var Util = {
 
 		return false;
 	},
+	shallowCopyHash: function (src_hash) {
+		var dst_hash = {};
+		for(var k in src_hash){
+			dst_hash[k] = src_hash[k];
+		}
+		return dst_hash;
+	}
 };
 
 module.exports = Util;
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 /* 画像を暗くするロジック */
@@ -11208,7 +11504,7 @@ CreateDarkerImage.exec = function (image) {
 
 module.exports = CreateDarkerImage;
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 'use strict';
 
 /* マップ内の各種オブジェクトを生成 */
@@ -11218,7 +11514,7 @@ var BlockGreen    = require('../object/tile/block_green');
 var BlockBlue     = require('../object/tile/block_blue');
 var BlockRed      = require('../object/tile/block_red');
 var BlockPurple   = require('../object/tile/block_purple');
-var BlockBrown    = require('../object/tile/block_brown');
+var BlockDisappear= require('../object/tile/block_disappear');
 var Ladder        = require('../object/tile/ladder');
 var Player        = require('../object/tile/player');
 var Enemy         = require('../object/tile/enemy');
@@ -11243,7 +11539,7 @@ TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_GREEN]     = BlockGreen;
 TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BLUE]      = BlockBlue;
 TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_RED]       = BlockRed;
 TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_PURPLE]    = BlockPurple;
-TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_BROWN]     = BlockBrown;
+TILE_TYPE_TO_CLASS[CONSTANT.BLOCK_DISAPPEAR] = BlockDisappear;
 TILE_TYPE_TO_CLASS[CONSTANT.LADDER]          = Ladder;
 TILE_TYPE_TO_CLASS[CONSTANT.PLAYER]          = Player;
 TILE_TYPE_TO_CLASS[CONSTANT.ENEMY]           = Enemy;
@@ -11368,7 +11664,7 @@ CreateMap.drawFrames = function(scene, offset_x, offset_y, scale) {
 
 module.exports = CreateMap;
 
-},{"../constant":6,"../logic/score":47,"../object/stage_frame1":139,"../object/stage_frame2":140,"../object/tile/block_blue":142,"../object/tile/block_brown":143,"../object/tile/block_green":144,"../object/tile/block_purple":145,"../object/tile/block_red":146,"../object/tile/block_stone1":147,"../object/tile/block_stone2":148,"../object/tile/block_stone3":149,"../object/tile/death":150,"../object/tile/enemy":151,"../object/tile/enemy_vertical":152,"../object/tile/item_for_reimu":153,"../object/tile/item_for_yukari":154,"../object/tile/item_of_exchange":155,"../object/tile/ladder":156,"../object/tile/player":157}],45:[function(require,module,exports){
+},{"../constant":6,"../logic/score":48,"../object/stage_frame1":140,"../object/stage_frame2":141,"../object/tile/block_blue":143,"../object/tile/block_disappear":144,"../object/tile/block_green":145,"../object/tile/block_purple":146,"../object/tile/block_red":147,"../object/tile/block_stone1":148,"../object/tile/block_stone2":149,"../object/tile/block_stone3":150,"../object/tile/death":151,"../object/tile/enemy":152,"../object/tile/enemy_vertical":153,"../object/tile/item_for_reimu":154,"../object/tile/item_for_yukari":155,"../object/tile/item_of_exchange":156,"../object/tile/ladder":157,"../object/tile/player":158}],46:[function(require,module,exports){
 'use strict';
 
 // 星3つ
@@ -11399,7 +11695,7 @@ module.exports = {
 	3: messageS,
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 //ステージ1~15のリザルト画面のメッセージ
@@ -11441,7 +11737,7 @@ for (i = 30; i < 40; i++) {
 
 module.exports = messages;
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 
@@ -11493,24 +11789,24 @@ Score.getStageData = function(stage_no){
 };
 module.exports = Score;
 
-},{"../stage_config":232}],48:[function(require,module,exports){
+},{"../stage_config":232}],49:[function(require,module,exports){
 'use strict';
 
 // セリフ
 var Serif= [
 	//（1. 霊夢と紫が別れるときのセリフを言ってるシーン）
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"やっぱり……無理なの？"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"ええ、ごめんなさいね"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"でも……また逢えるから。貴女が寂しくなったときにはきっと、ね"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"紫は……幻想郷の方が大事なの？"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"……そんなことはないわよ。愛しの子らだもの、貴女も幻想郷も同じくらい好きよ"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。始まりには必ず終わりが来るものなのよ。生きとし生けるものが\n泡沫のように散り去るのと同じように、森羅万象全てにはそう宿命付けられているの"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"それはとても哀しいことだけれども、終わることで始まることもある。\n消えぬ霧を、迎えぬ春を、明けぬ夜を終えて乗り越えた貴女なら分かるでしょう？"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"だから大丈夫、心配する必要なんてないわ。私が愛することが出来なくても、\n今度は代わりに幻想郷が貴女を愛する。貴女はもう素敵な楽園の巫女なのだから、ね？"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"…………そんなこと……ない"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"私にだって、終わらせたくない異変もあるのよ……紫"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"ダメよ、霊夢。貴女の手でこの異変に幕を下ろさなきゃ。\n異変を解決するのが、貴女の務めなのだから。お願い、分かって"},
-	{"background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"…………"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"やっぱり……無理なの？"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"ええ、ごめんなさいね"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"でも……また逢えるから。貴女が寂しくなったときにはきっと、ね"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"紫は……幻想郷の方が大事なの？"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"……そんなことはないわよ。愛しの子らだもの、貴女も幻想郷も同じくらい好きよ"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。始まりには必ず終わりが来るものなのよ。生きとし生けるものが\n泡沫のように散り去るのと同じように、森羅万象全てにはそう宿命付けられているの"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"それはとても哀しいことだけれども、終わることで始まることもある。\n消えぬ霧を、迎えぬ春を、明けぬ夜を終えて乗り越えた貴女なら分かるでしょう？"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"だから大丈夫、心配する必要なんてないわ。私が愛することが出来なくても、\n今度は代わりに幻想郷が貴女を愛する。貴女はもう素敵な楽園の巫女なのだから、ね？"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"…………そんなこと……ない"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"私にだって、終わらせたくない異変もあるのよ……紫"},
+	{"font_color": "#8b5fbf", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"ダメよ、霊夢。貴女の手でこの異変に幕を下ろさなきゃ。\n異変を解決するのが、貴女の務めなのだから。お願い、分かって"},
+	{"font_color": "#e6373c", "background":"after_ex1","pos":null,"exp":null,"chara":null,"serif":"…………"},
 
 	//（2. 霊夢のわかったわって顔）
 
@@ -11530,7 +11826,7 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11539,10 +11835,10 @@ var Serif= [
 	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"まさか――始めからこうなることを分かっていて、\n私だけを送り飛ばしたんじゃ……！？"},
 	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"あ……"},
 	{"background": "shrine_night", "pos":"right","exp":null,"chara":null,"serif":null},
-	{"background": "reminiscence", "pos":null,"exp":null,"chara":null,"serif":"私がいつまで霊夢のそばにいられるか分からないでしょ？"},
-	{"background": "reminiscence", "pos":null,"exp":null,"chara":null,"serif":"そんなことあり得るの？　紫の方がずっと長生きするのに"},
-	{"background": "reminiscence", "pos":null,"exp":null,"chara":null,"serif":"さぁ、どうかしら"},
-	{"background": "reminiscence", "pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。幻想郷は全てを受け入れるのよ。それはそれは残酷な話ですわ"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"私がいつまで霊夢のそばにいられるか分からないでしょ？"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"そんなことあり得るの？　紫の方がずっと長生きするのに"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"さぁ、どうかしら"},
+	{"background": "reminiscence1", "pos":null,"exp":null,"chara":null,"serif":"でもね、霊夢。幻想郷は全てを受け入れるのよ。それはそれは残酷な話ですわ"},
 	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"――紫は今、おそらく博麗大結界と幻と実体の境界との狭間にいるはず……"},
 	{"background": "shrine_night", "pos":"right","exp":"confused","chara":"reimu","serif":"けれど――、境界を操る能力を持たない私には、\nその境目にすら行くことが出来ない……"},
 	{"background": "shrine_night", "pos":"right","exp":"cry","chara":"reimu","serif":"なら――、これも受け入れなくちゃいけないのね……"},
@@ -11550,7 +11846,7 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11587,7 +11883,7 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11600,7 +11896,7 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11624,7 +11920,7 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11641,7 +11937,7 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11649,7 +11945,7 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11671,9 +11967,9 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],56:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],57:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],58:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11691,9 +11987,9 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],58:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],59:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],60:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11710,9 +12006,9 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],60:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],61:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],62:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11724,13 +12020,13 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],62:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],63:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],64:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],65:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],64:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],65:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],66:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11743,20 +12039,20 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],66:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],67:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],68:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],69:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],68:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],69:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],70:[function(require,module,exports){
 'use strict';
 
 // セリフ
 var Serif= [
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":null},
 	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"霊夢、見て"},
-	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あら、点滅している不思議な御札があるわ"},
+	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"あら、陰陽玉が落ちてるわ"},
 	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"取ると私の位置がかわるわ"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"どういうこと？"},
 	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"霊夢の左右の反対側に私がいるときに取ると、\n霊夢の上下の反対側に私がいるようになるの"},
@@ -11765,21 +12061,21 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],70:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],71:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],72:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],73:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],74:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],75:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],76:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],77:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],72:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],73:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],74:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],75:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],76:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],77:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],78:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11792,31 +12088,31 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],78:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],79:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],80:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],81:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],80:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],81:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],82:[function(require,module,exports){
 'use strict';
 
 // セリフ
 var Serif= [
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":null},
-	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"また点滅する御札があるわね"},
+	{"pos":"left","exp":"normal3","chara":"yukari","fukidashi":"normal","serif":"また陰陽玉があるわね"},
 	{"pos":"right","exp":"normal1","chara":"reimu","fukidashi":"normal","serif":"取ると紫の場所が、変わるんでしょ"},
 	{"pos":"left","exp":"smile","chara":"yukari","fukidashi":"normal","serif":"そのとおりよ♪"},
 ];
 module.exports = Serif;
 
-},{}],82:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],83:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],84:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],85:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],84:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],85:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],86:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11832,13 +12128,13 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],86:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],87:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],88:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],89:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],88:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],89:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],90:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11855,9 +12151,9 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],90:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],91:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],92:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11873,9 +12169,9 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],92:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],93:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],94:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11892,9 +12188,9 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],94:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],95:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],96:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11914,9 +12210,9 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],96:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],97:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],98:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11925,9 +12221,9 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],98:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],99:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],100:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11941,13 +12237,13 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],100:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],101:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],102:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],103:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],102:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],103:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],104:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11964,17 +12260,17 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],104:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],105:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],106:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],107:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],108:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],109:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],106:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],107:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],108:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],109:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],110:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -11990,11 +12286,11 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],110:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],111:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],112:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],112:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],113:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12014,7 +12310,7 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],113:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12029,9 +12325,9 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],114:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],115:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],116:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12043,9 +12339,9 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],116:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],117:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],118:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12057,13 +12353,13 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],118:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],119:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],120:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],121:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],120:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],121:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],122:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12076,13 +12372,13 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],122:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],123:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],124:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],125:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],124:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],125:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],126:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12095,13 +12391,13 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],126:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],127:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],128:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],129:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],128:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],129:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],130:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12113,9 +12409,9 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],130:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],131:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],132:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12127,9 +12423,9 @@ var Serif= [
 
 module.exports = Serif;
 
-},{}],132:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"dup":54}],133:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
+arguments[4][55][0].apply(exports,arguments)
+},{"dup":55}],134:[function(require,module,exports){
 'use strict';
 
 // セリフ
@@ -12142,7 +12438,7 @@ var Serif= [
 ];
 module.exports = Serif;
 
-},{}],134:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 'use strict';
 var Game = require('./game');
 var CONSTANT = require('./constant');
@@ -12189,7 +12485,7 @@ if(window.require) {
 
 
 
-},{"./constant":6,"./game":8,"electron":2}],135:[function(require,module,exports){
+},{"./constant":6,"./game":8,"electron":2}],136:[function(require,module,exports){
 'use strict';
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
@@ -12198,6 +12494,9 @@ var CONSTANT = require('../constant');
 
 var AlterEgo = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.ALTEREGO;
 };
 util.inherit(AlterEgo, base_object);
 
@@ -12248,32 +12547,17 @@ AlterEgo.prototype.beforeDraw = function(){
 		}
 	}
 
-	// アイテムとの接触判定
-	var item = this.checkCollisionWithItems();
-	if(item) {
-		item.got(); // 獲得済
-		this.scene.addYukariItemNum();
+	// 紫用アイテムとの接触判定
+	var item_for_yukari_list = this.scene.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI];
+	this.checkCollisionWithObjects(item_for_yukari_list);
+};
+
+AlterEgo.prototype.onCollision = function(obj){
+	// 紫用アイテムと接触したら
+	if (obj.type === CONSTANT.ITEM_FOR_YUKARI) {
+		this.scene.addYukariItemNum(); // 獲得数+1
 	}
 };
-
-AlterEgo.prototype.checkCollisionWithItems = function() {
-	var self = this;
-	// アイテムと分身の衝突判定
-	var collision_item = false;
-
-	self.scene.objects_by_tile_type[CONSTANT.ITEM_FOR_YUKARI].forEach(function(obj) {
-		if(obj.isCollision() && self.checkCollision(obj)) {
-			collision_item = obj;
-			// TODO: break;
-		}
-	});
-
-	return collision_item;
-};
-
-
-
-
 
 AlterEgo.prototype.draw = function(){
 	base_object.prototype.draw.apply(this, arguments);
@@ -12353,7 +12637,7 @@ AlterEgo.prototype.startExchange = function(span) {
 };
 module.exports = AlterEgo;
 
-},{"../constant":6,"../hakurei":9,"./exchange_anim":137}],136:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"./exchange_anim":138}],137:[function(require,module,exports){
 'use strict';
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
@@ -12383,7 +12667,7 @@ BackGroundEye.prototype.spriteHeight = function(){
 };
 module.exports = BackGroundEye;
 
-},{"../hakurei":9}],137:[function(require,module,exports){
+},{"../hakurei":9}],138:[function(require,module,exports){
 'use strict';
 var base_object = require('../hakurei').object.sprite;
 var util = require('../hakurei').util;
@@ -12467,7 +12751,7 @@ ExchangeAnim.prototype.spriteAnimationSpan = function(){
 
 module.exports = ExchangeAnim;
 
-},{"../constant":6,"../hakurei":9}],138:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9}],139:[function(require,module,exports){
 'use strict';
 
 /* スタッフロール用霊夢 */
@@ -12518,7 +12802,7 @@ Reimu.prototype.scaleHeight = function(){
 
 module.exports = Reimu;
 
-},{"../constant":6,"../hakurei":9}],139:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9}],140:[function(require,module,exports){
 'use strict';
 /* ステージ枠(縦横) */
 
@@ -12562,7 +12846,7 @@ BackGroundEye.prototype.rotateAdjust = function(){
 
 module.exports = BackGroundEye;
 
-},{"../hakurei":9}],140:[function(require,module,exports){
+},{"../hakurei":9}],141:[function(require,module,exports){
 'use strict';
 /* ステージ枠(角) */
 
@@ -12606,7 +12890,7 @@ BackGroundEye.prototype.rotateAdjust = function(){
 
 module.exports = BackGroundEye;
 
-},{"../hakurei":9}],141:[function(require,module,exports){
+},{"../hakurei":9}],142:[function(require,module,exports){
 'use strict';
 var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
@@ -12622,6 +12906,9 @@ BlockBase.prototype.init = function(x, y) {
 	this.y(y);
 
 	this.is_collision = true;
+};
+BlockBase.prototype.isBlock = function() {
+	return true;
 };
 
 BlockBase.prototype.isCollision = function() {
@@ -12662,7 +12949,7 @@ BlockBase.prototype.scaleHeight = function(){
 
 module.exports = BlockBase;
 
-},{"../../hakurei":9,"./tile_base":167}],142:[function(require,module,exports){
+},{"../../hakurei":9,"./tile_base":168}],143:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -12670,6 +12957,8 @@ var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
 	base_object.apply(this, arguments);
+	// 種類
+	this.type = CONSTANT.BLOCK_BLUE;
 };
 util.inherit(BlockGreen, base_object);
 
@@ -12680,7 +12969,7 @@ BlockGreen.prototype.spriteIndices = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":6,"../../hakurei":9,"./block_base":141}],143:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./block_base":142}],144:[function(require,module,exports){
 'use strict';
 
 /* 乗ると消えるブロック */
@@ -12694,23 +12983,26 @@ var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
 var util = require('../../hakurei').util;
 
-var BlockGreen = function (scene) {
+var BlockDisappear = function (scene) {
 	base_object.apply(this, arguments);
-};
-util.inherit(BlockGreen, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
+	// 種類
+	this.type = CONSTANT.BLOCK_DISAPPEAR;
+};
+util.inherit(BlockDisappear, base_object);
+
+BlockDisappear.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.start_fall_frame = 0;
 	this.is_show = true;
 	this.is_collision = true;
 };
 
-BlockGreen.prototype.spriteIndices = function(){
+BlockDisappear.prototype.spriteIndices = function(){
 	return [{x: 1, y: 0}];
 };
 
-BlockGreen.prototype.beforeDraw = function() {
+BlockDisappear.prototype.beforeDraw = function() {
 	base_object.prototype.beforeDraw.apply(this, arguments);
 	if(this.start_fall_frame && (FALL_SPAN - this.frame_count + this.start_fall_frame <= 0) ) {
 		this.is_show = false;
@@ -12720,18 +13012,18 @@ BlockGreen.prototype.beforeDraw = function() {
 	}
 };
 
-BlockGreen.prototype.fall = function(){
+BlockDisappear.prototype.fall = function(){
 	this.start_fall_frame = this.frame_count;
 	this.is_collision = false;
 };
 
-BlockGreen.prototype.isShow = function() {
+BlockDisappear.prototype.isShow = function() {
 	return this.is_show;
 };
-BlockGreen.prototype.isCollision = function() {
+BlockDisappear.prototype.isCollision = function() {
 	return this.is_collision;
 };
-BlockGreen.prototype.alpha = function() {
+BlockDisappear.prototype.alpha = function() {
 	var base_scale = 0.5;
 	if (this.start_fall_frame) {
 		return(base_scale *  (FALL_SPAN - (this.frame_count - this.start_fall_frame)) / FALL_SPAN );
@@ -12743,9 +13035,9 @@ BlockGreen.prototype.alpha = function() {
 };
 
 
-module.exports = BlockGreen;
+module.exports = BlockDisappear;
 
-},{"../../constant":6,"../../hakurei":9,"./block_base":141}],144:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./block_base":142}],145:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -12753,6 +13045,9 @@ var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.BLOCK_GREEN;
 };
 util.inherit(BlockGreen, base_object);
 
@@ -12762,7 +13057,7 @@ BlockGreen.prototype.spriteIndices = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":6,"../../hakurei":9,"./block_base":141}],145:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./block_base":142}],146:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -12770,6 +13065,8 @@ var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
 	base_object.apply(this, arguments);
+	// 種類
+	this.type = CONSTANT.BLOCK_PURPLE;
 };
 util.inherit(BlockGreen, base_object);
 
@@ -12779,7 +13076,7 @@ BlockGreen.prototype.spriteIndices = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":6,"../../hakurei":9,"./block_base":141}],146:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./block_base":142}],147:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -12787,6 +13084,9 @@ var util = require('../../hakurei').util;
 
 var BlockGreen = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.BLOCK_RED;
 };
 util.inherit(BlockGreen, base_object);
 
@@ -12797,7 +13097,7 @@ BlockGreen.prototype.spriteIndices = function(){
 
 module.exports = BlockGreen;
 
-},{"../../constant":6,"../../hakurei":9,"./block_base":141}],147:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./block_base":142}],148:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -12805,6 +13105,9 @@ var util = require('../../hakurei').util;
 
 var BlockStone1 = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.BLOCK_STONE1;
 };
 util.inherit(BlockStone1, base_object);
 
@@ -12814,7 +13117,7 @@ BlockStone1.prototype.spriteIndices = function(){
 
 module.exports = BlockStone1;
 
-},{"../../constant":6,"../../hakurei":9,"./block_base":141}],148:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./block_base":142}],149:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -12822,6 +13125,9 @@ var util = require('../../hakurei').util;
 
 var BlockStone2 = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.BLOCK_STONE2;
 };
 util.inherit(BlockStone2, base_object);
 
@@ -12831,7 +13137,7 @@ BlockStone2.prototype.spriteIndices = function(){
 
 module.exports = BlockStone2;
 
-},{"../../constant":6,"../../hakurei":9,"./block_base":141}],149:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./block_base":142}],150:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
@@ -12839,6 +13145,9 @@ var util = require('../../hakurei').util;
 
 var BlockStone3 = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.BLOCK_STONE3;
 };
 util.inherit(BlockStone3, base_object);
 
@@ -12848,7 +13157,7 @@ BlockStone3.prototype.spriteIndices = function(){
 
 module.exports = BlockStone3;
 
-},{"../../constant":6,"../../hakurei":9,"./block_base":141}],150:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./block_base":142}],151:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./tile_base');
@@ -12856,6 +13165,9 @@ var util = require('../../hakurei').util;
 
 var Death = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.DEATH;
 };
 util.inherit(Death, base_object);
 
@@ -12886,7 +13198,7 @@ Death.prototype.spriteHeight = function(){
 };
 module.exports = Death;
 
-},{"../../constant":6,"../../hakurei":9,"./tile_base":167}],151:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./tile_base":168}],152:[function(require,module,exports){
 'use strict';
 
 var SPEED = 2;
@@ -12897,6 +13209,9 @@ var util = require('../../hakurei').util;
 
 var Enemy = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.ENEMY;
 };
 util.inherit(Enemy, base_object);
 
@@ -12951,7 +13266,7 @@ var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_BLUE,
 	CONSTANT.BLOCK_RED,
 	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_DISAPPEAR,
 	CONSTANT.BLOCK_STONE1,
 	CONSTANT.BLOCK_STONE2,
 	CONSTANT.BLOCK_STONE3,
@@ -12988,7 +13303,7 @@ var BLOCK_TILE_TYPES2 = [
 	CONSTANT.BLOCK_BLUE,
 	CONSTANT.BLOCK_RED,
 	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_DISAPPEAR,
 	CONSTANT.BLOCK_STONE1,
 	CONSTANT.BLOCK_STONE2,
 	CONSTANT.BLOCK_STONE3,
@@ -13023,11 +13338,16 @@ Enemy.prototype.checkCollisionWithLeftRightBlocks = function() {
 
 
 
-Enemy.prototype.collisionWidth = function(){
-	return 24;
+Enemy.prototype.collisionWidth = function(obj){
+	return 1;
 };
-Enemy.prototype.collisionHeight = function(){
-	return 24 + 1; // 地面との接触のため、+1
+Enemy.prototype.collisionHeight = function(obj) {
+	if (obj && obj.type === CONSTANT.PLAYER) {
+		return 1;
+	}
+	else {
+		return 24 + 1; // 地面との接触のため、+1
+	}
 };
 
 Enemy.prototype.isReflect = function(){
@@ -13057,7 +13377,7 @@ Enemy.prototype.spriteHeight = function(){
 };
 module.exports = Enemy;
 
-},{"../../constant":6,"../../hakurei":9,"./tile_base":167}],152:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./tile_base":168}],153:[function(require,module,exports){
 'use strict';
 
 var SPEED = 1;
@@ -13068,6 +13388,9 @@ var util = require('../../hakurei').util;
 
 var Enemy = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.ENEMY_VERTICAL;
 };
 util.inherit(Enemy, base_object);
 
@@ -13082,7 +13405,6 @@ Enemy.prototype.init = function(x, y) {
 Enemy.prototype.beforeDraw = function() {
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
-	var before_y = this.y();
 	if (this.is_down) {
 		this._y += SPEED;
 	}
@@ -13095,60 +13417,28 @@ Enemy.prototype.beforeDraw = function() {
 		this.is_down = !this.is_down;
 	}
 
-	if(this.checkCollisionWithBlocks()) {
-		// ブロックと接触するならば戻って反転
-		this._y = before_y;
-		this.is_down = !this.is_down;
-	}
+	// ブロックとの接触判定
+	var stage_blocks = this.scene.getBlocks();
+	this.checkCollisionWithObjects(stage_blocks);
 };
 
-Enemy.prototype.isCollision = function() {
+Enemy.prototype.isCollision = function(obj) {
+	var self = this;
+	// 左右のブロックとは当たり判定しない
+	if (obj) {
+		if(self.x()-self.collisionWidth()/2 > obj.x()+obj.collisionWidth()/2) return false;
+		if(self.x()+self.collisionWidth()/2 < obj.x()-obj.collisionWidth()/2) return false;
+	}
 	return true;
 };
 
-
-
-
-// 地面ブロック一覧
-var BLOCK_TILE_TYPES = [
-	CONSTANT.BLOCK_GREEN,
-	CONSTANT.BLOCK_BLUE,
-	CONSTANT.BLOCK_RED,
-	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
-	CONSTANT.BLOCK_STONE1,
-	CONSTANT.BLOCK_STONE2,
-	CONSTANT.BLOCK_STONE3,
-];
-
-// ブロックとの接触判定
-Enemy.prototype.checkCollisionWithBlocks = function() {
-	var self = this;
-	// 壁と敵の衝突判定
-	var is_collision = false;
-	for (var i = 0; i < BLOCK_TILE_TYPES.length; i++) {
-		var tile_type = BLOCK_TILE_TYPES[i];
-		var tile_objects = self.scene.objects_by_tile_type[tile_type];
-
-		for (var j = 0; j < tile_objects.length; j++) {
-			var obj = tile_objects[j];
-
-			// 敵の左右のブロックは無視する
-			if(self.x()-self.collisionWidth()/2 > obj.x()+obj.collisionWidth()/2) continue;
-			if(self.x()+self.collisionWidth()/2 < obj.x()-obj.collisionWidth()/2) continue;
-			if(obj.isCollision() && self.checkCollision(obj)) {
-				is_collision = true;
-				break;
-			}
-		}
+Enemy.prototype.onCollision = function(obj) {
+	// ブロックと接触したら
+	if (obj.isBlock()) {
+		//TODO: this._y = before_y;
+		this.is_down = !this.is_down;
 	}
-
-	return is_collision;
 };
-
-
-
-
 
 Enemy.prototype.collisionWidth = function(){
 	return 24;
@@ -13184,7 +13474,7 @@ Enemy.prototype.spriteHeight = function(){
 };
 module.exports = Enemy;
 
-},{"../../constant":6,"../../hakurei":9,"./tile_base":167}],153:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./tile_base":168}],154:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./tile_base');
@@ -13192,6 +13482,9 @@ var util = require('../../hakurei').util;
 
 var Item = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.ITEM_FOR_REIMU;
 };
 util.inherit(Item, base_object);
 
@@ -13270,18 +13563,21 @@ Item.prototype.spriteHeight = function(){
 };
 module.exports = Item;
 
-},{"../../constant":6,"../../hakurei":9,"./tile_base":167}],154:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./tile_base":168}],155:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
 
-var Item = function (scene) {
+var ItemForYukari = function (scene) {
 	base_object.apply(this, arguments);
-};
-util.inherit(Item, base_object);
 
-Item.prototype.init = function(x, y) {
+	// 種類
+	this.type = CONSTANT.ITEM_FOR_YUKARI;
+};
+util.inherit(ItemForYukari, base_object);
+
+ItemForYukari.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x(x);
 	this.y(y);
@@ -13291,7 +13587,7 @@ Item.prototype.init = function(x, y) {
 	this.start_got_animation_frame_count = 0;
 };
 
-Item.prototype.got = function() {
+ItemForYukari.prototype.got = function() {
 	this.is_collision = false;
 
 	this.core.playSound("got_item_ribon");
@@ -13300,15 +13596,24 @@ Item.prototype.got = function() {
 	this.start_got_animation_frame_count = this.frame_count;
 };
 
-Item.prototype.isShow = function() {
+ItemForYukari.prototype.onCollision = function(obj){
+	// 紫と接触したら
+	if (obj.type === CONSTANT.ALTEREGO) {
+		this.got(); // 獲得済
+	}
+};
+
+
+
+ItemForYukari.prototype.isShow = function() {
 	return this.is_show;
 };
 
-Item.prototype.isCollision = function() {
+ItemForYukari.prototype.isCollision = function() {
 	return this.is_collision;
 };
 
-Item.prototype.beforeDraw = function(){
+ItemForYukari.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
 	if (this.start_got_animation_frame_count) {
@@ -13336,10 +13641,10 @@ Item.prototype.beforeDraw = function(){
 
 // sprite configuration
 
-Item.prototype.spriteName = function(){
+ItemForYukari.prototype.spriteName = function(){
 	return "stage_tile_24";
 };
-Item.prototype.spriteIndices = function(){
+ItemForYukari.prototype.spriteIndices = function(){
 	// Ex ストーリーになるとアイテムが変わる
 	if (this.scene.isInExStory()) {
 		return [{x: 3, y: 2}];
@@ -13349,26 +13654,29 @@ Item.prototype.spriteIndices = function(){
 	}
 
 };
-Item.prototype.spriteWidth = function(){
+ItemForYukari.prototype.spriteWidth = function(){
 	return 24;
 };
-Item.prototype.spriteHeight = function(){
+ItemForYukari.prototype.spriteHeight = function(){
 	return 24;
 };
-module.exports = Item;
+module.exports = ItemForYukari;
 
-},{"../../constant":6,"../../hakurei":9,"./tile_base":167}],155:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./tile_base":168}],156:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./tile_base');
 var util = require('../../hakurei').util;
 
-var Item = function (scene) {
+var ItemOfExchange = function (scene) {
 	base_object.apply(this, arguments);
-};
-util.inherit(Item, base_object);
 
-Item.prototype.init = function(x, y) {
+	// 種類
+	this.type = CONSTANT.ITEM_OF_EXCHANGE;
+};
+util.inherit(ItemOfExchange, base_object);
+
+ItemOfExchange.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.x(x);
 	this.y(y);
@@ -13376,29 +13684,26 @@ Item.prototype.init = function(x, y) {
 	this.is_collision = true;
 
 	this.start_got_animation_frame_count = 0;
-
-	// blink
-	this.alpha_for_blink = 100;
 };
 
-Item.prototype.got = function() {
+ItemOfExchange.prototype.got = function() {
 	this.is_collision = false;
 
-	this.core.playSound("powerup");
+	this.core.playSound("got_item_ohuda");
 
 	// start animation
 	this.start_got_animation_frame_count = this.frame_count;
 };
 
-Item.prototype.isShow = function() {
+ItemOfExchange.prototype.isShow = function() {
 	return this.is_show;
 };
 
-Item.prototype.isCollision = function() {
+ItemOfExchange.prototype.isCollision = function() {
 	return this.is_collision;
 };
 
-Item.prototype.beforeDraw = function(){
+ItemOfExchange.prototype.beforeDraw = function(){
 	base_object.prototype.beforeDraw.apply(this, arguments);
 
 	if (this.start_got_animation_frame_count) {
@@ -13414,16 +13719,10 @@ Item.prototype.beforeDraw = function(){
 			this.start_got_animation_frame_count = 0; //reset
 		}
 	}
-
-	this.alpha_for_blink--;
-	if (this.alpha_for_blink === 0) {
-		this.alpha_for_blink = 100;
-	}
 };
 
-Item.prototype.alpha = function() {
-	return this.alpha_for_blink / 100;
-};
+
+
 
 
 
@@ -13432,21 +13731,27 @@ Item.prototype.alpha = function() {
 
 // sprite configuration
 
-Item.prototype.spriteName = function(){
+ItemOfExchange.prototype.spriteName = function(){
 	return "stage_tile_24";
 };
-Item.prototype.spriteIndices = function(){
-	return [{x: 1, y: 2}];
+ItemOfExchange.prototype.spriteIndices = function(){
+	return [{x: 0, y: 3}];
 };
-Item.prototype.spriteWidth = function(){
+ItemOfExchange.prototype.spriteWidth = function(){
 	return 24;
 };
-Item.prototype.spriteHeight = function(){
+ItemOfExchange.prototype.spriteHeight = function(){
 	return 24;
 };
-module.exports = Item;
+ItemOfExchange.prototype.rotateAdjust = function(){
+	return this.frame_count*2 % 360;
+};
 
-},{"../../constant":6,"../../hakurei":9,"./tile_base":167}],156:[function(require,module,exports){
+
+
+module.exports = ItemOfExchange;
+
+},{"../../constant":6,"../../hakurei":9,"./tile_base":168}],157:[function(require,module,exports){
 'use strict';
 var CONSTANT = require('../../constant');
 var base_object = require('./tile_base');
@@ -13454,6 +13759,9 @@ var util = require('../../hakurei').util;
 
 var Ladder = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.LADDER;
 };
 util.inherit(Ladder, base_object);
 
@@ -13528,7 +13836,7 @@ Ladder.prototype.collisionHeight = function() {
 
 module.exports = Ladder;
 
-},{"../../constant":6,"../../hakurei":9,"./tile_base":167}],157:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"./tile_base":168}],158:[function(require,module,exports){
 'use strict';
 
 var CONSTANT = require('../../constant');
@@ -13552,7 +13860,7 @@ var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_BLUE,
 	CONSTANT.BLOCK_RED,
 	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_DISAPPEAR,
 	CONSTANT.BLOCK_STONE1,
 	CONSTANT.BLOCK_STONE2,
 	CONSTANT.BLOCK_STONE3,
@@ -13565,7 +13873,7 @@ var BLOCK_TILE_TYPES2 = [
 	CONSTANT.BLOCK_BLUE,
 	CONSTANT.BLOCK_RED,
 	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_DISAPPEAR,
 	CONSTANT.BLOCK_STONE1,
 	CONSTANT.BLOCK_STONE2,
 	CONSTANT.BLOCK_STONE3,
@@ -13590,6 +13898,9 @@ var StateFallDown  = require('./player/state_falldown');
 
 var Player = function (scene) {
 	base_object.apply(this, arguments);
+
+	// 種類
+	this.type = CONSTANT.PLAYER;
 
 	// プレイヤーの状態一覧
 	this.state = null;
@@ -13694,6 +14005,14 @@ Player.prototype.update = function(){
 			this.changeState(CONSTANT.STATE_CLIMBDOWN);
 			this._x = collision_ladder.x();
 			this.climbUp();
+
+			// 再度はしごとの当たり判定をチェックして、はしごと触れてなければ上移動を戻す
+			collision_ladder = this.checkCollisionWithLadder();
+			if (!collision_ladder) {
+				this.climbDown();
+				this.changeState(CONSTANT.STATE_NORMAL);
+			}
+
 		}
 		// 上あるいは下のブロックにめり込んだら、めり込み解除
 		var repulse_y = this.checkCollisionWithBlocks2();
@@ -13944,7 +14263,7 @@ Player.prototype.checkCollisionWithFallBlock = function() {
 	var self = this;
 	var is_collision = null;
 
-	var tile_objects = self.scene.objects_by_tile_type[CONSTANT.BLOCK_BROWN];
+	var tile_objects = self.scene.objects_by_tile_type[CONSTANT.BLOCK_DISAPPEAR];
 
 	for (var j = 0; j < tile_objects.length; j++) {
 		var obj = tile_objects[j];
@@ -14163,16 +14482,16 @@ Player.prototype.isShow = function(){
 		return this.isExchanging() ? false : true; // 交代中は表示しない
 	}
 };
-Player.prototype.collisionWidth = function() {
+Player.prototype.collisionWidth = function(obj) {
 	return 24;
 };
-Player.prototype.collisionHeight = function() {
+Player.prototype.collisionHeight = function(obj) {
 	return 32;
 };
 
 module.exports = Player;
 
-},{"../../constant":6,"../../hakurei":9,"../alterego":135,"../exchange_anim":137,"./block_base":141,"./player/state_climbdown":159,"./player/state_dying":160,"./player/state_exchange":161,"./player/state_falldown":162,"./player/state_moveleft":164,"./player/state_moveright":165,"./player/state_normal":166,"./tile_base":167}],158:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"../alterego":136,"../exchange_anim":138,"./block_base":142,"./player/state_climbdown":160,"./player/state_dying":161,"./player/state_exchange":162,"./player/state_falldown":163,"./player/state_moveleft":165,"./player/state_moveright":166,"./player/state_normal":167,"./tile_base":168}],159:[function(require,module,exports){
 'use strict';
 var base_object = require('../../../hakurei').object.base;
 var util = require('../../../hakurei').util;
@@ -14206,7 +14525,7 @@ StateBase.prototype.isEnableToDie = function () {
 
 module.exports = StateBase;
 
-},{"../../../hakurei":9}],159:[function(require,module,exports){
+},{"../../../hakurei":9}],160:[function(require,module,exports){
 'use strict';
 
 // はしごを降りている状態
@@ -14229,7 +14548,7 @@ StateNormal.prototype.isEnableToFallDown = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":6,"../../../hakurei":9,"./state_base":158}],160:[function(require,module,exports){
+},{"../../../constant":6,"../../../hakurei":9,"./state_base":159}],161:[function(require,module,exports){
 'use strict';
 
 // 死亡中の状態
@@ -14268,7 +14587,7 @@ StateNormal.prototype.isEnableToDie = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":6,"../../../hakurei":9,"./state_base":158}],161:[function(require,module,exports){
+},{"../../../constant":6,"../../../hakurei":9,"./state_base":159}],162:[function(require,module,exports){
 'use strict';
 
 // 場所交代中の状態
@@ -14306,7 +14625,7 @@ StateNormal.prototype.isEnableToDie = function () {
 
 module.exports = StateNormal;
 
-},{"../../../constant":6,"../../../hakurei":9,"./state_base":158}],162:[function(require,module,exports){
+},{"../../../constant":6,"../../../hakurei":9,"./state_base":159}],163:[function(require,module,exports){
 'use strict';
 
 // 落下中の状態
@@ -14326,7 +14645,7 @@ StateNormal.prototype.isEnableToPlayMove = function () {
 };
 module.exports = StateNormal;
 
-},{"../../../constant":6,"../../../hakurei":9,"./state_base":158}],163:[function(require,module,exports){
+},{"../../../constant":6,"../../../hakurei":9,"./state_base":159}],164:[function(require,module,exports){
 'use strict';
 
 // 移動状態の基底クラス
@@ -14342,7 +14661,7 @@ util.inherit(StateMoveBase, base_object);
 
 module.exports = StateMoveBase;
 
-},{"../../../constant":6,"../../../hakurei":9,"./state_base":158}],164:[function(require,module,exports){
+},{"../../../constant":6,"../../../hakurei":9,"./state_base":159}],165:[function(require,module,exports){
 'use strict';
 
 // 左への移動状態
@@ -14358,9 +14677,9 @@ util.inherit(StateMoveLeft, base_object);
 
 module.exports = StateMoveLeft;
 
-},{"../../../constant":6,"../../../hakurei":9,"./state_move_base":163}],165:[function(require,module,exports){
-arguments[4][164][0].apply(exports,arguments)
-},{"../../../constant":6,"../../../hakurei":9,"./state_move_base":163,"dup":164}],166:[function(require,module,exports){
+},{"../../../constant":6,"../../../hakurei":9,"./state_move_base":164}],166:[function(require,module,exports){
+arguments[4][165][0].apply(exports,arguments)
+},{"../../../constant":6,"../../../hakurei":9,"./state_move_base":164,"dup":165}],167:[function(require,module,exports){
 'use strict';
 
 // 通常の状態
@@ -14376,7 +14695,7 @@ util.inherit(StateNormal, base_object);
 
 module.exports = StateNormal;
 
-},{"../../../constant":6,"../../../hakurei":9,"./state_base":158}],167:[function(require,module,exports){
+},{"../../../constant":6,"../../../hakurei":9,"./state_base":159}],168:[function(require,module,exports){
 'use strict';
 var base_object = require('../../hakurei').object.sprite;
 var util = require('../../hakurei').util;
@@ -14396,203 +14715,12 @@ TileBase.prototype.init = function(x, y, scale) {
 	this._scale = scale;
 };
 
+TileBase.prototype.isBlock = function() {
+	return false;
+};
 module.exports = TileBase;
 
-},{"../../hakurei":9}],168:[function(require,module,exports){
-'use strict';
-
-
-// TODO: createStageResultObject 実装したい
-var base_class = require('./hakurei').storage.save;
-var util = require('./hakurei').util;
-var CONSTANT = require('./constant');
-var LogicScore = require('./logic/score');
-
-var StorageSave = function(scene) {
-	base_class.apply(this, arguments);
-};
-util.inherit(StorageSave, base_class);
-
-// 通常ストーリーの進捗を +1
-StorageSave.prototype.incrementNormalStageProgress = function(){
-	var progress = this.getNormalStageProgress();
-
-	if (progress) {
-		progress += 1;
-	}
-	else {
-		progress = 1;
-	}
-
-	this.set("normal_stage_progress", progress);
-};
-// 通常ストーリーをどのステージまで進めているか取得
-StorageSave.prototype.getNormalStageProgress = function(){
-	return this.get("normal_stage_progress");
-};
-// 通常ストーリーを進捗を削除
-StorageSave.prototype.resetNormalStageProgress = function(){
-	return this.remove("normal_stage_progress");
-};
-
-// Ex ストーリーの進捗を +1
-StorageSave.prototype.incrementExStageProgress = function(){
-	var progress = this.getExStageProgress();
-
-	if (progress) {
-		progress += 1;
-	}
-	else {
-		progress = CONSTANT.EX_STORY_START_STAGE_NO;
-	}
-
-	this.set("ex_stage_progress", progress);
-};
-// Ex ストーリーをどのステージまで進めているか取得
-StorageSave.prototype.getExStageProgress = function(){
-	return this.get("ex_stage_progress");
-};
-// Ex ストーリーを進捗を削除
-StorageSave.prototype.resetExStageProgress = function(){
-	return this.remove("ex_stage_progress");
-};
-
-// 通常ストーリーを1度でもクリアしたことを設定
-StorageSave.prototype.clearNormalStage = function(){
-	this.set("is_normal_stage_cleared", true);
-};
-// 通常ストーリーを1度でもクリアしたか否かを取得
-StorageSave.prototype.getIsNormalStageCleared = function(){
-	return this.get("is_normal_stage_cleared");
-};
-
-// Exストーリーを1度でもクリアしたことを設定
-StorageSave.prototype.clearExStage = function(){
-	this.set("is_ex_stage_cleared", true);
-};
-// Exストーリーを1度でもクリアしたか否かを取得
-StorageSave.prototype.getIsExStageCleared = function(){
-	return this.get("is_ex_stage_cleared");
-};
-
-
-
-
-
-// ステージ実績の一覧を取得
-StorageSave.prototype.getStageResultList = function(){
-	var list = this.get("stage_result_list");
-
-	if(!list) list = [];
-
-	return list;
-};
-
-// 対象のステージ実績を取得
-StorageSave.prototype.getStageResult = function(stage_no){
-	var list = this.getStageResultList();
-
-	return list[stage_no - 1];
-};
-
-// 最新のステージ実績を取得
-StorageSave.prototype.getLatestStageResult = function(){
-	var list = this.getStageResultList();
-
-	if (list.length === 0) {
-		return null;
-	}
-
-	return list[list.length - 1];
-};
-
-// 対象のステージ実績を更新
-StorageSave.prototype.updateStageResult = function(stage_no, time, exchange_num){
-	stage_no -= 1; // 配列なので 0 から
-	var list = this.getStageResultList();
-
-	// ステージ実績がなければ現在の実績でハイスコアを更新
-	if(!list[stage_no]) {
-		list[stage_no] = {
-			stage_no: stage_no + 1,     // -1 しちゃったのでここだけ正常なstage noに戻す
-			time:         time,         // クリア時刻
-			exchange_num: exchange_num, // 使用 交換回数
-		};
-	}
-	else {
-		// 以前のハイスコア
-		var previous_honor_num = LogicScore.calcHonor(
-			stage_no + 1,
-			list[stage_no].time,
-			list[stage_no].exchange_num
-		);
-		// 今回のスコア
-		var next_honor_num = LogicScore.calcHonor(
-			stage_no + 1,
-			time,
-			exchange_num
-		);
-
-		// ベストスコアであれば更新
-		if(next_honor_num > previous_honor_num) {
-			list[stage_no].time = time;
-			list[stage_no].exchange_num = exchange_num;
-		}
-	}
-	// セーブ
-	this.set("stage_result_list", list);
-};
-
-// 通常ストーリーの実績を全て解放
-StorageSave.prototype.clearNormalStageForDebug = function(){
-	var list = this.getStageResultList();
-
-	var last_stage_no = CONSTANT.EX_STORY_START_STAGE_NO - 1;
-
-	for (var i = 0; i < last_stage_no; i++) {
-		// 実績がないステージのみ解放
-		if(!list[i]) {
-			list[i] = {
-				stage_no: i+1,
-				time: 1,
-				exchange_num: 1,
-			};
-		}
-	}
-	this.set("stage_result_list", list);
-
-	// クリアフラグを立てる
-	this.clearNormalStage();
-	this.save();
-};
-
-// Exストーリーの実績を全て解放
-StorageSave.prototype.clearExStageForDebug = function(){
-	var list = this.getStageResultList();
-
-	var begin_stage_no = CONSTANT.EX_STORY_START_STAGE_NO;
-
-	for (var i = begin_stage_no - 1; i < 40; i++) { // TODO: 40固定なのを直す
-		// 実績がないステージのみ解放
-		if(!list[i]) {
-			list[i] = {
-				stage_no: i+1,
-				time: 1,
-				exchange_num: 1,
-			};
-		}
-	}
-	this.set("stage_result_list", list);
-
-	// クリアフラグを立てる
-	this.clearExStage();
-
-	this.save();
-};
-
-module.exports = StorageSave;
-
-},{"./constant":6,"./hakurei":9,"./logic/score":47}],169:[function(require,module,exports){
+},{"../../hakurei":9}],169:[function(require,module,exports){
 'use strict';
 
 // ローディングシーン
@@ -14712,7 +14840,7 @@ var SHOW_START_MESSAGE_INTERVAL = 50;
 
 var MENU = [
 	["menu_story_start", "reminiscence", function (core) {
-		var progress_stage_no = core.save.getNormalStageProgress();
+		var progress_stage_no = core.storage_story.getNormalStageProgress();
 
 		// 最初から
 		if (!progress_stage_no) {
@@ -14722,11 +14850,11 @@ var MENU = [
 		// 続きから
 		else {
 			// 続きのステージから
-			core.changeScene("stage", progress_stage_no + 1, "talk", true);
+			core.changeScene("stage", progress_stage_no + 1, "talk");
 		}
 	}],
 	["menu_ex_story_start", "ex_epigraph", function (core) {
-		var progress_stage_no = core.save.getExStageProgress();
+		var progress_stage_no = core.storage_story.getExStageProgress();
 
 		// 最初から
 		if (!progress_stage_no) {
@@ -14736,14 +14864,14 @@ var MENU = [
 		// 続きから
 		else {
 			// 続きのステージから
-			core.changeScene("stage", progress_stage_no + 1, "talk", true);
+			core.changeScene("stage", progress_stage_no + 1, "talk");
 		}
 	}],
 	["menu_select_stage", "select", function (core) {
 		// ステージセレクト画面へ
 		core.changeScene("select");
 	}],
-	///*
+	/*
 	["menu_how_to", "howto", function (core) {
 		// 遊び方画面へ
 		core.changeScene("howto");
@@ -14751,7 +14879,7 @@ var MENU = [
 	["menu_config", "config", function (core) {
 		core.changeScene("config");
 	}],
-	//*/
+	*/
 	["menu_music_room", "music", function (core) {
 		// Music Room 画面へ
 		core.changeScene("music");
@@ -14770,10 +14898,10 @@ SceneTitle.prototype.init = function(){
 	this.index = 0;
 
 	// Exステージ解放されているかどうか */
-	var is_normal_stage_cleared = this.core.save.getIsNormalStageCleared();
+	var is_normal_stage_cleared = this.core.storage_story.getIsNormalStageCleared();
 
 	// いずれかのステージがクリアされているかどうか
-	var is_any_stage_cleared = this.core.save.getLatestStageResult() ? true : false;
+	var is_any_stage_cleared = this.core.storage_story.getLatestStageResult() ? true : false;
 
 	// メニュー一覧
 	this.menu_list = [];
@@ -14803,11 +14931,20 @@ SceneTitle.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
 	if(this.frame_count === 60) {
-		this.core.playBGM("title");
+		// 通常ストーリーのみクリアしていれば、BGMを霊夢1人 ver に
+		if(this.core.storage_story.getIsNormalStageCleared() && !this.core.storage_story.getIsExStageCleared()) {
+			this.core.playBGM("title_without_yukari");
+		}
+		else {
+			this.core.playBGM("title");
+		}
+
+
 	}
 
 	// カーソルを下移動
 	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_DOWN)) {
+		this.core.playSound('select');
 		this.index++;
 
 		if(this.index >= this.menu_list.length) {
@@ -14816,6 +14953,7 @@ SceneTitle.prototype.beforeDraw = function(){
 	}
 	// カーソルを上移動
 	if(this.core.isKeyPushOrLongDown(H_CONSTANT.BUTTON_UP)) {
+		this.core.playSound('select');
 		this.index--;
 
 		if(this.index < 0) {
@@ -14842,7 +14980,7 @@ SceneTitle.prototype.draw = function(){
 
 	var title_bg;
 	// 通常ストーリーのみクリアしていれば、背景を霊夢1人 ver に
-	if(this.core.save.getIsNormalStageCleared() && !this.core.save.getIsExStageCleared()) {
+	if(this.core.storage_story.getIsNormalStageCleared() && !this.core.storage_story.getIsExStageCleared()) {
 		title_bg = this.core.image_loader.getImage('title_bg_without_yukari');
 	}
 	else {
@@ -14945,7 +15083,7 @@ SceneReminiscence.prototype.serifScript = function() {
 
 // BGM
 SceneReminiscence.prototype.bgm = function() {
-	return "mute";
+	return "reminiscence";
 };
 // トランジションカラー
 SceneReminiscence.prototype.backgroundTransitionColor = function() {
@@ -14956,7 +15094,7 @@ SceneReminiscence.prototype.backgroundTransitionColor = function() {
 
 module.exports = SceneReminiscence;
 
-},{"../constant":6,"../hakurei":9,"../logic/serif/reminiscence":53,"./serif_base":224}],172:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/serif/reminiscence":54,"./serif_base":224}],172:[function(require,module,exports){
 'use strict';
 
 /* 題字画面 */
@@ -15049,7 +15187,7 @@ util.inherit(ScenePrologue, base_scene);
 // 立ち絵＆セリフ終了後
 ScenePrologue.prototype.notifySerifEnd = function() {
 	var stage_no = 1;
-	this.core.changeScene("stage", stage_no, "talk", true);
+	this.core.changeScene("stage", stage_no, "talk");
 };
 
 // セリフスクリプト
@@ -15063,11 +15201,11 @@ ScenePrologue.prototype.background = function() {
 };
 // BGM
 ScenePrologue.prototype.bgm = function() {
-	return "mute";
+	return "prologue";
 };
 module.exports = ScenePrologue;
 
-},{"../constant":6,"../hakurei":9,"../logic/serif/prologue":52,"./serif_base":224}],174:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/serif/prologue":53,"./serif_base":224}],174:[function(require,module,exports){
 'use strict';
 
 var util = require('../hakurei').util;
@@ -15106,7 +15244,7 @@ var SceneStage = function(core) {
 };
 util.inherit(SceneStage, base_scene);
 
-SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm, is_from_select_scene){
+SceneStage.prototype.init = function(stage_no, sub_scene, is_from_select_scene){
 	base_scene.prototype.init.apply(this, arguments);
 
 	// stage no
@@ -15115,8 +15253,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_play_bgm, is_from_s
 	// デフォルトは talk シーンから開始
 	if(!sub_scene) sub_scene = "talk";
 
-	this.is_play_bgm = is_play_bgm ? true : false;
-	if(this.is_play_bgm) {
+	if(this.core.audio_loader.currentPlayingBGM() !== this.getBGMName()) {
 		this.core.stopBGM();
 	}
 
@@ -15171,10 +15308,22 @@ SceneStage.prototype.beforeDraw = function(){
 
 	// サブオブジェクトのbeforeDraw は sub scene play の中でやっている
 
-	if(this.is_play_bgm && this.frame_count === 60) {
-		this.core.playBGM('stage_a');
+	if(this.frame_count === 60) {
+		this.core.changeBGM(this.getBGMName());
 	}
 };
+
+SceneStage.prototype.getBlocks = function(){
+	var blocks = [];
+	for (var i = 0, len = this.objects.length; i < len; i++) {
+		if (!this.objects[i].isBlock()) continue;
+		blocks.push(this.objects[i]);
+	}
+
+	return blocks;
+};
+
+
 
 SceneStage.prototype.notifyPlayerDie = function(){
 	// 当該ステージの最初から
@@ -15182,7 +15331,7 @@ SceneStage.prototype.notifyPlayerDie = function(){
 };
 // ポーズ画面から、restart
 SceneStage.prototype.notifyRestart = function(){
-	this.core.changeScene("stage", this.stage_no, "play", false, this.is_from_select_scene);
+	this.core.changeScene("stage", this.stage_no, "play", this.is_from_select_scene);
 };
 // ポーズ画面から、quit
 SceneStage.prototype.notifyQuit = function(){
@@ -15198,42 +15347,42 @@ SceneStage.prototype.notifyQuit = function(){
 
 SceneStage.prototype.notifyStageClear = function(){
 	// (ストーリー／セレクト両方) ステージ実績に更新があればセーブ
-	this.core.save.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);
+	this.core.storage_story.updateStageResult(this.stage_no, this.getSubScene("play").frame_count, this.player().exchange_num);
 
 	// ストーリー中かつ
 	if (!this.is_from_select_scene) {
 		// 通常ストーリーならば
 		if(!this.isInExStory()) {
 			/// 通常ストーリー進捗を更新
-			this.core.save.incrementNormalStageProgress();
+			this.core.storage_story.incrementNormalStageProgress();
 
 			// 通常ストーリーの最後ならば
 			if (this.isLastNormalStory()) {
 				// 進捗をリセット
-				this.core.save.resetNormalStageProgress();
+				this.core.storage_story.resetNormalStageProgress();
 
 				// Ex ストーリー解放
-				this.core.save.clearNormalStage();
+				this.core.storage_story.clearNormalStage();
 			}
 
 		}
 		// Ex ストーリーならば
 		else {
 			/// Ex ストーリー進捗を更新
-			this.core.save.incrementExStageProgress();
+			this.core.storage_story.incrementExStageProgress();
 
 			// Ex ストーリーの最後ならば
 			if (this.isLastExStory()) {
 				// 進捗をリセット
-				this.core.save.resetExStageProgress();
+				this.core.storage_story.resetExStageProgress();
 
 				// Ex ストーリー クリア フラグON
-				this.core.save.clearExStage();
+				this.core.storage_story.clearExStage();
 			}
 		}
 	}
 
-	this.core.save.save();
+	this.core.storage_story.save();
 
 	// セレクト画面からプレイしたなら
 	if (this.is_from_select_scene) {
@@ -15460,6 +15609,32 @@ SceneStage.prototype.getBGImageName = function() {
 		return "stage_bg01";
 	}
 };
+// ステージBGM名
+SceneStage.prototype.getBGMName = function() {
+	if (this.stage_no <= 10) {
+		return "stage_a";
+	}
+	else if (10 < this.stage_no && this.stage_no <= 20) {
+		return "stage_b";
+	}
+	else if (20 < this.stage_no && this.stage_no <= 30) {
+		return "stage_c";
+	}
+	else if (30 < this.stage_no && this.stage_no <= 35) {
+		return "stage_d";
+	}
+	else if (35 < this.stage_no && this.stage_no <= 40) {
+		return "stage_e";
+	}
+	else {
+		// ここにくることはないはず
+		return "stage_a";
+	}
+};
+
+
+
+
 
 SceneStage.prototype.clearStageForDebug = function () {
 	// サブシーンがゲームの操作できるシーンならば
@@ -15471,7 +15646,7 @@ SceneStage.prototype.clearStageForDebug = function () {
 
 module.exports = SceneStage;
 
-},{"../constant":6,"../hakurei":9,"../logic/create_map":44,"../logic/score":47,"../object/background_eye":136,"../stage_config":232,"./stage/after_talk":225,"./stage/before_talk":226,"./stage/pause":227,"./stage/play":228,"./stage/result_clear_by_select":229,"./stage/result_clear_by_story":230}],175:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/create_map":45,"../logic/score":48,"../object/background_eye":137,"../stage_config":232,"./stage/after_talk":225,"./stage/before_talk":226,"./stage/pause":227,"./stage/play":228,"./stage/result_clear_by_select":229,"./stage/result_clear_by_story":230}],175:[function(require,module,exports){
 'use strict';
 
 /* 通常ストーリー クリア後画面 */
@@ -15502,7 +15677,6 @@ SceneAfterNormal.prototype.serifScript = function() {
 
 // BGM
 SceneAfterNormal.prototype.bgm = function() {
-	return "mute";
 };
 
 SceneAfterNormal.prototype.isPlayFadeIn = function() {
@@ -15512,7 +15686,7 @@ SceneAfterNormal.prototype.isPlayFadeIn = function() {
 
 module.exports = SceneAfterNormal;
 
-},{"../constant":6,"../hakurei":9,"../logic/serif/after_normal":49,"./serif_base":224}],176:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/serif/after_normal":50,"./serif_base":224}],176:[function(require,module,exports){
 'use strict';
 
 /* Ex エピグラフ画面 */
@@ -15606,7 +15780,7 @@ util.inherit(ScenePrologue, base_scene);
 // 立ち絵＆セリフ終了後
 ScenePrologue.prototype.notifySerifEnd = function() {
 	var stage_no = CONSTANT.EX_STORY_START_STAGE_NO;
-	this.core.changeScene("stage", stage_no, "talk", true);
+	this.core.changeScene("stage", stage_no, "talk");
 };
 
 // セリフスクリプト
@@ -15626,7 +15800,7 @@ ScenePrologue.prototype.isPlayFadeOut = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":6,"../hakurei":9,"../logic/serif/ex_prologue":51,"./serif_base":224}],178:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/serif/ex_prologue":52,"./serif_base":224}],178:[function(require,module,exports){
 'use strict';
 
 /* Exストーリー クリア後画面 */
@@ -15680,12 +15854,12 @@ SceneAfterEx.prototype.serifScript = function() {
 
 // BGM
 SceneAfterEx.prototype.bgm = function() {
-	return "mute";
+	return "after_ex";
 };
 
 module.exports = SceneAfterEx;
 
-},{"../constant":6,"../hakurei":9,"../logic/serif/after_ex":48,"./serif_base":224}],179:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/serif/after_ex":49,"./serif_base":224}],179:[function(require,module,exports){
 'use strict';
 
 /* スタッフロール画面 */
@@ -15698,7 +15872,7 @@ var serifs = [
 	["BGM","敷き紙"],
 	["DLカード デザイン","RF"],
 ];
-var RESULT_TRANSITION_COUNT = 320;
+var RESULT_TRANSITION_COUNT = 600;
 
 
 var base_scene = require('../hakurei').scene.base;
@@ -15722,7 +15896,7 @@ SceneStaffroll.prototype.init = function() {
 	// スタッフロール終了中かどうか
 	this.is_ending = false;
 
-	this.core.playBGM("mute");
+	this.core.playBGM("staffroll");
 };
 
 SceneStaffroll.prototype.beforeDraw = function() {
@@ -15796,7 +15970,7 @@ SceneStaffroll.prototype.draw = function(){
 
 module.exports = SceneStaffroll;
 
-},{"../hakurei":9,"../object/reimu_for_staffroll":138}],180:[function(require,module,exports){
+},{"../hakurei":9,"../object/reimu_for_staffroll":139}],180:[function(require,module,exports){
 'use strict';
 
 /* エピローグ画面 */
@@ -15846,7 +16020,7 @@ ScenePrologue.prototype.background = function() {
 
 // BGM
 ScenePrologue.prototype.bgm = function() {
-	return "mute";
+	return "epilogue";
 };
 
 ScenePrologue.prototype.isPlayFadeIn = function() {
@@ -15856,7 +16030,7 @@ ScenePrologue.prototype.isPlayFadeIn = function() {
 
 module.exports = ScenePrologue;
 
-},{"../constant":6,"../hakurei":9,"../logic/serif/epilogue":50,"./serif_base":224}],181:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/serif/epilogue":51,"./serif_base":224}],181:[function(require,module,exports){
 'use strict';
 
 /* 遊び方 */
@@ -17910,19 +18084,11 @@ var AssetsConfig = require('../assets_config');
 /* BGM 一覧を配列化 */
 var BGMS = [];
 for (var key in AssetsConfig.bgms) {
-	var data = AssetsConfig.bgms[key];
+	var data = util.shallowCopyHash(AssetsConfig.bgms[key]);
 
 	data.name = key;
 	BGMS.push(data);
 }
-
-//12個
-// DEBUG用
-
-for (var i = 0; i < 10; i++) {
-	BGMS.push(Object.assign({}, BGMS[0], {title: "サンプル"}));
-}
-
 
 var SceneMusic = function(core) {
 	base_scene.apply(this, arguments);
@@ -17966,8 +18132,16 @@ SceneMusic.prototype.beforeDraw = function(){
 
 	// 決定
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		var bgm_name = BGMS[this.index].name;
-		this.core.playBGM(bgm_name);
+		if (BGMS[this.index].is_normal && !this.isNormalStoryCleared()) { // Normal未クリア
+			// Normal 未クリアなら聴けない
+		}
+		else if (BGMS[this.index].is_ex && !this.isExStoryCleared()) { // Ex未クリア
+			// Ex未クリアなら聴けない
+		}
+		else {
+			var bgm_name = BGMS[this.index].name;
+			this.core.playBGM(bgm_name);
+		}
 	}
 };
 
@@ -18006,10 +18180,27 @@ SceneMusic.prototype.draw = function(){
 			this._drawText("▶", cursor_x, y);
 
 			// メッセージ表示
-			this._showMessage(bgm.message);
+			if (bgm.is_normal && !this.isNormalStoryCleared()) { // Normal未クリア
+				this._showMessage("ゲームをすすめたら聴けるわよ");
+			}
+			else if (bgm.is_ex && !this.isExStoryCleared()) { // Ex未クリア
+				this._showMessage("ゲームをすすめたら聴けるわよ");
+			}
+			else {
+				this._showMessage(bgm.message);
+			}
 		}
+
 		// 文字表示
-		this._drawText(music_no + ": " + bgm.title, text_x, y); // 1行表示
+		if (bgm.is_normal && !this.isNormalStoryCleared()) { // Normal未クリア
+			this._drawText(music_no + ": " + "???????", text_x, y); // 1行表示
+		}
+		else if (bgm.is_ex && !this.isExStoryCleared()) { // Ex未クリア
+			this._drawText(music_no + ": " + "???????", text_x, y); // 1行表示
+		}
+		else {
+			this._drawText(music_no + ": " + bgm.title, text_x, y); // 1行表示
+		}
 
 		y+= 30;
 	}
@@ -18120,8 +18311,7 @@ SceneMusic.prototype._showMessage = function(message) {
 
 SceneMusic.prototype._showBackGround = function(){
 	var ctx = this.core.ctx;
-	var title_bg = this.core.image_loader.getImage('title_bg');
-/*
+	var title_bg = this.core.image_loader.getImage('shrine_noon');
 	// 背景画像表示
 	ctx.drawImage(title_bg,
 					0,
@@ -18132,14 +18322,22 @@ SceneMusic.prototype._showBackGround = function(){
 					0,
 					this.core.width,
 					this.core.height);
-*/
 	// 背景をちょっと暗めに表示
 	ctx.fillStyle = 'rgb( 0, 0, 0 )' ;
-	ctx.globalAlpha = 0.6; // 半透明
+	ctx.globalAlpha = 0.4; // 半透明
 	ctx.fillRect(0, 0, this.core.width, this.core.height);
 
 	ctx.globalAlpha = 1.0; // 半透明戻す
 };
+
+
+SceneMusic.prototype.isExStoryCleared = function(){
+	return this.core.storage_story.getIsExStageCleared();
+};
+SceneMusic.prototype.isNormalStoryCleared = function(){
+	return this.core.storage_story.getIsNormalStageCleared();
+};
+
 
 
 module.exports = SceneMusic;
@@ -18175,7 +18373,7 @@ SceneSelect.prototype.init = function(selected_stage_no){
 	base_scene.prototype.init.apply(this, arguments);
 
 	// ステージ一覧
-	this.stage_list = this.core.save.getStageResultList();
+	this.stage_list = this.core.storage_story.getStageResultList();
 
 	// カーソル位置
 	if (selected_stage_no) {
@@ -18195,7 +18393,7 @@ SceneSelect.prototype.beforeDraw = function(){
 
 	// 決定
 	if(this.core.isKeyPush(H_CONSTANT.BUTTON_Z)) {
-		this.core.changeScene("stage", this.selected_stage + 1, "play", true, true); // 0 から selected_stage は始まるので +1
+		this.core.changeScene("stage", this.selected_stage + 1, "play", true); // 0 から selected_stage は始まるので +1
 	}
 	// 戻る
 	else if(this.core.isKeyPush(H_CONSTANT.BUTTON_X)) {
@@ -18341,7 +18539,7 @@ SceneSelect.prototype.draw = function(){
 		ctx.fillText("▼", this.core.width - 100, this.core.height- 10);
 	}
 
-	var stage_data = this.core.save.getStageResult(this.selected_stage + 1); // selected_stage は 0から始まるので +1
+	var stage_data = this.core.storage_story.getStageResult(this.selected_stage + 1); // selected_stage は 0から始まるので +1
 
 	if (stage_data) {
 		var stage_no_string = ( '00' + stage_data.stage_no ).slice(-2); // 数字を2桁に揃える
@@ -18424,7 +18622,7 @@ SceneSelect.prototype._showHowTo = function() {
 
 module.exports = SceneSelect;
 
-},{"../constant":6,"../hakurei":9,"../logic/create_map":44,"../logic/score":47,"../stage_config":232}],224:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/create_map":45,"../logic/score":48,"../stage_config":232}],224:[function(require,module,exports){
 'use strict';
 
 /* 立ち絵＆セリフ */
@@ -18461,8 +18659,9 @@ SceneSerifBase.prototype.init = function(serif){
 
 	this.transition_count = 0;
 
+	// シーン遷移前の BGM 止める
 	if (this.bgm()) {
-		this.core.playBGM(this.bgm());
+		this.core.stopBGM();
 	}
 
 	if (this.isPlayFadeIn()) {
@@ -18476,6 +18675,12 @@ SceneSerifBase.prototype.init = function(serif){
 
 SceneSerifBase.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	// BGM 再生
+	if (this.frame_count === 60 && this.bgm()) {
+		this.core.playBGM(this.bgm());
+	}
+
 
 	if (this.isInTransition()) {
 		this.transition_count--;
@@ -18755,7 +18960,7 @@ SceneSerifBase.prototype.isInTransition = function() {
 
 module.exports = SceneSerifBase;
 
-},{"../constant":6,"../hakurei":9,"../logic/create_darker_image":43}],225:[function(require,module,exports){
+},{"../constant":6,"../hakurei":9,"../logic/create_darker_image":44}],225:[function(require,module,exports){
 'use strict';
 // ステージクリア後のセリフ
 
@@ -19259,7 +19464,7 @@ SceneStageResultClearBySelect.prototype.getMessage = function() {
 
 module.exports = SceneStageResultClearBySelect;
 
-},{"../../constant":6,"../../hakurei":9,"../../logic/result_message/select":45,"../../logic/score":47}],230:[function(require,module,exports){
+},{"../../constant":6,"../../hakurei":9,"../../logic/result_message/select":46,"../../logic/score":48}],230:[function(require,module,exports){
 'use strict';
 // クリア リザルト
 // ステージセレクトと一緒なので継承して実装
@@ -19303,7 +19508,7 @@ SceneStageResultClear.prototype.getMessage = function() {
 
 module.exports = SceneStageResultClear;
 
-},{"../../hakurei":9,"../../logic/result_message/story":46,"./result_clear_by_select":229}],231:[function(require,module,exports){
+},{"../../hakurei":9,"../../logic/result_message/story":47,"./result_clear_by_select":229}],231:[function(require,module,exports){
 'use strict';
 
 var MESSAGE_WINDOW_OUTLINE_MARGIN = 10;
@@ -19546,7 +19751,7 @@ SceneStageTalk.prototype.notifyTalkEnd = function() {
 
 module.exports = SceneStageTalk;
 
-},{"../../hakurei":9,"../../logic/create_darker_image":43}],232:[function(require,module,exports){
+},{"../../hakurei":9,"../../logic/create_darker_image":44}],232:[function(require,module,exports){
 'use strict';
 
 // ステージマップ一覧
@@ -19737,4 +19942,199 @@ module.exports = {
 	EYES_NUM: EYES_NUM,
 };
 
-},{"./logic/serif/stage01/after":54,"./logic/serif/stage01/before":55,"./logic/serif/stage02/after":56,"./logic/serif/stage02/before":57,"./logic/serif/stage03/after":58,"./logic/serif/stage03/before":59,"./logic/serif/stage04/after":60,"./logic/serif/stage04/before":61,"./logic/serif/stage05/after":62,"./logic/serif/stage05/before":63,"./logic/serif/stage06/after":64,"./logic/serif/stage06/before":65,"./logic/serif/stage07/after":66,"./logic/serif/stage07/before":67,"./logic/serif/stage08/after":68,"./logic/serif/stage08/before":69,"./logic/serif/stage09/after":70,"./logic/serif/stage09/before":71,"./logic/serif/stage10/after":72,"./logic/serif/stage10/before":73,"./logic/serif/stage11/after":74,"./logic/serif/stage11/before":75,"./logic/serif/stage12/after":76,"./logic/serif/stage12/before":77,"./logic/serif/stage13/after":78,"./logic/serif/stage13/before":79,"./logic/serif/stage14/after":80,"./logic/serif/stage14/before":81,"./logic/serif/stage15/after":82,"./logic/serif/stage15/before":83,"./logic/serif/stage16/after":84,"./logic/serif/stage16/before":85,"./logic/serif/stage17/after":86,"./logic/serif/stage17/before":87,"./logic/serif/stage18/after":88,"./logic/serif/stage18/before":89,"./logic/serif/stage19/after":90,"./logic/serif/stage19/before":91,"./logic/serif/stage20/after":92,"./logic/serif/stage20/before":93,"./logic/serif/stage21/after":94,"./logic/serif/stage21/before":95,"./logic/serif/stage22/after":96,"./logic/serif/stage22/before":97,"./logic/serif/stage23/after":98,"./logic/serif/stage23/before":99,"./logic/serif/stage24/after":100,"./logic/serif/stage24/before":101,"./logic/serif/stage25/after":102,"./logic/serif/stage25/before":103,"./logic/serif/stage26/after":104,"./logic/serif/stage26/before":105,"./logic/serif/stage27/after":106,"./logic/serif/stage27/before":107,"./logic/serif/stage28/after":108,"./logic/serif/stage28/before":109,"./logic/serif/stage29/after":110,"./logic/serif/stage29/before":111,"./logic/serif/stage30/after":112,"./logic/serif/stage30/before":113,"./logic/serif/stage31/after":114,"./logic/serif/stage31/before":115,"./logic/serif/stage32/after":116,"./logic/serif/stage32/before":117,"./logic/serif/stage33/after":118,"./logic/serif/stage33/before":119,"./logic/serif/stage34/after":120,"./logic/serif/stage34/before":121,"./logic/serif/stage35/after":122,"./logic/serif/stage35/before":123,"./logic/serif/stage36/after":124,"./logic/serif/stage36/before":125,"./logic/serif/stage37/after":126,"./logic/serif/stage37/before":127,"./logic/serif/stage38/after":128,"./logic/serif/stage38/before":129,"./logic/serif/stage39/after":130,"./logic/serif/stage39/before":131,"./logic/serif/stage40/after":132,"./logic/serif/stage40/before":133,"./scene/map/stage01":182,"./scene/map/stage02":183,"./scene/map/stage03":184,"./scene/map/stage04":185,"./scene/map/stage05":186,"./scene/map/stage06":187,"./scene/map/stage07":188,"./scene/map/stage08":189,"./scene/map/stage09":190,"./scene/map/stage10":191,"./scene/map/stage11":192,"./scene/map/stage12":193,"./scene/map/stage13":194,"./scene/map/stage14":195,"./scene/map/stage15":196,"./scene/map/stage16":197,"./scene/map/stage17":198,"./scene/map/stage18":199,"./scene/map/stage19":200,"./scene/map/stage20":201,"./scene/map/stage21":202,"./scene/map/stage22":203,"./scene/map/stage23":204,"./scene/map/stage24":205,"./scene/map/stage25":206,"./scene/map/stage26":207,"./scene/map/stage27":208,"./scene/map/stage28":209,"./scene/map/stage29":210,"./scene/map/stage30":211,"./scene/map/stage31":212,"./scene/map/stage32":213,"./scene/map/stage33":214,"./scene/map/stage34":215,"./scene/map/stage35":216,"./scene/map/stage36":217,"./scene/map/stage37":218,"./scene/map/stage38":219,"./scene/map/stage39":220,"./scene/map/stage40":221}]},{},[134]);
+},{"./logic/serif/stage01/after":55,"./logic/serif/stage01/before":56,"./logic/serif/stage02/after":57,"./logic/serif/stage02/before":58,"./logic/serif/stage03/after":59,"./logic/serif/stage03/before":60,"./logic/serif/stage04/after":61,"./logic/serif/stage04/before":62,"./logic/serif/stage05/after":63,"./logic/serif/stage05/before":64,"./logic/serif/stage06/after":65,"./logic/serif/stage06/before":66,"./logic/serif/stage07/after":67,"./logic/serif/stage07/before":68,"./logic/serif/stage08/after":69,"./logic/serif/stage08/before":70,"./logic/serif/stage09/after":71,"./logic/serif/stage09/before":72,"./logic/serif/stage10/after":73,"./logic/serif/stage10/before":74,"./logic/serif/stage11/after":75,"./logic/serif/stage11/before":76,"./logic/serif/stage12/after":77,"./logic/serif/stage12/before":78,"./logic/serif/stage13/after":79,"./logic/serif/stage13/before":80,"./logic/serif/stage14/after":81,"./logic/serif/stage14/before":82,"./logic/serif/stage15/after":83,"./logic/serif/stage15/before":84,"./logic/serif/stage16/after":85,"./logic/serif/stage16/before":86,"./logic/serif/stage17/after":87,"./logic/serif/stage17/before":88,"./logic/serif/stage18/after":89,"./logic/serif/stage18/before":90,"./logic/serif/stage19/after":91,"./logic/serif/stage19/before":92,"./logic/serif/stage20/after":93,"./logic/serif/stage20/before":94,"./logic/serif/stage21/after":95,"./logic/serif/stage21/before":96,"./logic/serif/stage22/after":97,"./logic/serif/stage22/before":98,"./logic/serif/stage23/after":99,"./logic/serif/stage23/before":100,"./logic/serif/stage24/after":101,"./logic/serif/stage24/before":102,"./logic/serif/stage25/after":103,"./logic/serif/stage25/before":104,"./logic/serif/stage26/after":105,"./logic/serif/stage26/before":106,"./logic/serif/stage27/after":107,"./logic/serif/stage27/before":108,"./logic/serif/stage28/after":109,"./logic/serif/stage28/before":110,"./logic/serif/stage29/after":111,"./logic/serif/stage29/before":112,"./logic/serif/stage30/after":113,"./logic/serif/stage30/before":114,"./logic/serif/stage31/after":115,"./logic/serif/stage31/before":116,"./logic/serif/stage32/after":117,"./logic/serif/stage32/before":118,"./logic/serif/stage33/after":119,"./logic/serif/stage33/before":120,"./logic/serif/stage34/after":121,"./logic/serif/stage34/before":122,"./logic/serif/stage35/after":123,"./logic/serif/stage35/before":124,"./logic/serif/stage36/after":125,"./logic/serif/stage36/before":126,"./logic/serif/stage37/after":127,"./logic/serif/stage37/before":128,"./logic/serif/stage38/after":129,"./logic/serif/stage38/before":130,"./logic/serif/stage39/after":131,"./logic/serif/stage39/before":132,"./logic/serif/stage40/after":133,"./logic/serif/stage40/before":134,"./scene/map/stage01":182,"./scene/map/stage02":183,"./scene/map/stage03":184,"./scene/map/stage04":185,"./scene/map/stage05":186,"./scene/map/stage06":187,"./scene/map/stage07":188,"./scene/map/stage08":189,"./scene/map/stage09":190,"./scene/map/stage10":191,"./scene/map/stage11":192,"./scene/map/stage12":193,"./scene/map/stage13":194,"./scene/map/stage14":195,"./scene/map/stage15":196,"./scene/map/stage16":197,"./scene/map/stage17":198,"./scene/map/stage18":199,"./scene/map/stage19":200,"./scene/map/stage20":201,"./scene/map/stage21":202,"./scene/map/stage22":203,"./scene/map/stage23":204,"./scene/map/stage24":205,"./scene/map/stage25":206,"./scene/map/stage26":207,"./scene/map/stage27":208,"./scene/map/stage28":209,"./scene/map/stage29":210,"./scene/map/stage30":211,"./scene/map/stage31":212,"./scene/map/stage32":213,"./scene/map/stage33":214,"./scene/map/stage34":215,"./scene/map/stage35":216,"./scene/map/stage36":217,"./scene/map/stage37":218,"./scene/map/stage38":219,"./scene/map/stage39":220,"./scene/map/stage40":221}],233:[function(require,module,exports){
+'use strict';
+
+// セーブデータ ストーリー進捗
+
+// TODO: createStageResultObject 実装したい
+var base_class = require('../hakurei').storage.save;
+var util = require('../hakurei').util;
+var CONSTANT = require('../constant');
+var LogicScore = require('../logic/score');
+
+var StorageStory = function(scene) {
+	base_class.apply(this, arguments);
+};
+util.inherit(StorageStory, base_class);
+
+// 通常ストーリーの進捗を +1
+StorageStory.prototype.incrementNormalStageProgress = function(){
+	var progress = this.getNormalStageProgress();
+
+	if (progress) {
+		progress += 1;
+	}
+	else {
+		progress = 1;
+	}
+
+	this.set("normal_stage_progress", progress);
+};
+// 通常ストーリーをどのステージまで進めているか取得
+StorageStory.prototype.getNormalStageProgress = function(){
+	return this.get("normal_stage_progress");
+};
+// 通常ストーリーを進捗を削除
+StorageStory.prototype.resetNormalStageProgress = function(){
+	return this.remove("normal_stage_progress");
+};
+
+// Ex ストーリーの進捗を +1
+StorageStory.prototype.incrementExStageProgress = function(){
+	var progress = this.getExStageProgress();
+
+	if (progress) {
+		progress += 1;
+	}
+	else {
+		progress = CONSTANT.EX_STORY_START_STAGE_NO;
+	}
+
+	this.set("ex_stage_progress", progress);
+};
+// Ex ストーリーをどのステージまで進めているか取得
+StorageStory.prototype.getExStageProgress = function(){
+	return this.get("ex_stage_progress");
+};
+// Ex ストーリーを進捗を削除
+StorageStory.prototype.resetExStageProgress = function(){
+	return this.remove("ex_stage_progress");
+};
+
+// 通常ストーリーを1度でもクリアしたことを設定
+StorageStory.prototype.clearNormalStage = function(){
+	this.set("is_normal_stage_cleared", true);
+};
+// 通常ストーリーを1度でもクリアしたか否かを取得
+StorageStory.prototype.getIsNormalStageCleared = function(){
+	return this.get("is_normal_stage_cleared");
+};
+
+// Exストーリーを1度でもクリアしたことを設定
+StorageStory.prototype.clearExStage = function(){
+	this.set("is_ex_stage_cleared", true);
+};
+// Exストーリーを1度でもクリアしたか否かを取得
+StorageStory.prototype.getIsExStageCleared = function(){
+	return this.get("is_ex_stage_cleared");
+};
+
+
+
+
+
+// ステージ実績の一覧を取得
+StorageStory.prototype.getStageResultList = function(){
+	var list = this.get("stage_result_list");
+
+	if(!list) list = [];
+
+	return list;
+};
+
+// 対象のステージ実績を取得
+StorageStory.prototype.getStageResult = function(stage_no){
+	var list = this.getStageResultList();
+
+	return list[stage_no - 1];
+};
+
+// 最新のステージ実績を取得
+StorageStory.prototype.getLatestStageResult = function(){
+	var list = this.getStageResultList();
+
+	if (list.length === 0) {
+		return null;
+	}
+
+	return list[list.length - 1];
+};
+
+// 対象のステージ実績を更新
+StorageStory.prototype.updateStageResult = function(stage_no, time, exchange_num){
+	stage_no -= 1; // 配列なので 0 から
+	var list = this.getStageResultList();
+
+	// ステージ実績がなければ現在の実績でハイスコアを更新
+	if(!list[stage_no]) {
+		list[stage_no] = {
+			stage_no: stage_no + 1,     // -1 しちゃったのでここだけ正常なstage noに戻す
+			time:         time,         // クリア時刻
+			exchange_num: exchange_num, // 使用 交換回数
+		};
+	}
+	else {
+		// 以前のハイスコア
+		var previous_honor_num = LogicScore.calcHonor(
+			stage_no + 1,
+			list[stage_no].time,
+			list[stage_no].exchange_num
+		);
+		// 今回のスコア
+		var next_honor_num = LogicScore.calcHonor(
+			stage_no + 1,
+			time,
+			exchange_num
+		);
+
+		// ベストスコアであれば更新
+		if(next_honor_num > previous_honor_num) {
+			list[stage_no].time = time;
+			list[stage_no].exchange_num = exchange_num;
+		}
+	}
+	// セーブ
+	this.set("stage_result_list", list);
+};
+
+// 通常ストーリーの実績を全て解放
+StorageStory.prototype.clearNormalStageForDebug = function(){
+	var list = this.getStageResultList();
+
+	var last_stage_no = CONSTANT.EX_STORY_START_STAGE_NO - 1;
+
+	for (var i = 0; i < last_stage_no; i++) {
+		// 実績がないステージのみ解放
+		if(!list[i]) {
+			list[i] = {
+				stage_no: i+1,
+				time: 1,
+				exchange_num: 1,
+			};
+		}
+	}
+	this.set("stage_result_list", list);
+
+	// クリアフラグを立てる
+	this.clearNormalStage();
+	this.save();
+};
+
+// Exストーリーの実績を全て解放
+StorageStory.prototype.clearExStageForDebug = function(){
+	var list = this.getStageResultList();
+
+	var begin_stage_no = CONSTANT.EX_STORY_START_STAGE_NO;
+
+	for (var i = begin_stage_no - 1; i < 40; i++) { // TODO: 40固定なのを直す
+		// 実績がないステージのみ解放
+		if(!list[i]) {
+			list[i] = {
+				stage_no: i+1,
+				time: 1,
+				exchange_num: 1,
+			};
+		}
+	}
+	this.set("stage_result_list", list);
+
+	// クリアフラグを立てる
+	this.clearExStage();
+
+	this.save();
+};
+
+module.exports = StorageStory;
+
+},{"../constant":6,"../hakurei":9,"../logic/score":48}]},{},[135]);
