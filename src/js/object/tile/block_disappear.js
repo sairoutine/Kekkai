@@ -11,23 +11,23 @@ var CONSTANT = require('../../constant');
 var base_object = require('./block_base');
 var util = require('../../hakurei').util;
 
-var BlockGreen = function (scene) {
+var BlockDisappear = function (scene) {
 	base_object.apply(this, arguments);
 };
-util.inherit(BlockGreen, base_object);
+util.inherit(BlockDisappear, base_object);
 
-BlockGreen.prototype.init = function(x, y) {
+BlockDisappear.prototype.init = function(x, y) {
 	base_object.prototype.init.apply(this, arguments);
 	this.start_fall_frame = 0;
 	this.is_show = true;
 	this.is_collision = true;
 };
 
-BlockGreen.prototype.spriteIndices = function(){
+BlockDisappear.prototype.spriteIndices = function(){
 	return [{x: 1, y: 0}];
 };
 
-BlockGreen.prototype.beforeDraw = function() {
+BlockDisappear.prototype.beforeDraw = function() {
 	base_object.prototype.beforeDraw.apply(this, arguments);
 	if(this.start_fall_frame && (FALL_SPAN - this.frame_count + this.start_fall_frame <= 0) ) {
 		this.is_show = false;
@@ -37,18 +37,18 @@ BlockGreen.prototype.beforeDraw = function() {
 	}
 };
 
-BlockGreen.prototype.fall = function(){
+BlockDisappear.prototype.fall = function(){
 	this.start_fall_frame = this.frame_count;
 	this.is_collision = false;
 };
 
-BlockGreen.prototype.isShow = function() {
+BlockDisappear.prototype.isShow = function() {
 	return this.is_show;
 };
-BlockGreen.prototype.isCollision = function() {
+BlockDisappear.prototype.isCollision = function() {
 	return this.is_collision;
 };
-BlockGreen.prototype.alpha = function() {
+BlockDisappear.prototype.alpha = function() {
 	var base_scale = 0.5;
 	if (this.start_fall_frame) {
 		return(base_scale *  (FALL_SPAN - (this.frame_count - this.start_fall_frame)) / FALL_SPAN );
@@ -60,4 +60,4 @@ BlockGreen.prototype.alpha = function() {
 };
 
 
-module.exports = BlockGreen;
+module.exports = BlockDisappear;

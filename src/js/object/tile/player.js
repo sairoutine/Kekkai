@@ -21,7 +21,7 @@ var BLOCK_TILE_TYPES = [
 	CONSTANT.BLOCK_BLUE,
 	CONSTANT.BLOCK_RED,
 	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_DISAPPEAR,
 	CONSTANT.BLOCK_STONE1,
 	CONSTANT.BLOCK_STONE2,
 	CONSTANT.BLOCK_STONE3,
@@ -34,7 +34,7 @@ var BLOCK_TILE_TYPES2 = [
 	CONSTANT.BLOCK_BLUE,
 	CONSTANT.BLOCK_RED,
 	CONSTANT.BLOCK_PURPLE,
-	CONSTANT.BLOCK_BROWN,
+	CONSTANT.BLOCK_DISAPPEAR,
 	CONSTANT.BLOCK_STONE1,
 	CONSTANT.BLOCK_STONE2,
 	CONSTANT.BLOCK_STONE3,
@@ -413,7 +413,7 @@ Player.prototype.checkCollisionWithFallBlock = function() {
 	var self = this;
 	var is_collision = null;
 
-	var tile_objects = self.scene.objects_by_tile_type[CONSTANT.BLOCK_BROWN];
+	var tile_objects = self.scene.objects_by_tile_type[CONSTANT.BLOCK_DISAPPEAR];
 
 	for (var j = 0; j < tile_objects.length; j++) {
 		var obj = tile_objects[j];
