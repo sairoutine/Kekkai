@@ -349,7 +349,7 @@ SceneStage.prototype.checkValidMap = function(map) {
 SceneStage.prototype.parseAndCreateMap = function(map) {
 	this.objects_by_tile_type = LogicCreateMap.exec(this, map, CONSTANT.STAGE_OFFSET_X, CONSTANT.STAGE_OFFSET_Y);
 
-
+	this.removeAllObject();
 	for (var key in this.objects_by_tile_type) {
 		this.addObjects(this.objects_by_tile_type[key]);
 	}
