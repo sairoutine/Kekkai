@@ -80,7 +80,7 @@ ItemForYukari.prototype.spriteName = function(){
 };
 ItemForYukari.prototype.spriteIndices = function(){
 	// Ex ストーリーになるとアイテムが変わる
-	if (this.scene.isInExStory()) {
+	if (this.scene.isExReimu()) {
 		return [{x: 3, y: 2}];
 	}
 	else {

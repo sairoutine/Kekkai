@@ -71,7 +71,7 @@ Item.prototype.spriteName = function(){
 };
 Item.prototype.spriteIndices = function(){
 	// Ex ストーリーになるとアイテムが変わる
-	if (this.scene.isInExStory()) {
+	if (this.scene.isExReimu()) {
 		return [{x: 2, y: 2}];
 	}
 	else {

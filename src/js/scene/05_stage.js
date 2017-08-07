@@ -424,8 +424,30 @@ SceneStage.prototype.getBGMName = function() {
 	}
 };
 
-
-
+// 分身が霊夢(精神)であるべきか
+SceneStage.prototype.isExReimu = function () {
+	// 通常ストーリー
+	if(this.isInNormalStory()) {
+		return false;
+	}
+	// Ex ストーリー
+	else {
+		// セレクト画面からプレイしている場合
+		if (this.is_from_select_scene) {
+			// Ex クリア済みなら
+			if(this.core.storage_story.getIsExStageCleared()) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		// ストーリー中ならば
+		else {
+			return true;
+		}
+	}
+};
 
 
 SceneStage.prototype.clearStageForDebug = function () {

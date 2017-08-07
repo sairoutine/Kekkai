@@ -97,13 +97,32 @@ SceneSelect.prototype.createMap = function(){
 	return stage_objects;
 };
 // ノーマル ストーリーのステージかどうか
-SceneSelect.prototype.isInNormalStory = function() {
-	return !this.isInExStory();
+SceneSelect.prototype._isInNormalStory = function() {
+	return !this._isInExStory();
 };
 // Ex ストーリーのステージかどうか
-SceneSelect.prototype.isInExStory = function() {
+SceneSelect.prototype._isInExStory = function() {
 	return this.selected_stage+1 >= CONSTANT.EX_STORY_START_STAGE_NO ? true : false;
 };
+
+// 分身が霊夢(精神)であるべきか
+SceneSelect.prototype.isExReimu = function () {
+	// 通常ストーリー
+	if(this._isInNormalStory()) {
+		return false;
+	}
+	// Ex ストーリー
+	else {
+		// Ex クリア済みなら
+		if(this.core.storage_story.getIsExStageCleared()) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+};
+
 
 
 
