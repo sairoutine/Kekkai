@@ -9,7 +9,7 @@ var messageS = [
 
 // 星2つ
 var messageA = [
-	["reimu", "normal2", "まぁ、こんなところね"],
+	["reimu", "laugh2", "まぁ、こんなところね"],
 	["yukari", "normal3", "上出来ね"],
 	//["reimu", "smile", "星2つ メッセージC"],
 ];
