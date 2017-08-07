@@ -60,11 +60,16 @@ Enemy.prototype.onCollision = function(obj) {
 	}
 };
 
-Enemy.prototype.collisionWidth = function(){
-	return 24;
+Enemy.prototype.collisionWidth = function(obj){
+	return 1;
 };
-Enemy.prototype.collisionHeight = function(){
-	return 24;
+Enemy.prototype.collisionHeight = function(obj){
+	if (obj && obj.type === CONSTANT.PLAYER) {
+		return 1;
+	}
+	else {
+		return 24;
+	}
 };
 
 Enemy.prototype.isReflect = function(){
