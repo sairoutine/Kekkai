@@ -12,7 +12,10 @@ var BlockStone2 = function (scene) {
 util.inherit(BlockStone2, base_object);
 
 BlockStone2.prototype.spriteIndices = function(){
-	return [{x: 1, y: 0}];
+	return [{x: 0, y: 0}];
+};
+BlockStone2.prototype.spriteName = function(){
+	return "tile_gray";
 };
 
 module.exports = BlockStone2;

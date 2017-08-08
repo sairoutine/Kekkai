@@ -14,5 +14,8 @@ util.inherit(BlockStone1, base_object);
 BlockStone1.prototype.spriteIndices = function(){
 	return [{x: 0, y: 0}];
 };
+BlockStone1.prototype.spriteName = function(){
+	return "tile_gray";
+};
 
 module.exports = BlockStone1;

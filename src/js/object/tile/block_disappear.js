@@ -27,8 +27,12 @@ BlockDisappear.prototype.init = function(x, y) {
 };
 
 BlockDisappear.prototype.spriteIndices = function(){
-	return [{x: 1, y: 0}];
+	return [{x: 0, y: 0}];
 };
+BlockDisappear.prototype.spriteName = function(){
+	return "tile_gray";
+};
+
 
 BlockDisappear.prototype.beforeDraw = function() {
 	base_object.prototype.beforeDraw.apply(this, arguments);
