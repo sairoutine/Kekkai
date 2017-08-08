@@ -15,7 +15,12 @@ BlockStone2.prototype.spriteIndices = function(){
 	return [{x: 0, y: 0}];
 };
 BlockStone2.prototype.spriteName = function(){
-	return "tile_gray";
+	if (this.scene.isInExStory()) {
+		return "tile_red";
+	}
+	else {
+		return "tile_gray";
+	}
 };
 
 module.exports = BlockStone2;
