@@ -34,11 +34,19 @@ SceneStaffroll.prototype.init = function() {
 	// スタッフロール終了中かどうか
 	this.is_ending = false;
 
-	this.core.playBGM("staffroll");
+	// bgm をプレイ済みかどうか
+	this.is_play_bgm = false;
+
+	this.core.stopBGM();
 };
 
 SceneStaffroll.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
+
+	if (this.frame_count === 60 && !this.is_play_bgm) {
+		this.core.playBGM("staffroll");
+		this.is_play_bgm = true;
+	}
 
 	if (this.frame_count > RESULT_TRANSITION_COUNT) {
 		this.frame_count = 0;
