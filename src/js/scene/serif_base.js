@@ -35,9 +35,7 @@ SceneSerifBase.prototype.init = function(serif){
 	this.transition_count = 0;
 
 	// シーン遷移前の BGM 止める
-	if (this.bgm()) {
-		this.core.stopBGM();
-	}
+	this.core.stopBGM();
 
 	if (this.isPlayFadeIn()) {
 		this.setFadeIn(60);
