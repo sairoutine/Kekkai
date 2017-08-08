@@ -7,6 +7,7 @@ var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
 var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
+var GetTitleBgm = require('../logic/get_title_bgm');
 
 var StageConfig = require('../stage_config');
 var LogicScore = require('../logic/score');
@@ -41,7 +42,9 @@ SceneSelect.prototype.init = function(selected_stage_no){
 	// マップを更新
 	this.stage_objects = this.createMap();
 
-	this.core.changeBGM("title");
+	// BGMM再生
+	this.core.changeBGM(GetTitleBgm.exec(this.core.storage_story));
+
 };
 SceneSelect.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);

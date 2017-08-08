@@ -4,6 +4,7 @@ var base_scene = require('../hakurei').scene.base;
 var util = require('../hakurei').util;
 var H_CONSTANT = require('../hakurei').constant;
 var CONSTANT = require('../constant');
+var GetTitleBgm = require('../logic/get_title_bgm');
 
 // transition time ready to show canvas
 var SHOW_TRANSITION_COUNT = 100;
@@ -104,15 +105,7 @@ SceneTitle.prototype.beforeDraw = function(){
 	base_scene.prototype.beforeDraw.apply(this, arguments);
 
 	if(this.frame_count === 60) {
-		// 通常ストーリーのみクリアしていれば、BGMを霊夢1人 ver に
-		if(this.core.storage_story.getIsNormalStageCleared() && !this.core.storage_story.getIsExStageCleared()) {
-			this.core.playBGM("title_without_yukari");
-		}
-		else {
-			this.core.playBGM("title");
-		}
-
-
+		this.core.playBGM(GetTitleBgm.exec(this.core.storage_story));
 	}
 
 	// カーソルを下移動
