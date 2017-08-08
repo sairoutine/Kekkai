@@ -19,6 +19,7 @@ ScenePrologue.prototype.init = function() {
 	base_scene.prototype.init.apply(this, arguments);
 
 	this._is_play_drop_sound = false;
+	this._is_play_bgm = false;
 };
 ScenePrologue.prototype.beforeDraw = function() {
 	base_scene.prototype.beforeDraw.apply(this, arguments);
@@ -28,6 +29,13 @@ ScenePrologue.prototype.beforeDraw = function() {
 		this._is_play_drop_sound = true;
 		this.core.playSound("drop");
 	}
+
+	// BGM再生
+	if(this.serif.progress === 3 && !this._is_play_bgm) {
+		this._is_play_bgm = true;
+		this.core.playBGM("epilogue");
+	}
+
 };
 
 // 立ち絵＆セリフ終了後
@@ -46,9 +54,8 @@ ScenePrologue.prototype.background = function() {
 };
 
 // BGM
-ScenePrologue.prototype.bgm = function() {
-	return "epilogue";
-};
+//ScenePrologue.prototype.bgm = function() {
+//};
 
 ScenePrologue.prototype.isPlayFadeIn = function() {
 	return true;
