@@ -42,6 +42,10 @@ AssetsConfig.images = {
 	stage_tile_32: "./image/stage_tile_32.png",
 	block:         "./image/block.png",
 	hashigo:       "./image/hashigo.png",
+	//tile_brown:  "./image/tile_brown.gif",
+	//tile_purple: "./image/tile_purple.gif",
+	tile_gray:   "./image/tile_gray.gif",
+	tile_red:    "./image/tile_red.gif",
 
 	mari_bg:       "./image/mari_bg.png",
 	// ノーマルステージクリア後背景
