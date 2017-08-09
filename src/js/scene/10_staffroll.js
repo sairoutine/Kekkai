@@ -27,6 +27,7 @@ SceneStaffroll.prototype.init = function() {
 
 	this.reimu = new Reimu(this);
 	this.reimu.init(this.core.width - 100, this.core.height - 100);
+	this.removeAllObject();
 	this.addObject(this.reimu);
 
 	this.serif_index = 0;
