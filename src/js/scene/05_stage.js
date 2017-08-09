@@ -216,6 +216,8 @@ SceneStage.prototype.notifyAfterTalkEnd = function() {
 	}
 	// Exステージクリア後
 	else if (this.isLastExStory()) {
+		// フェードアウトして終了
+		this.setFadeOut(120, 'white');
 		// 次のシーンへ
 		this.core.changeScene("after_ex");
 	}
