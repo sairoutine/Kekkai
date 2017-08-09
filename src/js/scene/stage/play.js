@@ -68,7 +68,7 @@ SceneStagePlay.prototype.draw = function() {
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 	ctx.font = "18px 'PixelMplus'";
 	ctx.textAlign = 'left';
-	ctx.fillText("矢印キー: 移動, Xキー: スキマ移動", 30, this.core.height - 15);
+	ctx.fillText("矢印キー: 移動, Xキー: スキマ移動, スペースキー: ポーズ", 30, this.core.height - 15);
 	ctx.restore();
 };
 
