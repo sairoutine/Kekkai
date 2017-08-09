@@ -340,7 +340,7 @@ module.exports = CONSTANT;
 'use strict';
 var DEBUG = {
 	ON: false,
-	SOUND_OFF: true,
+	SOUND_OFF: false,
 	START_SCENE: "title",
 };
 
@@ -11751,7 +11751,7 @@ var Serif= [
 	{"pos":"left","exp":"normal1","chara":"yukari","serif":null},
 	{"pos":"right","exp":"confused","chara":"reimu","serif":"答えてよ紫。ここは一体どこなの？\nアンタは私に、一体何をやらせようとしているのよ？"},
 	{"pos":"left","exp":"normal4","chara":"yukari","serif":"……そうね、前者の問いかけに関して言えば、\n霊夢が言う通り、ここはスキマ空間ということになるかしら"},
-	{"pos":"right","exp":"confused","chara":"reimu","serif":"やっぱりそうだったのね。進むごとに見覚えのある目玉が\n増えていくからおかしいと思ったわ"},
+	{"pos":"right","exp":"confused","chara":"reimu","serif":"やっぱりそうだったのね。どうりでおかしいと思ったわ"},
 	{"pos":"right","exp":"confused","chara":"reimu","serif":"どうしてそう、大事なことを黙っていたのよ？"},
 
 	{"pos":"left","exp":"normal2","chara":"yukari","serif":"……好きで黙っていたわけじゃないわ"},
@@ -15065,6 +15065,8 @@ SceneStage.prototype.notifyAfterTalkEnd = function() {
 	}
 	// Exステージクリア後
 	else if (this.isLastExStory()) {
+		// フェードアウトして終了
+		this.setFadeOut(120, 'white');
 		// 次のシーンへ
 		this.core.changeScene("after_ex");
 	}
