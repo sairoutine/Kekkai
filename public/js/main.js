@@ -339,7 +339,7 @@ module.exports = CONSTANT;
 },{"./debug_constant":3}],3:[function(require,module,exports){
 'use strict';
 var DEBUG = {
-	ON: true,
+	ON: false,
 	SOUND_OFF: true,
 	START_SCENE: "title",
 };
