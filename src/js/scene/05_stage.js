@@ -221,7 +221,14 @@ SceneStage.prototype.notifyAfterTalkEnd = function() {
 		// 次のシーンへ
 		this.core.changeScene("after_ex");
 	}
-	// 次のステージへ
+	// 体験版終了ならば
+	else if (CONSTANT.TRIAL && this.stage_no === CONSTANT.TRIAL_LAST_STAGE_NO) {
+		// 進捗をリセット
+		this.core.storage_story.resetNormalStageProgress();
+
+		// タイトルへ戻る
+		this.core.changeScene("title");
+	}
 	else {
 		this.core.changeScene("stage", this.stage_no + 1);
 	}

@@ -4,6 +4,11 @@ var DEBUG = require("./debug_constant");
 var CONSTANT = {
 	DEBUG: {},
 
+	// 体験版かどうか
+	TRIAL: true,
+	// 体験版の最終ステージ
+	TRIAL_LAST_STAGE_NO: 10,
+
 	// スコアの最高数
 	MAX_SCORE:  3,
 

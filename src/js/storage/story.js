@@ -190,4 +190,15 @@ StorageStory.prototype.clearExStageForDebug = function(){
 	this.save();
 };
 
+StorageStory.prototype.save = function(){
+	// 体験版はセーブ無効
+	if (CONSTANT.TRIAL) return;
+
+	base_class.prototype.save.apply(this, arguments);
+};
+
+
+
+
+
 module.exports = StorageStory;
