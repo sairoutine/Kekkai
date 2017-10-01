@@ -5,7 +5,7 @@ var CONSTANT = {
 	DEBUG: {},
 
 	// 体験版かどうか
-	TRIAL: true,
+	TRIAL: false,
 	// 体験版の最終ステージ
 	TRIAL_LAST_STAGE_NO: 10,
 
