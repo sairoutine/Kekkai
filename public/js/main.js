@@ -367,7 +367,7 @@ module.exports = CONSTANT;
 'use strict';
 var DEBUG = {
 	ON: false,
-	SOUND_OFF: true,
+	SOUND_OFF: false,
 	START_SCENE: "title",
 };
 
