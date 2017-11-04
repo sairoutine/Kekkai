@@ -45,7 +45,7 @@ SceneStage.prototype.init = function(stage_no, sub_scene, is_from_select_scene){
 	// デフォルトは talk シーンから開始
 	if(!sub_scene) sub_scene = "talk";
 
-	if(this.core.audio_loader.currentPlayingBGM() !== this.getBGMName()) {
+	if(!this.core.audio_loader.isPlayingBGM(this.getBGMName())) {
 		this.core.stopBGM();
 	}
 
