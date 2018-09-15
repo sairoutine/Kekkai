@@ -241,7 +241,7 @@ SceneSerifBase.prototype._showMessage = function() {
 
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	var x, y;
 	// セリフ表示
@@ -274,7 +274,7 @@ SceneSerifBase.prototype._showHowTo = function() {
 
 	ctx.font = "14px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.lineWidth = 4.0;

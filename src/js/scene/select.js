@@ -187,7 +187,7 @@ SceneSelect.prototype.draw = function(){
 	// ステージ一覧 文字列
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 
 	var i, len;
@@ -287,7 +287,7 @@ SceneSelect.prototype._showHowTo = function() {
 
 	ctx.font = "14px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	this._drawText(text, 10, this.core.height - 10);
 	ctx.restore();

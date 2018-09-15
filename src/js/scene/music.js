@@ -95,7 +95,7 @@ SceneMusic.prototype.draw = function(){
 	// 文字表示
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 
 	for(var i = 0, len = BGMS.length; i < len; i++) {
@@ -157,7 +157,7 @@ SceneMusic.prototype._showHowTo = function() {
 
 	ctx.font = "14px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	this._drawText(text, 10, this.core.height - 10);
 	ctx.restore();
@@ -208,7 +208,7 @@ SceneMusic.prototype._showMessage = function(message) {
 
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	var x, y;
 	// セリフ表示

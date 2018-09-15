@@ -116,7 +116,7 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 
 	ctx.save();
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	ctx.fillStyle = 'rgb(232, 52, 33)';
 	ctx.font = "24px 'Migu'";
@@ -210,7 +210,7 @@ SceneStageResultClearBySelect.prototype._showMessage = function(message) {
 
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	var x, y;
 	// セリフ表示

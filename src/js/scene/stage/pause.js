@@ -77,7 +77,7 @@ SceneStagePause.prototype.draw = function(){
 	ctx.textAlign = 'center';
 	ctx.font = "18px 'Migu'" ;
 
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	if(this.selectIndex === 0) {
 		ctx.globalAlpha = 1.0;
