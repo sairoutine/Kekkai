@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "electron ./public/electron.js",
-    "build:win": "cd public && electron-packager ./ Yukareimu --overwrite --platform=win32  --arch=x64 --version=1.6.0 --icon=icon.ico --out ../releases --ignore '(main.js|.m4a)' --asar",
-    "build:mac": "cd public && electron-packager ./ Yukareimu --overwrite --platform=darwin --arch=x64 --version=1.6.0 --icon=icon.icns --out ../releases --ignore '(main.js|.m4a)' --asar",
-    "build:trial:win": "cd public && electron-packager ./ YukareimuTrial --overwrite --platform=win32  --arch=x64 --version=1.6.0 --icon=icon.ico --out ../releases --ignore '(production/|main.js|.m4a)' --asar",
-    "build:trial:mac": "cd public && electron-packager ./ YukareimuTrial --overwrite --platform=darwin --arch=x64 --version=1.6.0 --icon=icon.icns --out ../releases --ignore '(production/|main.js|.m4a)' --asar"
+    "build:win": "cd public && electron-packager ./ Yukareimu --overwrite --platform=win32  --arch=x64 --electron-version=1.6.0 --icon=icon.ico --out ../releases --ignore '(main.js|.m4a)' --asar",
+    "build:mac": "cd public && electron-packager ./ Yukareimu --overwrite --platform=darwin --arch=x64 --electron-version=1.6.0 --icon=icon.icns --out ../releases --ignore '(main.js|.m4a)' --asar",
+    "build:trial:win": "cd public && electron-packager ./ YukareimuTrial --overwrite --platform=win32  --arch=x64 --electron-version=1.6.0 --icon=icon.ico --out ../releases --ignore '(production/|main.js|.m4a)' --asar",
+    "build:trial:mac": "cd public && electron-packager ./ YukareimuTrial --overwrite --platform=darwin --arch=x64 --electron-version=1.6.0 --icon=icon.icns --out ../releases --ignore '(production/|main.js|.m4a)' --asar"
   },
   "author": "sairoutine",
   "license": "NO LICENSE",
