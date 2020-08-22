@@ -276,7 +276,7 @@ SceneSerifBase.prototype._showHowTo = function() {
 	ctx.textAlign = 'left';
 	//ctx.textBaseline = 'middle';
 
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.strokeStyle = 'rgb( 0, 0, 0 )';
 	ctx.lineWidth = 4.0;
 	ctx.strokeText(text, this.core.width - 130, this.core.height - 10);
 
