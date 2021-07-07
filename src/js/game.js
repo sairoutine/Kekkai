@@ -4,6 +4,7 @@ var util = require('./hakurei').util;
 var CONSTANT = require('./constant');
 
 var StorageStory = require('./storage/story');
+var StorageConfig = require('./storage/config');
 
 // ローディング画面
 var SceneLoading      = require('./scene/00_loading');
@@ -35,6 +36,8 @@ var SceneMusic        = require('./scene/music');
 var SceneHowTo        = require('./scene/howto');
 // ステージセレクト画面
 var SceneSelect       = require('./scene/select');
+// コンフィグ画面
+var SceneConfig       = require('./scene/config');
 
 var Game = function(canvas) {
 	core.apply(this, arguments);
@@ -62,9 +65,15 @@ Game.prototype.init = function () {
 	this.addScene("epilogue", new SceneEpilogue(this));
 	this.addScene("music", new SceneMusic(this));
 	this.addScene("howto", new SceneHowTo(this));
+	this.addScene("config", new SceneConfig(this));
 
 	this.changeScene("loading");
 
+	// ゲームパッドの設定を取得
+	var storage_config = StorageConfig.load();
+	if (!storage_config.isEmpty()) {
+		this.input_manager.setAllButtonIdMapping(storage_config.toHash());
+	}
 };
 
 Game.prototype.isKeyLongDown = function (key) {
