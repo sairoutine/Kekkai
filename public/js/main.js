@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
 var CONSTANT = require("./constant");
@@ -367,8 +367,9 @@ module.exports = CONSTANT;
 'use strict';
 var DEBUG = {
 	ON: false,
-	SOUND_OFF: false,
-	START_SCENE: "title",
+	SOUND_OFF: true,
+	START_STAGE_NO: 15,
+	START_SCENE: "stage",
 };
 
 module.exports = DEBUG;
@@ -380,6 +381,13 @@ var util = require('./hakurei').util;
 var CONSTANT = require('./constant');
 
 var StorageStory = require('./storage/story');
+
+// ゲームのFPSレート
+var FPS = 60;
+// FPS計算する間隔(frame)
+var FPS_SPAN = 30;
+
+var FrameLimit = 1000/FPS;
 
 // ローディング画面
 var SceneLoading      = require('./scene/00_loading');
@@ -419,6 +427,15 @@ util.inherit(Game, core);
 
 Game.prototype.init = function () {
 	core.prototype.init.apply(this, arguments);
+
+	// 前回にゲーム更新をした際の時刻(ミリ秒)
+	this.before_update_time = 0;
+
+	// 前回にFPSを計算した際の時刻(ミリ秒)
+	this.before_time = 0;
+
+	// 計測したFPS
+	this.fps = 0;
 
 	// セーブデータ
 	this.storage_story = StorageStory.load(); // ストーリー進捗
@@ -473,7 +490,92 @@ Game.prototype.clearStageForDebug = function () {
 		this.currentScene().clearStageForDebug();
 	}
 };
+Game.prototype.run = function(){
+	var current_scene = this.currentScene();
+	if(current_scene && current_scene.update) {
+		// 将来的なhakureijsのアップデートのために、
+		// もしアップデートされていたら本来の run メソッドを呼び出す。
+		core.prototype.run.apply(this, arguments);
+	}
+	else {
+		// https://github.com/sairoutine/hakureijs/blob/0a5c77d97181d20639df189c7129189e9c1b42d3/core.js#L108-L146
+		// からのコピペ
 
+		// get gamepad input
+		// get pressed key time
+		this.input_manager.beforeRun();
+
+		// go to next scene if next scene is set
+		this.changeNextSceneIfReserved();
+
+		// play sound which already set to play
+		this.audio_loader.executePlaySound();
+
+		var current_scene = this.currentScene();
+		if(current_scene) {
+			current_scene.beforeDraw();
+
+			// clear already rendered canvas
+			this.clearCanvas();
+
+			current_scene.draw();
+
+			if(CONSTANT.DEBUG.ON) {
+				this._renderFPS();
+			}
+
+			current_scene.afterDraw();
+		}
+
+		this.frame_count++;
+
+		this.input_manager.afterRun();
+
+		this._requestAnimationFrame();
+	}
+};
+Game.prototype._requestAnimationFrame = function() {
+	var now = Date.now();
+	if (now - this.before_update_time >= FrameLimit) {
+		this.before_update_time = now;
+		this.request_id = requestAnimationFrame(this.run.bind(this));
+	}
+	else {
+		// ゲーミングディスプレイなどリフレッシュレートが144Hzのディスプレイの場合、
+		// requestAnimationFrame が 60FPS 以上で実行されることがある。
+		//
+		// 過剰にゲームの更新が行われないように 60FPS より早く更新されそうなときは待つ。
+		var that = this;
+		setTimeout(function() {
+			if (!that.isRunning()) return;
+
+			that.before_update_time = Date.now();
+			that.request_id = requestAnimationFrame(that.run.bind(that));
+		}, this.before_update_time + FrameLimit - now);
+	}
+};
+Game.prototype._renderFPS = function(){
+	// FPSをレンダリング
+	var ctx = this.ctx;
+	ctx.save();
+	ctx.fillStyle = 'rgb( 6, 40, 255 )';
+	ctx.textAlign = 'left';
+	ctx.font = "16px 'Migu'";
+	ctx.fillText("FPS: " + this.fps, 10, 20);
+	ctx.restore();
+
+	// FPS_SPAN 毎にFPSを計測する
+	if((this.frame_count % FPS_SPAN) !== 0) return;
+
+	// 現在時刻(ミリ秒)を取得
+	var newTime = Date.now();
+
+	if(this.before_time) {
+		this.fps = parseInt(1000 * FPS_SPAN / (newTime - this.before_time));
+	}
+
+	this.before_time = newTime;
+};
 Game.prototype.setupDebug = function (dom) {
 	if (!CONSTANT.DEBUG.ON) return;
 
@@ -8152,7 +8254,7 @@ vec4.equals = function (a, b) {
 module.exports = vec4;
 
 },{"./common.js":16}],25:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /*
 ** Copyright (c) 2012 The Khronos Group Inc.
 **
@@ -9108,7 +9210,7 @@ return {
 
 module.exports = WebGLDebugUtils;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],26:[function(require,module,exports){
 'use strict';
 
@@ -17910,7 +18012,7 @@ SceneMusic.prototype.draw = function(){
 	// 文字表示
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 
 	for(var i = 0, len = BGMS.length; i < len; i++) {
@@ -17972,7 +18074,7 @@ SceneMusic.prototype._showHowTo = function() {
 
 	ctx.font = "14px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	this._drawText(text, 10, this.core.height - 10);
 	ctx.restore();
@@ -18023,7 +18125,7 @@ SceneMusic.prototype._showMessage = function(message) {
 
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	var x, y;
 	// セリフ表示
@@ -18274,7 +18376,7 @@ SceneSelect.prototype.draw = function(){
 	// ステージ一覧 文字列
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 	ctx.fillStyle = 'rgb( 255, 255, 255 )';
 
 	var i, len;
@@ -18374,7 +18476,7 @@ SceneSelect.prototype._showHowTo = function() {
 
 	ctx.font = "14px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	this._drawText(text, 10, this.core.height - 10);
 	ctx.restore();
@@ -18630,7 +18732,7 @@ SceneSerifBase.prototype._showMessage = function() {
 
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	var x, y;
 	// セリフ表示
@@ -18663,9 +18765,9 @@ SceneSerifBase.prototype._showHowTo = function() {
 
 	ctx.font = "14px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
-	ctx.fillStyle = 'rgb( 0, 0, 0 )';
+	ctx.strokeStyle = 'rgb( 0, 0, 0 )';
 	ctx.lineWidth = 4.0;
 	ctx.strokeText(text, this.core.width - 130, this.core.height - 10);
 
@@ -18845,7 +18947,7 @@ SceneStagePause.prototype.draw = function(){
 	ctx.textAlign = 'center';
 	ctx.font = "18px 'Migu'" ;
 
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	if(this.selectIndex === 0) {
 		ctx.globalAlpha = 1.0;
@@ -19076,7 +19178,7 @@ SceneStageResultClearBySelect.prototype.draw = function(){
 
 	ctx.save();
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	ctx.fillStyle = 'rgb(232, 52, 33)';
 	ctx.font = "24px 'Migu'";
@@ -19170,7 +19272,7 @@ SceneStageResultClearBySelect.prototype._showMessage = function(message) {
 
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	var x, y;
 	// セリフ表示
@@ -19458,7 +19560,7 @@ SceneStageTalk.prototype._showMessage = function() {
 
 	ctx.font = "18px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	var x, y;
 	// セリフ表示
@@ -19492,7 +19594,7 @@ SceneStageTalk.prototype._showHowTo = function() {
 
 	ctx.font = "14px 'Migu'";
 	ctx.textAlign = 'left';
-	ctx.textBaseAlign = 'middle';
+	//ctx.textBaseline = 'middle';
 
 	ctx.fillStyle = 'rgb( 0, 0, 0 )';
 	ctx.lineWidth = 4.0;
