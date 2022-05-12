@@ -5,7 +5,12 @@ var CONSTANT = require('./constant');
 
 var StorageStory = require('./storage/story');
 
+// ゲームのFPSレート
+var FPS = 60;
+// FPS計算する間隔(frame)
 var FPS_SPAN = 30;
+
+var FrameLimit = 1000/FPS;
 
 // ローディング画面
 var SceneLoading      = require('./scene/00_loading');
@@ -45,6 +50,9 @@ util.inherit(Game, core);
 
 Game.prototype.init = function () {
 	core.prototype.init.apply(this, arguments);
+
+	// 前回にゲーム更新をした際の時刻(ミリ秒)
+	this.before_update_time = 0;
 
 	// 前回にFPSを計算した際の時刻(ミリ秒)
 	this.before_time = 0;
@@ -106,9 +114,67 @@ Game.prototype.clearStageForDebug = function () {
 	}
 };
 Game.prototype.run = function(){
-	core.prototype.run.apply(this, arguments);
-	if(CONSTANT.DEBUG.ON) {
-		this._renderFPS();
+	var current_scene = this.currentScene();
+	if(current_scene && current_scene.update) {
+		// 将来的なhakureijsのアップデートのために、
+		// もしアップデートされていたら本来の run メソッドを呼び出す。
+		core.prototype.run.apply(this, arguments);
+	}
+	else {
+		// https://github.com/sairoutine/hakureijs/blob/0a5c77d97181d20639df189c7129189e9c1b42d3/core.js#L108-L146
+		// からのコピペ
+
+		// get gamepad input
+		// get pressed key time
+		this.input_manager.beforeRun();
+
+		// go to next scene if next scene is set
+		this.changeNextSceneIfReserved();
+
+		// play sound which already set to play
+		this.audio_loader.executePlaySound();
+
+		var current_scene = this.currentScene();
+		if(current_scene) {
+			current_scene.beforeDraw();
+
+			// clear already rendered canvas
+			this.clearCanvas();
+
+			current_scene.draw();
+
+			if(CONSTANT.DEBUG.ON) {
+				this._renderFPS();
+			}
+
+			current_scene.afterDraw();
+		}
+
+		this.frame_count++;
+
+		this.input_manager.afterRun();
+
+		this._requestAnimationFrame();
+	}
+};
+Game.prototype._requestAnimationFrame = function() {
+	var now = Date.now();
+	if (now - this.before_update_time >= FrameLimit) {
+		this.before_update_time = now;
+		this.request_id = requestAnimationFrame(this.run.bind(this));
+	}
+	else {
+		// ゲーミングディスプレイなどリフレッシュレートが144Hzのディスプレイの場合、
+		// requestAnimationFrame が 60FPS 以上で実行されることがある。
+		//
+		// 過剰にゲームの更新が行われないように 60FPS より早く更新されそうなときは待つ。
+		var that = this;
+		setTimeout(function() {
+			if (!that.isRunning()) return;
+
+			that.before_update_time = Date.now();
+			that.request_id = requestAnimationFrame(that.run.bind(that));
+		}, this.before_update_time + FrameLimit - now);
 	}
 };
 Game.prototype._renderFPS = function(){
