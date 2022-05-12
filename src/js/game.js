@@ -5,6 +5,8 @@ var CONSTANT = require('./constant');
 
 var StorageStory = require('./storage/story');
 
+var FPS_SPAN = 30;
+
 // ローディング画面
 var SceneLoading      = require('./scene/00_loading');
 // タイトル画面
@@ -43,6 +45,12 @@ util.inherit(Game, core);
 
 Game.prototype.init = function () {
 	core.prototype.init.apply(this, arguments);
+
+	// 前回にFPSを計算した際の時刻(ミリ秒)
+	this.before_time = 0;
+
+	// 計測したFPS
+	this.fps = 0;
 
 	// セーブデータ
 	this.storage_story = StorageStory.load(); // ストーリー進捗
@@ -97,7 +105,34 @@ Game.prototype.clearStageForDebug = function () {
 		this.currentScene().clearStageForDebug();
 	}
 };
+Game.prototype.run = function(){
+	core.prototype.run.apply(this, arguments);
+	if(CONSTANT.DEBUG.ON) {
+		this._renderFPS();
+	}
+};
+Game.prototype._renderFPS = function(){
+	// FPSをレンダリング
+	var ctx = this.ctx;
+	ctx.save();
+	ctx.fillStyle = 'rgb( 6, 40, 255 )';
+	ctx.textAlign = 'left';
+	ctx.font = "16px 'Migu'";
+	ctx.fillText("FPS: " + this.fps, 10, 20);
+	ctx.restore();
 
+	// FPS_SPAN 毎にFPSを計測する
+	if((this.frame_count % FPS_SPAN) !== 0) return;
+
+	// 現在時刻(ミリ秒)を取得
+	var newTime = Date.now();
+
+	if(this.before_time) {
+		this.fps = parseInt(1000 * FPS_SPAN / (newTime - this.before_time));
+	}
+
+	this.before_time = newTime;
+};
 Game.prototype.setupDebug = function (dom) {
 	if (!CONSTANT.DEBUG.ON) return;
 
