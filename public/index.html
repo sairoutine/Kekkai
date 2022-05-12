@@ -19,23 +19,31 @@
 body {
 	margin:0;
 	padding:0;
-	width:768;
-	height:576;
-	overflow: hidden;
+	width:768px;
+	height:576px;
 }
 #canvasdiv {
+	cursor: none;
 	position:relative;
 	width:768px;
-	height:576px
+	height:576px;
+}
+#mainCanvas {
+	top: 0px;
+	left: 0px;
+	position: absolute;
 }
 #mainCanvas:-webkit-full-screen {
 	height: 100%;
+	position:relative;
+	top: 0px;
+	left: 0px;
 }
 </style>
 </head>
 <body>
 	<div id="canvasdiv">
-		<canvas id="mainCanvas" width="768" height="576" style="position:absolute;left: 0px;top: 0px;"></canvas>
+		<canvas id="mainCanvas" width="768" height="576"></canvas>
 	</div>
 
 	<div id="debug"></div>
