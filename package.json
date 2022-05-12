@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "8.12.0"
+  },
   "scripts": {
     "start": "electron ./public/electron.js",
     "build:win": "cd public && electron-packager ./ Yukareimu --overwrite --platform=win32  --arch=x64 --electron-version=1.6.0 --icon=icon.ico --out ../releases --ignore '(main.js|.m4a)' --asar",
